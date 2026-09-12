@@ -1,0 +1,1 @@
+{"name":"flowwitness","version":"0.1.0","private":true,"type":"module","engines":{"node":">=22"},"bin":{"flowwitness":"bin/flowwitness.mjs"},"scripts":{"start":"node bin/flowwitness.mjs serve","test":"node --test test/unit.test.mjs","test:integration":"node --test test/integration.test.mjs"},"dependencies":{"playwright":"1.63.0","sharp":"0.35.4"}}
