@@ -6,3 +6,5 @@ node_modules/
 .flowwitness/private/
 artifacts/
 *.log
+
+.worktrees/
