@@ -45,6 +45,16 @@ The fixture uses synthetic report data, but the server, browser interaction, ass
 - Native server composition for all six modules with separate durable state and authenticated artifact-link delivery. Optional adapters are injected at startup; no model or hosted browser is required.
 - A [shared coding-assistant skill](docs/AGENT-INTEGRATION.md), with host installation guidance.
 
+## What to use first
+
+**Stage 1** is the pilot path: issues and Q&A, the evidence-linked reasoning
+bank, agent jobs and CLI, workflow verification, and the bilingual dashboard.
+**Stage 2** stays available as separate modules: approved preview reproduction
+and private walkthrough video editing. They require explicit adapters and do not
+change the Stage 1 workflow-to-answer loop. Photo understanding, customer
+computer use, native host hooks, Archify export and hosted InsForge/E2B remain
+later integrations.
+
 ## Honest limits
 
 Workflows are explicitly authored or imported; automatic screen recording and code-to-workflow discovery are not implemented. Query matching uses configured question aliases, not an LLM. Images can be privately uploaded, but image recognition is not implemented. Initial replay targets trusted, operator-configured applications; it is not a sandbox for hostile code. Authenticated customer-session replay needs an additional adapter.
