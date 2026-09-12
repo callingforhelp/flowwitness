@@ -93,5 +93,7 @@ listeners (`listen EPERM: operation not permitted 127.0.0.1`) during later
 integration/dashboard reruns, so those earlier passing receipts remain the
 latest valid browser evidence and this environment does not provide a new
 browser result. Root `.git` also remains OS-denied for ref updates on
-TimeMachine1, so the follow-up CLI/docs/video changes are uncommitted WIP and
-were not pushed.
+TimeMachine1. A writable mirror checkout published the follow-up CLI/docs/video
+changes as public commit `0489cef` on `origin/main`; the TimeMachine1 checkout
+still shows those files as uncommitted WIP because its own ref database cannot
+be updated by this host.
