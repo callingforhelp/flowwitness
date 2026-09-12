@@ -3,9 +3,9 @@
 [简体中文](ROADMAP.zh-CN.md)
 
 The local alpha now implements the core runtime. A hosted authenticated pilot
-backend is available for sponsor review, while the public Pages concept demo
-remains simulated. External pilots and production certification are still
-unverified.
+backend and a browser-capable shared-EC2 public-route rehearsal are available
+for sponsor review, while the public Pages concept demo remains simulated.
+External pilots and production certification are still unverified.
 
 ## Foundation — delivered in this repository
 
@@ -29,7 +29,7 @@ for the current published answer.
 | 4 — implemented | Question queue and publication rules | One revision creates one deduplicated review item; unanswered questions prevent current publication |
 | 5 — implemented, no vision | Headless query service and optional image intake | Known flow returns evidence; stale/unknown/wrong-role/ambiguous image returns safe non-answer or clarification |
 | 6 — skill shipped, host smoke tests pending | Shared agent skill and guidance contract | Clean-install smoke test in one host, then separate Claude Code/Codex/pi compatibility receipts; no unsupported compatibility claims |
-| 7 — pending | Pilot hardening | Three adopters, two release cycles, product metrics and private-data tests documented |
+| 7 — public rehearsal complete; external pending | Pilot hardening | Public synthetic two-release receipt is in [PILOT-02](docs/PILOT-02.md); the remaining gate is three adopter runs, product metrics and private-data tests |
 
 The Stage 1 backend surfaces are the workflow service, issues and messages,
 the bilingual reasoning bank, agent registration and job leasing, local
@@ -44,7 +44,7 @@ reproduction and private FFmpeg video editing. They remain pilot-gated: no E2B
 browser provider, customer-facing video delivery, or automatic customer
 computer control is enabled by default.
 
-Stage 1 release gate: the complete record → change → reverify → query loop works for a real pilot deployment, privacy boundaries hold, and the measurements in [PRODUCT.md](docs/PRODUCT.md) are reported. Local fixtures alone do not establish pilot readiness.
+Stage 1 release gate: the complete record → change → reverify → query loop works for a real pilot deployment, privacy boundaries hold, and the measurements in [PRODUCT.md](docs/PRODUCT.md) are reported. Pilot 02 proves the public route with synthetic data; local or synthetic fixtures alone do not establish external pilot readiness.
 
 Automatic capture/discovery, logged-in session adapters, public hosting and a real three-builder pilot remain open. See [validation evidence](docs/VALIDATION.md).
 
