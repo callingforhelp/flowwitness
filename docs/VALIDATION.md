@@ -9,6 +9,7 @@
 | Independent process/API acceptance | Python standard-library client starts the actual CLI server with temp state and authenticated tokens; real PNG evidence, publication and version/role/application boundaries passed |
 | Connected operator UI | Setup, actual replay, private screenshots, publication, query, failure and repair passed; sidebar status, full image link, Chinese results and three viewport widths checked |
 | Dashboard credentials | Invalid token then valid retry works; token not stored in localStorage and reload requires reconnection |
+| Cloudflare preview | `flowwitness-preview.dave-z.workers.dev` returned dynamic `/api/health`, bilingual `v1`/`v2` preview state, and the static site through the Worker |
 | Portable skill | Frontmatter validation passed; individual Claude Code/Codex/pi discovery and behavioral smoke tests have not been run |
 | Container | Docker build and authenticated startup passed on GitHub Linux CI; Docker daemon unavailable on development Mac |
 | Public backend / pilot | Not deployed to a public domain; no external customer pilot performed |

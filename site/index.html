@@ -112,10 +112,12 @@
         <p class="lead" data-en="Connect your repository and coding agent. Let customers ask in the chat they already use. FlowWitness is designed to turn your product’s workflows into clear steps—and keep those steps up to date when your UI changes." data-zh="连接代码仓库与编码智能体，让客户在已有的聊天入口提问。FlowWitness 的目标是把产品操作流程变成清晰的步骤，并在界面变化后及时更新指引。">Connect your repository and coding agent. Let customers ask in the chat they already use. FlowWitness is designed to turn your product’s workflows into clear steps—and keep those steps up to date when your UI changes.</p>
         <div class="actions">
           <a class="button primary" href="#demo" data-en="Try the customer experience ↓" data-zh="体验客户如何获得帮助 ↓">Try the customer experience ↓</a>
+          <a class="button" href="https://flowwitness-preview.dave-z.workers.dev/" data-en="Open live preview ↗" data-zh="打开动态预览 ↗">Open live preview ↗</a>
           <a href="#builders" data-en="How it would fit your product" data-zh="了解如何接入你的产品">How it would fit your product</a>
         </div>
       </div>
       <p class="note"><a href="https://github.com/callingforhelp/flowwitness#run-locally" data-en="Run the working app locally →" data-zh="在本地运行实际应用 →">Run the working app locally →</a></p>
+      <p id="preview-status" class="note" role="status" data-en="Checking preview runtime…" data-zh="正在检查预览运行时……">Checking preview runtime…</p>
       <section id="demo">
         <p class="eyebrow" data-en="The customer experience" data-zh="客户体验">The customer experience</p>
         <h2 data-en="A question. Steps you can follow." data-zh="提出问题，照着步骤操作。">A question. Steps you can follow.</h2>
@@ -227,10 +229,32 @@
     let lang = 'en';
     let lastAction = 'reset';
     let exportShown = false;
+    let previewMode = 'checking';
     try {
       if (localStorage.getItem('flowwitness-language') === 'zh') lang = 'zh';
     } catch {}
     const words = (en, zh) => lang === 'zh' ? zh : en;
+
+    function renderPreviewStatus() {
+      const text = previewMode === 'connected'
+        ? words('Cloudflare preview API connected · concept state only.', 'Cloudflare 预览 API 已连接 · 仅提供概念状态。')
+        : previewMode === 'static'
+          ? words('Static concept demo · install the project for the working backend.', '静态概念演示 · 安装项目后运行实际后端。')
+          : words('Checking preview runtime…', '正在检查预览运行时……');
+      el('preview-status').textContent = text;
+    }
+
+    async function checkPreviewRuntime() {
+      try {
+        const response = await fetch('/api/preview?release=v1', { headers: { accept: 'application/json' } });
+        const value = await response.json();
+        if (!response.ok || value.kind !== 'flowwitness-preview-v1') throw new Error('preview unavailable');
+        previewMode = 'connected';
+      } catch {
+        previewMode = 'static';
+      }
+      renderPreviewStatus();
+    }
 
     function closeMenu() {
       el('more-menu').hidden = true;
@@ -306,6 +330,7 @@
       if (['How do I export a report?', '如何导出报告？'].includes(el('question').value)) {
         el('question').value = words('How do I export a report?', '如何导出报告？');
       }
+      renderPreviewStatus();
       render();
     }
 
@@ -354,6 +379,7 @@
       render();
     });
     setLanguage();
+    checkPreviewRuntime();
   </script>
 </body>
 </html>

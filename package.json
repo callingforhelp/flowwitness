@@ -11,7 +11,7 @@
   },
   "scripts": {
     "start": "node bin/flowwitness.mjs serve",
-    "test": "node --test test/unit.test.mjs test/lifecycle.test.mjs site/demo.test.mjs",
+    "test": "node --test test/unit.test.mjs test/lifecycle.test.mjs site/demo.test.mjs test/cloudflare-preview.test.mjs",
     "test:integration": "node --test test/integration.test.mjs",
     "test:dashboard": "node scripts/check-dashboard.mjs"
   },
