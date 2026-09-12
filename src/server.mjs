@@ -14,7 +14,7 @@ const publicJob=j=>Object.fromEntries(Object.entries(j).filter(([k])=>!['workflo
 export async function createServer(options={}){
  const config={root:options.root||process.cwd(),host:options.host||process.env.HOST||'127.0.0.1',port:options.port??Number(process.env.PORT||4310),application:options.application||process.env.FLOWWITNESS_APPLICATION||'demo-reports',adminToken:options.adminToken??process.env.FLOWWITNESS_ADMIN_TOKEN,supportToken:options.supportToken??process.env.FLOWWITNESS_SUPPORT_TOKEN,webhookSecret:options.webhookSecret??process.env.FLOWWITNESS_WEBHOOK_SECRET,ttl:options.ttl??86400000,stepTimeout:options.stepTimeout??5000,allowedOrigins:options.allowedOrigins||process.env.FLOWWITNESS_ALLOWED_ORIGINS?.split(',').filter(Boolean)||[]};
  const authenticated=!!(config.adminToken||config.supportToken);if(authenticated||!loopback(config.host))demand(config.adminToken?.length>=24&&config.supportToken?.length>=24&&config.adminToken!==config.supportToken,'Distinct admin/support tokens of at least 24 characters required');
- const store=new Store(config.root);if(options.dataDir||process.env.FLOWWITNESS_DATA_DIR)store.private=path.resolve(options.dataDir||process.env.FLOWWITNESS_DATA_DIR);await store.open();const service=new Service(store,config);const rates=new Map();
+ const store=new Store(config.root);if(options.dataDir||process.env.FLOWWITNESS_DATA_DIR)store.private=path.resolve(options.dataDir||process.env.FLOWWITNESS_DATA_DIR);await store.open();const service=new Service(store,config);try{await service.start();}catch(error){await service.close();throw error;}const rates=new Map();
  const server=http.createServer(async(req,res)=>{const request_id=randomUUID();const json=(status,value)=>{res.writeHead(status,{'content-type':'application/json','cache-control':'no-store','x-content-type-options':'nosniff'});res.end(JSON.stringify(value));};
  try{const url=new URL(req.url,config.origin||'http://localhost');const p=url.pathname;const mutation=!['GET','HEAD'].includes(req.method);const host=req.headers.host;demand(host===new URL(config.origin).host,'Host not allowed','forbidden',403);if(req.headers.origin)demand(req.headers.origin===config.origin,'Origin not allowed','forbidden',403);
  let role='admin';if(authenticated&&p.startsWith('/v1/')&&p!=='/v1/webhooks/github'){const token=req.headers.authorization?.replace(/^Bearer /,'');role=equal(token,config.adminToken)?'admin':equal(token,config.supportToken)?'support':null;demand(role,'Authentication required','unauthorized',401);if(role==='support')demand(p==='/v1/query'||p==='/v1/images'||/^\/v1\/artifacts\/[a-z0-9-]+$/.test(p),'Admin credential required','forbidden',403);}
@@ -38,7 +38,28 @@ export async function createServer(options={}){
  if(p==='/v1/webhooks/github'&&req.method==='POST'){demand(config.webhookSecret,'Webhook is not configured','forbidden',403);demand(equal(req.headers['x-hub-signature-256'],'sha256='+createHmac('sha256',config.webhookSecret).update(raw).digest('hex')),'Invalid signature','forbidden',403);const id=req.headers['x-github-delivery'];demand(typeof id==='string'&&id.length<=200&&req.headers['x-github-event']==='push','Push delivery required');if(store.data.deliveries.includes(id))return json(200,{affected:[],unmapped:[],questions:[],duplicate:true});demand(Array.isArray(b.commits)&&b.commits.length<2048&&(b.size===undefined||(Number.isInteger(b.size)&&b.size===b.commits.length))&&!b.truncated&&!b.forced&&!b.created&&!b.deleted&&b.commits.every(c=>['added','modified','removed'].every(k=>Array.isArray(c[k]))),'Incomplete changes; use CLI impact with a full local diff');const receipt=await service.impact({changed_paths:[...new Set(b.commits.flatMap(c=>[...c.added,...c.modified,...c.removed]))],source_revision:b.after});store.data.deliveries.push(id);store.data.deliveries=store.data.deliveries.slice(-10000);await store.save();return json(200,receipt);}
  if(p==='/v1/query'&&req.method==='POST')return json(200,service.query(b));
  if(p==='/v1/images'&&req.method==='POST'){demand(b.consent===true,'Explicit image consent required');demand(typeof b.image_base64==='string'&&/^[A-Za-z0-9+/]*={0,2}$/.test(b.image_base64),'Raw base64 image required');const bytes=Buffer.from(b.image_base64,'base64');demand(bytes.length>0&&bytes.length<=2*1024*1024,'Image exceeds 2 MB');let meta;try{meta=await sharp(bytes,{limitInputPixels:16000000}).metadata();}catch{throw new Fault('invalid_image','Image decode failed');}demand(['png','jpeg','webp'].includes(meta.format)&&meta.width*meta.height<=16000000&&(!meta.pages||meta.pages===1),'Only single-frame PNG, JPEG or WebP images accepted');const id=await service.artifact(bytes,'upload');return json(201,{artifact:{id,expires_at:store.data.artifacts[id].expires_at}});}
- if((m=p.match(/^\/v1\/artifacts\/([a-z0-9-]+)$/))){const a=get('artifacts',m[1]);demand(a.application===config.application&&Date.parse(a.expires_at)>Date.now(),'Artifact expired','not_found',404);if(req.method==='GET'){const bytes=await fs.readFile(path.join(store.private,a.file));res.writeHead(200,{'content-type':'image/png','cache-control':'no-store','x-content-type-options':'nosniff'});return res.end(bytes);}if(req.method==='DELETE'){await fs.rm(path.join(store.private,a.file),{force:true});delete store.data.artifacts[a.id];await store.save();return json(200,{deleted:true});}}
+ if ((m = p.match(/^\/v1\/artifacts\/([a-z0-9-]+)$/))) {
+  const artifact = store.data.artifacts[m[1]];
+  if (req.method === 'DELETE') {
+   if (artifact) {
+    demand(artifact.application === config.application, 'Not found', 'not_found', 404);
+    await fs.rm(path.join(store.private, artifact.file), {force: true});
+    delete store.data.artifacts[artifact.id];
+    await store.save();
+   }
+   return json(200, {deleted: true});
+  }
+  demand(artifact && artifact.application === config.application &&
+   Date.parse(artifact.expires_at) > Date.now(), 'Artifact expired', 'not_found', 404);
+  if (req.method === 'GET') {
+   const bytes = await fs.readFile(path.join(store.private, artifact.file)).catch(error => {
+    if (error.code === 'ENOENT') throw new Fault('not_found', 'Artifact unavailable', 404);
+    throw error;
+   });
+   res.writeHead(200, {'content-type': 'image/png', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff'});
+   return res.end(bytes);
+  }
+ }
  if(p==='/v1/demo/setup'&&req.method==='POST')return json(200,await service.demo());
  if(p==='/v1/demo/version'&&req.method==='POST'){demand(['v1','v2'].includes(b.version),'Version must be v1 or v2');return json(200,await service.demo(b.version));}
  if(p==='/v1/demo/repair'&&req.method==='POST')return json(200,{workflow:await service.put(demoWorkflow(config.application,true))});
@@ -52,4 +73,4 @@ export async function createServer(options={}){
  const listen=async()=>{await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(config.port,config.host,resolve);});const publicOrigin=options.publicOrigin||process.env.FLOWWITNESS_PUBLIC_ORIGIN;const reachableHost=['0.0.0.0','::'].includes(config.host)?'127.0.0.1':config.host;config.origin=publicOrigin||`http://${reachableHost.includes(':')?'['+reachableHost+']':reachableHost}:${server.address().port}`;const originURL=new URL(config.origin);demand(['http:','https:'].includes(originURL.protocol)&&originURL.origin===config.origin&&!originURL.username&&!originURL.password,'Public origin must be an HTTP(S) origin');if(!config.allowedOrigins.includes(config.origin))config.allowedOrigins.push(config.origin);return api;};
  const api={server,service,store,config,listen,close:async()=>{await new Promise(resolve=>server.close(resolve));await service.close();}};return api;
 }
-export async function startServer(options={}){const app=await createServer(options);try{return await app.listen();}catch(e){await app.store.close();throw e;}}
+export async function startServer(options={}){const app=await createServer(options);try{return await app.listen();}catch(e){await app.service.close();throw e;}}
