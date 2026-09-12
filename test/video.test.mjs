@@ -29,7 +29,7 @@ function fixture() {
   const renderer = { async probe() { return {durationMs:2000}; }, async render(p) { plan=p; return {bytes:Buffer.from('fake')}; } };
   const module = createModule({repository,artifacts,jobs,renderer,config:{now:()=>tick,idGenerator:()=>`vid${++seq}`}});
   const scope = {application:'app',conversationId:'c1'};
-  media.set(key(scope,'artifacts','source'),{id:'source',kind:'recording',mediaType:'video/mp4',expiresAt:new Date(100000).toISOString()});
+  media.set(key(scope,'artifacts','source'),{id:'source',sha256:'source-hash',kind:'recording',mediaType:'video/mp4',expiresAt:new Date(100000).toISOString()});
   media.set(key(scope,'artifacts','logo'),{id:'logo',mediaType:'image/png'});
   media.set(key(scope,'artifacts','voice'),{id:'voice',mediaType:'audio/wav'});
   return {module,repository,artifacts,jobs,renderer,queue,scope,get plan(){return plan;},expire(){tick=200000;}};
@@ -38,7 +38,7 @@ function fixture() {
 test('fake renderer preserves bilingual timeline, private output, publication and scoped access', async () => {
   for (const locale of ['en','zh']) {
     const f=fixture();
-    await f.repository.create(f.scope,'evidenceBundles',{id:'bundle',status:'verified',artifactIds:['source'],expiresAt:new Date(100000).toISOString()});
+    await seedEvidence(f);
     const edit = {trim:{startMs:0,endMs:2000},segments:[{startMs:1000,endMs:1500},{startMs:0,endMs:500}],captions:[{startMs:0,endMs:900,text:locale==='zh'?'检查结果':'Check result'}],logoArtifactId:'logo',narrationArtifactId:'voice',colors:{primary:'#123456',background:'#000000',text:'#ffffff'},highlights:[{startMs:10,endMs:800,x:0,y:0,width:0.5,height:0.5}]};
     const {item}=await f.module.create(operator,{locale,evidenceBundleId:'bundle',edit});
     await assert.rejects(f.module.get({...operator,application:'other'},{id:item.id}));
@@ -88,4 +88,49 @@ test('render attachment CAS failure revokes output and fails before completion',
   assert.equal(job.status, 'failed');
   assert.ok((await f.artifacts.get(f.scope, output.id)).revokedAt);
   assert.equal((await f.repository.get(f.scope, 'videoProjects', item.id)).outputArtifactId, null);
+});
+
+async function seedEvidence(f) {
+  await f.repository.create(f.scope, 'investigationJobs', {
+    id: 'receipt', kind: 'reproduction', status: 'succeeded',
+    resultRef: { collection: 'evidenceBundles', id: 'bundle' },
+  });
+  return f.repository.create(f.scope, 'evidenceBundles', {
+    id: 'bundle', status: 'verified', jobId: 'receipt', validatorVersion: 'v1',
+    target: { revision: 'release-1' }, artifactIds: ['source'],
+    artifactHashes: { source: 'source-hash' }, expiresAt: new Date(100000).toISOString(),
+  });
+}
+
+test('live evidence gates reject forged receipts and invalid artifacts across reads, renders and publication', async () => {
+  const cases = [
+    ['missing job', async (f,b) => { b.jobId = 'missing'; }, 'unverified'],
+    ['queued job', async (f) => { (await f.repository.get(f.scope,'investigationJobs','receipt')).status='queued'; }, 'unverified'],
+    ['wrong result', async (f) => { (await f.repository.get(f.scope,'investigationJobs','receipt')).resultRef.id='other'; }, 'unverified'],
+    ['cancelled receipt', async (f) => { (await f.repository.get(f.scope,'investigationJobs','receipt')).cancelRequestedAt='now'; }, 'unverified'],
+    ['wrong scope', async (f,b) => { b.application='other'; }, 'unverified'],
+    ['missing validator', async (f,b) => { delete b.validatorVersion; }, 'unverified'],
+    ['missing revision', async (f,b) => { delete b.target.revision; }, 'unverified'],
+    ['hash mismatch', async (f,b) => { b.artifactHashes.source='wrong'; }, 'failed'],
+    ['revoked artifact', async (f) => { await f.artifacts.revoke(f.scope,'source'); }, 'expired'],
+    ['missing additional artifact', async (f,b) => { b.artifactIds.push('missing'); }, 'expired'],
+    ['artifact expiry', async (f) => { (await f.artifacts.get(f.scope,'source')).expiresAt=new Date(0).toISOString(); }, 'expired'],
+    ['bundle expiry', async (f,b) => { b.expiresAt=new Date(0).toISOString(); }, 'expired'],
+    ['invalid expiry', async (f,b) => { b.expiresAt='invalid'; }, 'expired'],
+  ];
+  for (const [label, invalidate, status] of cases) {
+    const f=fixture(); const bundle=await seedEvidence(f);
+    const {item}=await f.module.create(operator,{locale:'en',evidenceBundleId:'bundle'});
+    assert.equal(item.evidenceStatus,'verified');
+    const {job}=await f.module.render(operator,{id:item.id,idempotencyKey:'valid-render'}); job.status='leased';
+    await f.module.runRender(operator,{id:job.id,token:'token'});
+    await f.module.publish(operator,{id:item.id});
+    await invalidate(f,bundle);
+    assert.equal((await f.module.get(operator,{id:item.id})).item.evidenceStatus,status,label);
+    for (const operation of [
+      () => f.module.render(operator,{id:item.id,idempotencyKey:'invalid-render'}),
+      () => f.module.publish(operator,{id:item.id}),
+      () => f.module.get({...operator,role:'customer'},{id:item.id}),
+    ]) await assert.rejects(operation, {code:'evidence_ineligible'}, label);
+  }
 });

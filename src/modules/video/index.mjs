@@ -106,15 +106,38 @@ export function createModule({ repository, artifacts, jobs, config = {}, rendere
     return record;
   }
 
-  // Live evidence status is computed, never stored from caller input:
-  // imported recordings stay unverified forever; evidence-backed projects
-  // mirror the bundle and expire with it.
+  // Re-evaluate the receipt and all evidence on every read and operation.
+  // Imported recordings never acquire verified provenance.
+  async function inspectEvidence(scope, record) {
+    const bundle = await repository.get(scope, BUNDLES, record.evidenceBundleId);
+    const result = (status) => ({ status, bundle });
+    const exactScope = (value) => value?.application === scope.application &&
+      (value.conversationId ?? null) === scope.conversationId;
+    if (!bundle || !exactScope(bundle)) return result("unverified");
+    if (!bundle.validatorVersion || !bundle.target?.revision || !bundle.jobId) return result("unverified");
+    const job = await repository.get(scope, "investigationJobs", bundle.jobId);
+    if (!job || !exactScope(job) || job.status !== "succeeded" || job.cancelRequestedAt ||
+        !["investigation", "reproduction"].includes(job.kind) ||
+        job.resultRef?.collection !== BUNDLES || job.resultRef?.id !== bundle.id) return result("unverified");
+    if (["failed", "expired", "stale"].includes(bundle.status)) return result(bundle.status);
+    const expiry = Date.parse(bundle.expiresAt ?? "");
+    if (!Number.isFinite(expiry) || expiry <= now()) return result("expired");
+    let sourceMeta = null;
+    for (const id of Array.isArray(bundle.artifactIds) ? bundle.artifactIds : []) {
+      const meta = await artifacts.get(scope, id);
+      if (!meta || meta.revokedAt) return result("expired");
+      if (!meta.sha256 || (bundle.artifactHashes && bundle.artifactHashes[id] !== meta.sha256)) return result("failed");
+      const artifactExpiry = Date.parse(meta.expiresAt ?? "");
+      if (!Number.isFinite(artifactExpiry) || artifactExpiry <= now()) return result("expired");
+      if (!sourceMeta && (meta.kind === "recording" || meta.mediaType?.startsWith("video/"))) sourceMeta = meta;
+    }
+    if (!sourceMeta) return result("unverified");
+    return { status: bundle.status === "verified" ? "verified" : "unverified", bundle, sourceMeta };
+  }
+
   async function evidenceStatusOf(scope, record) {
     if (record.provenance === "imported") return "unverified";
-    const bundle = await repository.get(scope, BUNDLES, record.evidenceBundleId);
-    if (!bundle) return "failed";
-    if (bundle.expiresAt && Date.parse(bundle.expiresAt) <= now()) return "expired";
-    return bundle.status;
+    return (await inspectEvidence(scope, record)).status;
   }
 
   async function present(scope, record) {
@@ -137,30 +160,8 @@ export function createModule({ repository, artifacts, jobs, config = {}, rendere
       assertArtifactUsable(meta, "Source recording");
       return { bundle: null, sourceArtifactId: record.sourceArtifactId, sourceMeta: meta };
     }
-    const bundle = await repository.get(scope, BUNDLES, record.evidenceBundleId);
-    demand(bundle, "Evidence bundle is missing", "evidence_ineligible", 409);
-    demand(
-      bundle.status === "verified",
-      `Evidence bundle is ${bundle.status}; rendering and publication consume verified evidence only`,
-      "evidence_ineligible",
-      409,
-    );
-    demand(
-      !bundle.expiresAt || Date.parse(bundle.expiresAt) > now(),
-      "Evidence bundle has expired",
-      "evidence_ineligible",
-      409,
-    );
-    let sourceMeta = null;
-    for (const artifactId of bundle.artifactIds ?? []) {
-      const meta = await artifacts.get(scope, artifactId);
-      if (meta && (meta.kind === "recording" || meta.mediaType?.startsWith("video/"))) {
-        sourceMeta = meta;
-        break;
-      }
-    }
-    demand(sourceMeta, "Evidence bundle contains no recording artifact", "evidence_ineligible", 409);
-    assertArtifactUsable(sourceMeta, "Source recording");
+    const { status, bundle, sourceMeta } = await inspectEvidence(scope, record);
+    demand(status === "verified", `Evidence is ${status}; rendering and publication require live verified evidence`, "evidence_ineligible", 409);
     return { bundle, sourceArtifactId: sourceMeta.id, sourceMeta };
   }
 

@@ -10,3 +10,88 @@ Local checks: 13 unit/API/lifecycle/concept tests, real browser integration, ind
 Local service restarted on the final implementation at http://127.0.0.1:4310/app/. Demo export workflow checked in real Chromium and explicitly published; CLI query returned its real screenshot reference. Private state is ignored by Git. Run IDs and artifacts expire; this is a local example, not a customer deployment.
 CI: runtime Linux suite passed. Initial container build passed; immediate readiness request reset its connection, so bounded retries now include that startup condition. Final run 34680028316 passed both the full Linux runtime suite and container build/authenticated startup.
 Delivery complete: terminal CI result recorded with the reviewed demo workflow; docs and source pushed to public main. Public backend hosting, external pilot, native host discovery tests, vision, videos and customer computer execution remain unimplemented.
+
+The execution log below records the earlier DSH attempts. Its final incomplete
+claim is superseded by the current checkpoint at the end of this file.
+
+
+## Next release execution — 2026-09-12
+
+Approved: Q&A/issues, reasoning bank, builder-agent CLI/MCP, E2B reproduction, editable FFmpeg walkthrough videos, workflow maintenance and bilingual dashboard. InsForge cloud + local adapters; no mandatory model API, customer computer execution or generated voice. User selected Prewalk + DSH runner after initially requesting Sol agents.
+Main HEAD 67b7fba; prior local alpha preserved. InsForge flowwitness created at https://x2ah5ixj.us-east.insforge.app, private bucket flowwitness-private created, credentials ignored. Generated AGENTS/insforge-cli/insforge skills read. Empty migration 20260912074747_platform-records.sql generated via CLI in main; foundation worker owns its populated version. No cloud schema applied yet. E2B_API_KEY absent; requested private configuration asynchronously. FFmpeg available.
+Prewalk first edit: Astra wrote only docs/MODULE-CONTRACT.md, coordinator verified 118 lines and clean diffcheck; b7f6f59 integrated as 67b7fba. No direct module implementation by coordinator. DSH route coordinator-direct, foundation blocking run plus authorized parallel spawn for independent modules. Effective returned runtime: hub / ark-agent-plan / kimi-k3 / effort off, tier pro; not Sol or DeepSeek Pro.
+Active writers (one per worktree):
+- hub-1-mty33pqg: .worktrees/platform foundation adapters/jobs/artifacts/SQL/tests; functions cell153 awaits blocking result.
+- hub-2-mty34w2r: .worktrees/knowledge reasoning-bank module/tests/docs.
+- hub-3-mty34w4r: .worktrees/video video module/FFmpeg adapter/tests/docs.
+Pending dispatch: issues+agents, reproduction, dashboard, maintenance/CLI, route+edge composition. Modules follow MODULE-CONTRACT.md with independent adapters; no sibling internals imported.
+Next: accept terminal results only after diff inspection/focused tests, apply and live-test InsForge migration, start remaining independent tasks in freed worker slots. Coordinator owns integration, validation, deployment, and this state. No worker success or live API deployment claimed yet.
+
+DSH access blocker: all three jobs reached approval/asked because workspace-write sandbox returns EPERM for TimeMachine1 worktrees. No module files written. Pending approvals: platform b07c3736-245d-4dfd-ad1e-cca548464017; knowledge 93bb9825-50a3-42cc-86b3-9ef778ae3dd7; video c037449a-f4a0-497b-9860-c9d1510c0858. Worker requests danger-full-access for assigned cwd. Direct MCP has status/result/cancel but no approval response; asked user to approve in DSH. Jobs deliberately remain waiting, not abandoned. Do not duplicate writers/retry/route around sandbox. Current node host Claude executable also opens third-party relay authentication even for --help; that probe was interrupted cleanly, so Claude host behavioral smoke remains unverified. Codex/pi help works.
+
+User explicitly approved danger-full-access for platform/knowledge/video. Hub restarted (old PID55979 dead), old job shards are stale running records with originWriterAlive:false and cancel returns no-such-job; no live locks or code. New writer jobs: platform hub-1-mty3r3fw session-c7893f17-e927-4231-b18a-919fa00de2cf (functions cell16); knowledge hub-2-mty3uau4 session-28ae7c4c-6f9f-4337-b70e-650cd0c946a6; video hub-3-mty3uavk session-813b2bb3-00eb-491b-a8b1-ce993456f2e3. Same worktrees/ownership. Current hub PID1137 at127.0.0.1:3080 uses arch03-aggregate worktree. Normal authenticated Gateway approval API found: WS /api/remote.mux $events then POST /api/$events/result. User-granted approvals accepted, not bypassed. Temporary approval bridge /private/tmp/flowwitness-dsh-approvals.mjs (exec85098) answers only bash danger-full-access requests in these three exact sessions for30min; terminate on worker completion. Private cookie file ignored outside repo, never print. No global permission/config changes. Next: verify progress, collect terminal results and resume integration sequence.
+
+Final retry outcome: DSH approvals were accepted, but child bash still received
+macOS EPERM for every TimeMachine1 path. The three implementation jobs were
+cancelled; no DSH result was accepted. A WorkBuddy stream smoke did complete
+after a local null-stream fix, and the implementation was completed by fresh
+isolated Astra fallback workers instead. Do not claim DSH implementation
+success until the host Node process has volume access and a read/write fixture
+passes.
+
+
+## Current checkpoint — 2026-09-12
+
+Repository: `/Volumes/TimeMachine1/flowwitness`, `main` at `8a75335`. The root
+checkout retains this state file as uncommitted WIP; feature changes are in
+reviewable commits and were not pushed from this turn.
+
+Implemented and composed locally:
+
+- Scoped durable platform repository, CAS transitions, fenced jobs, private
+  artifacts and optional InsForge admin adapter.
+- Bilingual issues/Q&A and message records with customer conversation binding.
+- Bilingual reasoning bank with evidence validation, supersession, feedback and
+  explicit operator publication.
+- Agent registration and investigation job leasing for Claude Code, Codex and
+  pi runtimes.
+- Approved preview/test reproduction runner with bounded actions, cancellation
+  cleanup and unverified evidence receipts. A real E2B connection is not
+  configured.
+- Private editable FFmpeg video projects with trim, captions, narration, logo,
+  colors, highlights and expiring output links. Rendering stays private until
+  evidence and operator publication gates pass.
+- Native server composition for all six modules, separate module persistence,
+  authenticated artifact-link delivery and a maintenance adapter that leaves
+  the existing workflow/query lifecycle intact.
+
+Worker evidence: direct DSH jobs were retried after the WorkBuddy stream fix;
+the stream smoke completed, but implementation jobs still hit macOS EPERM on
+TimeMachine1 despite approved tool requests. Those jobs were cancelled and no
+DSH worker result was accepted. Fresh isolated Astra fallback workers completed
+the modules; the coordinator inspected, merged and independently tested their
+changes.
+
+Validation: the combined module suites report 28 passed, 1 skipped (opt-in
+InsForge integration), 0 failed; `npm test`, `npm run test:integration`, and
+`npm run test:dashboard` all pass. The FFmpeg fixture ran a real tiny render.
+The remaining gates are an authenticated InsForge migration/conformance run,
+an approved E2B/browser adapter, host-specific Claude/Codex/pi discovery
+receipts, public deployment and a real external pilot. No public endpoint or
+push was performed here.
+
+Follow-up checkpoint: the CLI now exposes allowlisted `module`/`api` calls,
+bounded inline or `@file` JSON, read shortcuts and token redaction for the
+issues, knowledge, agents, investigation, reproduction and video routes.
+The shared English/Chinese host-integration docs and skill include those
+examples and their authorization boundaries. A video evidence repair now
+requires a scoped succeeded investigation/reproduction receipt, validator and
+revision metadata, live expiry checks, a recording artifact and matching live
+hashes before render, publication or customer read. CLI/video focused checks
+pass; `git diff --check` passes. The current host then denied new loopback
+listeners (`listen EPERM: operation not permitted 127.0.0.1`) during later
+integration/dashboard reruns, so those earlier passing receipts remain the
+latest valid browser evidence and this environment does not provide a new
+browser result. Root `.git` also remains OS-denied for ref updates on
+TimeMachine1, so the follow-up CLI/docs/video changes are uncommitted WIP and
+were not pushed.

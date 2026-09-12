@@ -25,13 +25,19 @@ The local alpha now implements the core runtime. The public Pages concept demo r
 
 The alpha uses Node.js 22+ ESM JavaScript, Git-friendly JSON, private artifact storage, Playwright and a native HTTP service. It does not require a TypeScript build step or a model key. Playwright provides repeatable assertions; evaluate Stagehand as an optional semantic locator/recovery adapter. A local tool named sagehand is not itself a portable dependency contract.
 
+The next-release backend modules are now composed in the local service: scoped
+issues and messages, the evidence-linked reasoning bank, agent leasing,
+approved preview/test reproduction and private FFmpeg video editing. They are
+portable adapters and routes, not a hosted service. InsForge, E2B and native
+host integrations remain opt-in validation work.
+
 Stage 1 release gate: the complete record → change → reverify → query loop works for a real pilot deployment, privacy boundaries hold, and the measurements in [PRODUCT.md](docs/PRODUCT.md) are reported. Local fixtures alone do not establish pilot readiness.
 
 Automatic capture/discovery, logged-in session adapters, public hosting and a real three-builder pilot remain open. See [validation evidence](docs/VALIDATION.md).
 
 ## Stage 2 — only after the first loop earns continued use
 
-1. **Short walkthrough videos:** assemble a successful replay into captioned steps, then optional narration. Share expiring artifacts. Raw browser video is not an edited tutorial. Reuse by workflow/version/role instead of generating a video for every query.
+1. **Walkthrough delivery:** the private FFmpeg studio and bilingual edit model are implemented; validate source evidence, configure a renderer/font, and add customer-facing delivery and optional narration during pilot work. Reuse by workflow/version/role instead of generating a video for every query.
 2. **Richer screenshot/photo assistance:** evaluate cropped, blurred, localized and outdated screens; role and release ambiguity must remain explicit.
 3. **Customer-side computer use:** adapter-specific action plans with preconditions, expected observations, pause/confirmation points, cancellation and verified completion. Test real host protocols separately.
 4. **Expanded sandbox scenarios:** permissions, failed network, feature flags and recovery paths; a bounded work queue and budgets before multiple specialized agents.

@@ -4,7 +4,7 @@
 
 [简体中文](README.zh-CN.md) · [Public concept demo](https://callingforhelp.github.io/flowwitness/) · [Runbook](docs/OPERATIONS.md) · [API](docs/API.md) · [Research](docs/RESEARCH.md) · [Roadmap](ROADMAP.md)
 
-FlowWitness is a self-hosted local alpha that stores customer workflows, checks them in Chromium, and serves explicitly published instructions to your existing support chat. When an application changes, test the old steps, inspect the failure, repair the workflow, and publish a new checked answer.
+FlowWitness is a self-hosted local alpha that stores customer workflows and support issues, checks approved preview flows in Chromium, and serves explicitly published instructions to your existing support chat. When an application changes, test the old steps, inspect the failure, repair the workflow, and publish a new checked answer.
 
 **The runtime is real.** It includes a CLI, HTTP service, bilingual operator dashboard, actual browser checks, private screenshots, and a support-query endpoint. The public GitHub Pages site remains a **separate simulated concept demo**; it does not host the backend.
 
@@ -39,13 +39,17 @@ The fixture uses synthetic report data, but the server, browser interaction, ass
 - Headless support queries return published steps, screenshot references and a structured guidance object, or clarification/unavailable status.
 - Signed GitHub push intake and deduplicated review questions. A source push does not overwrite production deployment identity.
 - English/Chinese dashboard, image upload with consent and metadata stripping, and separate admin/support credentials for authenticated mode.
+- Scoped issues and messages, an evidence-linked bilingual reasoning bank, and lease-fenced investigation jobs for Claude Code, Codex and pi workers.
+- A bounded preview/test reproduction module that can consume an injected VM/browser adapter and records unverified evidence receipts until an operator reviews them.
+- A private FFmpeg video studio with trim, captions, logo, colors, highlights, narration mixing and expiring links; video output remains private until publication.
+- Native server composition for all six modules with separate durable state and authenticated artifact-link delivery. Optional adapters are injected at startup; no model or hosted browser is required.
 - A [shared coding-assistant skill](docs/AGENT-INTEGRATION.md), with host installation guidance.
 
 ## Honest limits
 
 Workflows are explicitly authored or imported; automatic screen recording and code-to-workflow discovery are not implemented. Query matching uses configured question aliases, not an LLM. Images can be privately uploaded, but image recognition is not implemented. Initial replay targets trusted, operator-configured applications; it is not a sandbox for hostile code. Authenticated customer-session replay needs an additional adapter.
 
-This is one application per service, with a single state writer. It is not a multi-tenant hosted helpdesk. No production deployment or external pilot is claimed. Native agent hooks, narrated videos and customer computer-use execution remain future work. See [Stage 1 boundaries](ROADMAP.md).
+This is one application per service, with a single state writer. It is not a multi-tenant hosted helpdesk. No production deployment, external pilot, managed E2B connection or native host hook is claimed. Customer computer-use execution, image understanding and generated voice remain future work. See [Stage 1 boundaries](ROADMAP.md) and the [composition notes](docs/COMPOSITION.md).
 
 ## CLI and integrations
 

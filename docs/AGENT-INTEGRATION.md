@@ -21,3 +21,23 @@ For GitHub automation, configure a push webhook pointing to `/v1/webhooks/github
 A job queue replaces a team of continuously running agents in this first version. Missing facts appear as review questions. Native hooks, scheduled reasoning and computer-use execution remain future work.
 
 Sources checked September 12, 2026: [Claude skills](https://code.claude.com/docs/en/skills), [Codex skills](https://developers.openai.com/codex/skills/), [pi skills](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/skills.md). These document extension surfaces, not a tested FlowWitness integration receipt.
+
+## Module CLI for Claude Code, Codex and pi
+
+Set `FLOWWITNESS_URL` and load `FLOWWITNESS_TOKEN` from private local configuration. The CLI sends the existing Bearer authorization plus `x-flowwitness-client: cli`; the server resolves the principal and scope. Module calls require the corresponding server adapter and authorization. CLI availability does not prove that the backend is configured.
+
+Use `flowwitness module <METHOD> <PATH> [JSON|@file]` (`api` is an alias). Only implemented `/v1` module routes are accepted. JSON input is limited to 1 MiB, paths to 8192 characters, GET requests have no body, and redirects are refused. `issues`, `knowledge`, and `agents` list records; `investigation <id>`, `reproduction <id>`, and `video <id>` fetch one record. Video responses contain authorized evidence links and metadata; they do not download video bytes.
+
+```sh
+flowwitness module POST /v1/issues '{"title":"Export fails","description":"Export button shows an error","locale":"en"}'
+flowwitness module GET '/v1/knowledge?text=export&limit=10'
+flowwitness module POST /v1/investigations '{"issueId":"ISSUE_ID","requiredCapabilities":["investigation"],"idempotencyKey":"export-investigation-1"}'
+flowwitness module POST /v1/reproductions @reproduction.json
+flowwitness module POST /v1/agents '{"ownerId":"AGENT_SUBJECT_ID","runtime":"codex","capabilities":["investigation"],"enabled":true}'
+flowwitness module POST /v1/investigations/claim '{"capabilities":["investigation"]}'
+flowwitness module GET /v1/videos/VIDEO_ID
+```
+
+Use IDs, approval references, targets, revisions and selectors returned or supplied by the operator. Reuse an idempotency key only for identical input. Registration and enqueue calls need operator scope; claim needs the matching registered agent identity. Keep lease tokens and private evidence links private. A queued job is not a completed investigation or reproduction, and fetching a video does not render or publish it.
+
+The CLI returns FlowWitness guidance and evidence; it never authorizes actions on a customer's computer. Native customer computer-use execution, image understanding, generated voice and hosted video infrastructure remain separate integration work.
