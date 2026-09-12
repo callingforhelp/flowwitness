@@ -60,7 +60,10 @@ The bounded pilot is deployed from merged revision `b7da9c4` in the isolated
   failure, repair, private PNG retrieval, English/Chinese query,
   authentication and restart persistence all passed. A public-route smoke then
   passed the current v2 identity/publication, bilingual query, authentication
-  boundary and operator app. No customer data or credentials were used.
+  boundary and operator app. [Pilot 02](../PILOT-02.md) records a fresh public
+  two-release rehearsal with a separate workflow ID, signed delivery
+  deduplication, failure evidence, repaired publication, image deletion and
+  post-restart query. No customer data or credentials were used.
 
 The quick-tunnel URL is temporary and may change when the connector is
 recreated. A URL change requires updating the service's public-origin

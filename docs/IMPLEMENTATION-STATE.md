@@ -182,3 +182,17 @@ returned 200 with `duplicate=true`. Two real GitHub delivery GUIDs from later
 repository pushes are present in the hosted InsForge delivery state. Digest
 scheduling remains intentionally unimplemented until a pilot shows that it is
 needed.
+
+## Shared EC2 public-route rehearsal — 2026-09-12
+
+The browser-capacity limitation of the free 512 MB fallback is now separated
+from the browser-capable pilot path. The existing ARM64 EC2 host, shared with
+DSH and reached only through an accountless Cloudflare quick tunnel, completed
+the fresh two-release receipt in [PILOT-02](PILOT-02.md): release A published a
+real Chromium screenshot, release B retained a failed screenshot and withheld
+the stale answer, the repaired two-step workflow was published, English and
+Chinese support queries returned the repaired guide, the signed delivery was
+deduplicated, an uploaded image was deleted, and the service restart preserved
+the publication. This remains synthetic sponsor-review evidence; stable
+production ingress, backup/restore, alerting and an external adopter are still
+open.

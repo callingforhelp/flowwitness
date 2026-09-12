@@ -25,7 +25,9 @@ existing ARM64 EC2 host:
 On September 12, 2026, the merged `b7da9c4` checkout passed the hosted
 release-A replay, private PNG retrieval, explicit publication, stale release-B
 failure, repair replay, English/Chinese query, authentication, invalid-image,
-and service-restart checks. The pilot uses synthetic fixture data only. The
+and service-restart checks. [Pilot 02](PILOT-02.md) then ran a fresh public-route
+two-release rehearsal with a separate workflow ID, signed delivery deduplication
+and image deletion. The pilot uses synthetic fixture data only. The
 quick-tunnel hostname is temporary and may change when the connector is
 recreated; it is not a production hostname or a durable availability claim.
 
@@ -41,14 +43,12 @@ the service environment and is never part of the repository or browser UI.
 This is a hosted pilot backend, not a production certification. The original
 InsForge free Compute endpoint above remains the fallback plane. That plan
 permits one `shared-1x` machine with 512 MB of memory; an attempted 1024 MB
-update was rejected by that plan. The
-HTTP API, authentication, legacy and module state mirror, support binding,
-image upload, and artifact retrieval have passed external checks, including a
-module record read after a Compute restart. The bundled Chromium replay reaches
-the browser launch but cannot reliably create a page at that memory limit, so a
-browser verification job remains failed until the machine is moved to a larger
-memory tier or an approved remote browser adapter is configured. No successful
-hosted browser run is claimed.
+update was rejected by that plan. Its HTTP API, authentication, legacy and
+module state mirror, support binding, image upload and artifact retrieval have
+passed external checks, but its bundled Chromium replay cannot reliably create
+a page at that memory limit. The existing shared ARM64 EC2 host is the
+browser-capable pilot path; it does not remove the need for stable ingress,
+backup/restore, alerting or an adopter-owned preview before production claims.
 
 The service currently scales to zero on the pilot tier. A cold-start probe took
 longer than 15 seconds but recovered within 60 seconds; this is an observed
@@ -63,9 +63,10 @@ Promotion to production requires:
    alternative.
 2. A custom domain/TLS policy, webhook secret, backup/restore drill, alerting,
    and an operator-owned preview application with non-sensitive test data.
-3. A repeat of the two-release pilot, including current-versus-stale query
-   behavior, private evidence access, English/Chinese responses, and restart
-   recovery.
+3. A repeat of the two-release pilot with an adopter-owned preview, including
+   current-versus-stale query behavior, private evidence access, English/Chinese
+   responses, and restart recovery. [Pilot 02](PILOT-02.md) is the public
+   synthetic rehearsal; it does not satisfy this external gate.
 4. An explicit decision on tenancy and retention before serving more than one
    application per service.
 

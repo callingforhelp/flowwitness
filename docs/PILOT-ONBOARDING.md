@@ -56,7 +56,9 @@ Stop the pilot if production credentials, personal data, unrestricted network
 access or customer-side computer execution would be required. File that need as
 a separate Stage 2 proposal.
 
-The current hosted service still has a 512 MB browser-capacity gate and a
-scale-to-zero cold-start policy. Until those are resolved, run the browser
-steps locally or in an approved browser worker and use the hosted service for
-the authenticated API/state portions only.
+The shared ARM64 EC2 pilot route can run the real browser steps and is suitable
+for a bounded rehearsal or adopter pilot. Its accountless quick tunnel is
+temporary and must not be treated as production ingress. The original free
+512 MB hosted fallback still has a browser-capacity gate, so use the shared
+route or an approved browser worker for external runs and keep the hosted
+service's scale-to-zero cold-start behavior in the recorded latency metrics.

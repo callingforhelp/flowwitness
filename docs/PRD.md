@@ -119,13 +119,13 @@ Status meanings:
 | --- | --- | --- | --- | --- |
 | S1-01 | P0 | A builder can author or import a workflow with stable step IDs, source paths, role/release context, expected outcome and safe actions; validation rejects unsafe or incomplete records. | **Implemented locally.** `flowwitness init`, `validate`, `import`, `list`, `serve` and module CLI paths exist; unit, lifecycle and CI checks pass. | Test clean-install behavior separately in each target host. Automatic capture is intentionally outside this row. |
 | S1-02 | P0 | A complete Git range marks linked and shared workflows as possibly affected, reports unknown coverage, and a signed GitHub push is accepted only once and with a complete change set. | **Partial.** Impact analysis, source relationships, signature validation and deduplication are implemented locally; the public repository has a push-only hook, and two real GitHub delivery IDs are persisted by the hosted service alongside the signed synthetic dedupe check. | Document retry behavior and add an operator-controlled digest/scheduler only if pilot cadence requires it. |
-| S1-03 | P0 | A verification run checks deployment identity before and after bounded browser actions, retains redacted private evidence, and only an explicit operator call can publish a current matching release. | **Blocked for hosted use; implemented locally.** Real Chromium release-A/release-B failure and repair pass locally and in CI. The hosted 512 MB Compute machine cannot reliably create a page, and the free plan rejected a 1024 MB update. | Enable a paid browser-capable memory tier or provide an approved remote browser adapter, then repeat the hosted two-release run. |
+| S1-03 | P0 | A verification run checks deployment identity before and after bounded browser actions, retains redacted private evidence, and only an explicit operator call can publish a current matching release. | **Partial: shared EC2 pilot passed.** Real Chromium release-A/release-B failure and repair, private evidence retrieval and explicit publication pass on the existing ARM64 shared host; the original free 512 MB Compute endpoint still cannot reliably create a page. The public-route receipt is in [Pilot 02](PILOT-02.md). | Keep the browser-capable runtime behind approved stable ingress, then repeat on an adopter-owned preview before production certification. |
 | S1-04 | P0 | Missing facts create one review question per workflow/revision; operators resolve it before publication. Issues/messages and knowledge entries preserve concise bilingual provenance and never accept hidden chain of thought or credentials. | **Partial.** Legacy questions and the issues/knowledge modules are implemented with local tests and publication gates. The module runtime now uses the scoped InsForge adapter in hosted mode, and a configured support conversation can read/write its own module scope; scheduled summaries and a real support-chat integration are still absent. | Connect one real support chat and add scheduled summaries only if a pilot demonstrates the need. |
 | S1-05 | P0 | An authenticated support backend can submit a question with trusted application/release/role context and receive current steps/evidence or clarification/unavailable; an image can be consented, normalized, private and expiring. | **Partial.** `/v1/query` and `/v1/images` are implemented; hosted auth/image/artifact checks pass. Images are not interpreted. | Connect one real support chat and evaluate image understanding only against measured pilot failures. |
 | S1-06 | P0 | Claude Code, Codex and pi can use a portable skill/CLI; registered agents claim bounded jobs with capabilities, heartbeats, fencing and cancellation; no host receives implicit execution authority. | **Partial.** Skill, allowlisted module CLI, agent records and job lease logic have source and focused tests. | Run clean-install discovery and behavior receipts in all three hosts; add lifecycle hooks or an MCP wrapper only as explicit integrations. |
-| S1-07 | P0 | The operator can set up, verify, inspect evidence, resolve questions, publish, query, induce a UI failure and repair it in English or Chinese at mobile and desktop widths. | **Implemented for local runtime and served hosted UI.** Dashboard checks cover real API calls, screenshots, publication, failure/repair, locale and responsive layouts. | Hosted browser gate still prevents claiming the same flow works on the hosted machine. |
-| S1-08 | P0 | A hosted HTTPS service provides separate admin/support auth, durable workflow state and private artifacts, restart recovery, retention, backups and operational health. | **Partial hosted pilot.** InsForge-backed legacy workflow state, Stage 1 module records and private module artifacts survive a Compute restart; authenticated health, setup, image, module and artifact checks pass. The scale-to-zero pilot showed one cold-start probe exceeding 15 seconds while succeeding within 60 seconds. Backups, alerts, a custom domain/TLS policy and multi-application operations are still open. | Run a backup/restore drill, measure startup and support-query latency, choose a keep-warm/capacity policy, add alerting and custom-domain operations, and decide retention/tenancy. |
-| S1-09 | P0 | One adopter-owned, non-sensitive application completes release A → publish → UI change → stale suppression → repaired release B → support query, with setup, latency, false-alert and retention measurements. | **Not implemented.** Internal synthetic Pilot 01 is complete; no external adopter has run the loop. | Recruit one pilot partner before claiming external or production readiness. |
+| S1-07 | P0 | The operator can set up, verify, inspect evidence, resolve questions, publish, query, induce a UI failure and repair it in English or Chinese at mobile and desktop widths. | **Implemented for local runtime and shared EC2 pilot UI.** Dashboard checks and [Pilot 02](PILOT-02.md) cover real API calls, screenshots, publication, failure/repair, locale and responsive layouts. | Run the same operator flow with an adopter-owned application and review terminology with the pilot owner. |
+| S1-08 | P0 | A hosted HTTPS service provides separate admin/support auth, durable workflow state and private artifacts, restart recovery, retention, backups and operational health. | **Partial hosted pilot.** InsForge-backed legacy workflow state, Stage 1 module records and private module artifacts survive the shared EC2 Compute restart; authenticated health, setup, image, module, browser, publication and artifact checks pass. The scale-to-zero pilot showed one cold-start probe exceeding 15 seconds while succeeding within 60 seconds. Backups, alerts, a stable custom domain/TLS policy and multi-application operations are still open. | Run a backup/restore drill, measure startup and support-query latency, choose a keep-warm/capacity policy, add alerting and custom-domain operations, and decide retention/tenancy. |
+| S1-09 | P0 | One adopter-owned, non-sensitive application completes release A → publish → UI change → stale suppression → repaired release B → support query, with setup, latency, false-alert and retention measurements. | **Not implemented.** Internal Pilot 01 and the public-route Pilot 02 rehearsal are complete, but both use FlowWitness's synthetic fixture; no external adopter has run the loop. | Recruit one pilot partner and repeat the two-release receipt with its preview target before claiming external or production readiness. |
 
 ### Stage 2 retained modules
 
@@ -145,7 +145,9 @@ The phrase “production backend” is reserved for the following evidence:
 
 - The hosted release-A/release-B browser loop passes on the selected compute or
   remote browser provider, including private screenshot retrieval and stale
-  answer suppression.
+  answer suppression. The shared ARM64 EC2 pilot now satisfies the synthetic
+  browser check; its accountless quick tunnel is temporary and is not production
+  ingress.
 - Legacy workflow state **and** Stage 1 module records survive a replacement,
   with a tested backup/restore path and retention cleanup.
 - A real support integration uses the support credential and conversation
@@ -156,16 +158,16 @@ The phrase “production backend” is reserved for the following evidence:
 - Tenancy and data-retention decisions are written down before serving more
   than one application.
 
-The current endpoint satisfies the authenticated API, legacy state/artifact
-restart and basic health portions. It does not satisfy the browser, module
-durability or external-pilot portions, so it must be described as a hosted
-pilot backend.
+The current endpoint satisfies the authenticated API, browser-on-shared-EC2,
+legacy state/artifact restart and basic health portions. It does not satisfy
+stable production ingress, backup/restore, or the external-pilot portion, so it
+must be described as a hosted pilot backend.
 
 ## Open questions
 
 | Question | Owner | Blocking? |
 | --- | --- | --- |
-| Should the browser gate be a paid larger Compute tier or a remote browser provider? | Stakeholder/operations | Yes for hosted verification |
+| Which stable browser runtime and ingress should production use after the shared EC2 pilot? | Stakeholder/operations | Yes for production certification |
 | Which durable adapter should store module records: InsForge RPC tables, Postgres, or another approved store? | Engineering | Resolved for the pilot: InsForge scoped RPC; backup/restore is still required before production |
 | Is one service per application acceptable for the first sponsor pilot? | Product/sponsor | Yes before inviting a second application |
 | Which existing support chat supplies trusted conversation, role and release context? | Pilot integrator | Yes for customer query testing |
@@ -174,8 +176,8 @@ pilot backend.
 
 ## Sequencing
 
-1. Close S1-03 and S1-08: browser capacity and basic hosted operations now that
-   module state uses the InsForge adapter.
+1. Keep S1-03 closed for the shared EC2 synthetic pilot and close the remaining
+   S1-08 operations gates: stable ingress, backup/restore, alerting and policy.
 2. Run S1-09 with one external non-sensitive workflow and record the metrics.
 3. Complete S1-06 host smoke checks and S1-02 webhook/digest work only where the
    pilot shows recurring value.
@@ -196,5 +198,4 @@ pilot backend.
   run and evidence to collect from the first adopter.
 - [Runtime contract](RUNTIME-CONTRACT.md) and [module contract](MODULE-CONTRACT.md)
   — wire and adapter acceptance conditions.
-- [Validation record](VALIDATION.md) and [Pilot 01](PILOT-01.md) — test and
-  internal pilot receipts.
+- [Validation record](VALIDATION.md), [Pilot 01](PILOT-01.md) and [Pilot 02](PILOT-02.md) — test, internal and public-route pilot receipts.
