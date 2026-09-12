@@ -6,7 +6,7 @@
 
 FlowWitness is a self-hosted service with a temporary hosted pilot backend. It stores customer workflows and support issues, checks approved preview flows in Chromium, and serves explicitly published instructions to your existing support chat. When an application changes, test the old steps, inspect the failure, repair the workflow, and publish a new checked answer.
 
-**The runtime is real.** It includes a CLI, HTTP service, bilingual operator dashboard, actual browser checks, private screenshots, and a support-query endpoint. The [hosted backend](docs/HOSTED-BACKEND.md) is reachable for sponsor review; the public GitHub Pages site remains a **separate simulated concept demo**.
+**The runtime is real.** It includes a CLI, HTTP service, bilingual operator dashboard, actual browser checks, private screenshots, and a support-query endpoint. The [hosted backend](docs/HOSTED-BACKEND.md) is reachable for sponsor review; the public GitHub Pages site remains a **separate simulated concept demo**. The [launch spine](docs/LAUNCH-SPINE.md) is the execution plan for turning the rehearsal into one real adopter launch.
 
 ## Run locally
 
@@ -60,7 +60,7 @@ defines the first adopter's two-release evidence run.
 
 Workflows are explicitly authored or imported; automatic screen recording and code-to-workflow discovery are not implemented. Query matching uses configured question aliases, not an LLM. Images can be privately uploaded, but image recognition is not implemented. Initial replay targets trusted, operator-configured applications; it is not a sandbox for hostile code. Authenticated customer-session replay needs an additional adapter.
 
-This is one application per service, with a single state writer. The hosted endpoint is a sponsor-review pilot: its authenticated API and InsForge state mirror are live, while the free 512 MB machine still cannot reliably run the Chromium page step. It is not production-certified or a multi-tenant hosted helpdesk. Customer computer-use execution, image understanding and generated voice remain future work. See [Stage 1 boundaries](ROADMAP.md), the [hosted backend checkpoint](docs/HOSTED-BACKEND.md), and the [composition notes](docs/COMPOSITION.md).
+This is one application per service, with a single state writer. The hosted endpoint is a sponsor-review pilot: the shared EC2 route can run the real Chromium page step, while the free 512 MB fallback still cannot do so reliably. The quick tunnel is temporary; the service is not production-certified or a multi-tenant hosted helpdesk. Customer computer-use execution, image understanding and generated voice remain future work. See the [launch spine](docs/LAUNCH-SPINE.md), [Stage 1 boundaries](ROADMAP.md), the [hosted backend checkpoint](docs/HOSTED-BACKEND.md), and the [composition notes](docs/COMPOSITION.md).
 
 ## CLI and integrations
 
@@ -82,9 +82,10 @@ npm test
 npm run test:integration
 node scripts/check-dashboard.mjs
 python3 scripts/check-system.py
+npm run smoke:launch
 ```
 
-The browser checks use temporary state and the bundled fixture. They demonstrate local behavior, not an external customer's deployment. Results and limits are in [VALIDATION.md](docs/VALIDATION.md).
+`smoke:launch` is a read-only check for a configured endpoint; set `FLOWWITNESS_URL`, `FLOWWITNESS_ADMIN_TOKEN` and `FLOWWITNESS_SUPPORT_TOKEN` privately. The browser checks use temporary state and the bundled fixture. They demonstrate local behavior, not an external customer's deployment. Results and limits are in [VALIDATION.md](docs/VALIDATION.md).
 
 ## Contribute
 

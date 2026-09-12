@@ -6,7 +6,7 @@
 
 FlowWitness 是可自托管服务，并提供一个临时托管试点后端：保存客户操作流程和客服问题，在 Chromium 中检查已批准的预览流程，再把明确审核发布的指引交给已有的客服聊天。界面变动后，验证旧步骤、查看失败证据、修复流程并发布新版答案。
 
-**后端已经实现。** 包含 CLI、HTTP 服务、中英文操作台、真实浏览器验证、私密截图和客服查询接口。[托管后端](docs/HOSTED-BACKEND.zh-CN.md)已可供赞助方审阅；GitHub Pages 仍是**独立的模拟概念演示**。
+**后端已经实现。** 包含 CLI、HTTP 服务、中英文操作台、真实浏览器验证、私密截图和客服查询接口。[托管后端](docs/HOSTED-BACKEND.zh-CN.md)已可供赞助方审阅；GitHub Pages 仍是**独立的模拟概念演示**。[发布主线](docs/LAUNCH-SPINE.zh-CN.md)定义如何把演练变成一次真实伙伴发布。
 
 ## 本地运行
 
@@ -57,7 +57,7 @@ npm start
 
 流程需要明确编写或导入，尚无自动录屏或从代码自动发现流程。查询匹配配置好的问题别名，不调用大模型。支持私密上传图片，但不识别图片内容。验证只面向操作者配置的可信应用，不是执行恶意代码的沙箱；登录后的客户会话回放需要额外适配。
 
-一个服务对应一个应用、一个状态写入进程。托管地址可供赞助方审阅：认证接口和 InsForge 状态同步已上线，但免费 512 MB 机器仍无法稳定完成 Chromium 页面步骤，因此尚未通过生产认证，也不是多租户客服平台。客户电脑执行、图片理解和自动生成配音属于后续工作。详见[第一阶段边界](ROADMAP.zh-CN.md)、[托管后端检查点](docs/HOSTED-BACKEND.zh-CN.md)和[模块组合说明](docs/COMPOSITION.zh-CN.md)。
+一个服务对应一个应用、一个状态写入进程。托管地址可供赞助方审阅：共用 EC2 路径可以运行真实 Chromium 页面步骤，但免费 512 MB 回退仍无法稳定完成；quick tunnel 是临时入口。服务尚未通过生产认证，也不是多租户客服平台。客户电脑执行、图片理解和自动生成配音属于后续工作。详见[发布主线](docs/LAUNCH-SPINE.zh-CN.md)、[第一阶段边界](ROADMAP.zh-CN.md)、[托管后端检查点](docs/HOSTED-BACKEND.zh-CN.md)和[模块组合说明](docs/COMPOSITION.zh-CN.md)。
 
 ## CLI 与验证
 
@@ -72,9 +72,10 @@ npm test
 npm run test:integration
 node scripts/check-dashboard.mjs
 python3 scripts/check-system.py
+npm run smoke:launch
 ```
 
-服务类命令需要运行中的实例；validate 只在本地校验。通过私有环境配置 FLOWWITNESS_URL 与需要时的 FLOWWITNESS_TOKEN，勿公开令牌。目前未发布 npm 注册表包。
+服务类命令需要运行中的实例；validate 只在本地校验。通过私有环境配置 FLOWWITNESS_URL、FLOWWITNESS_ADMIN_TOKEN 和 FLOWWITNESS_SUPPORT_TOKEN，勿公开令牌。`smoke:launch` 只读检查已配置的端点。目前未发布 npm 注册表包。
 
 浏览器测试使用临时数据和内置页面，证明本地行为，不证明外部客户部署。结果见 [验证记录](docs/VALIDATION.md)。
 
