@@ -1,4 +1,6 @@
 import http from "node:http";
+import { pipeline } from "node:stream/promises";
+import { createModuleRuntime, isModulePath } from "./module-runtime.mjs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -64,6 +66,18 @@ export async function createServer(options = {}) {
     await service.close();
     throw error;
   }
+  let moduleRuntime;
+  try {
+    if (options.modules !== false) moduleRuntime = await createModuleRuntime({
+      dir: path.join(store.private, "modules"),
+      browser: options.browser, renderer: options.renderer, config: options.moduleConfig,
+      workflow: options.workflowAdapter || {
+        impact: input => service.impact(input),
+        verify: input => service.enqueue(input.workflowId),
+        publish: input => service.publish(input.workflowId, input.runId),
+      },
+    });
+  } catch (error) { await service.close(); throw error; }
   const rates = new Map();
   const server = http.createServer(async (req, res) => {
     const request_id = randomUUID();
@@ -108,7 +122,8 @@ export async function createServer(options = {}) {
         demand(role, "Authentication required", "unauthorized", 401);
         if (role === "support")
           demand(
-            p === "/v1/query" ||
+            (moduleRuntime && isModulePath(p)) ||
+              p === "/v1/query" ||
               p === "/v1/images" ||
               /^\/v1\/artifacts\/[a-z0-9-]+$/.test(p),
             "Admin credential required",
@@ -158,6 +173,26 @@ export async function createServer(options = {}) {
           b && typeof b === "object" && !Array.isArray(b),
           "JSON object required",
         );
+      }
+      if (moduleRuntime && isModulePath(p)) {
+        // These bindings are deployment configuration, never request body/header claims.
+        const binding = options.modulePrincipals?.[role] || {};
+        const principal = {
+          application: config.application,
+          subjectId: binding.subjectId || role,
+          role: role === "support" ? "customer" : (binding.role || "operator"),
+          conversationId: binding.conversationId ?? null,
+        };
+        demand(["operator", "agent", "customer"].includes(principal.role), "Invalid module role");
+        demand(principal.role !== "customer" || (typeof principal.conversationId === "string" && principal.conversationId.length > 0), "Conversation binding required", "forbidden", 403);
+        const result = await moduleRuntime.handle({ method: req.method, path: p,
+          query: Object.fromEntries(url.searchParams), body: b, principal, requestId: request_id });
+        if (result?.stream) {
+          res.writeHead(result.status, { "content-type": result.mediaType, "cache-control": "no-store", "x-content-type-options": "nosniff" });
+          await pipeline(result.stream, res);
+          return;
+        }
+        if (result) return json(result.status, result.body);
       }
       const get = (collection, id) => {
         const item = store.data[collection][id];
@@ -489,12 +524,14 @@ export async function createServer(options = {}) {
       }
       throw new Fault("not_found", "Not found", 404);
     } catch (e) {
+      if (res.headersSent) { res.destroy(); return; }
       json(e.status || 500, {
         error: {
           code: e.code || "internal_error",
           message: e.status ? e.message : "Request failed",
         },
         request_id,
+        ...(moduleRuntime && isModulePath(new URL(req.url, "http://localhost").pathname) ? { requestId: request_id } : {}),
       });
     }
   });
@@ -528,12 +565,13 @@ export async function createServer(options = {}) {
   const api = {
     server,
     service,
+    moduleRuntime,
     store,
     config,
     listen,
     close: async () => {
       await new Promise((resolve) => server.close(resolve));
-      await service.close();
+      try { await service.close(); } finally { await moduleRuntime?.close(); }
     },
   };
   return api;
@@ -543,7 +581,7 @@ export async function startServer(options = {}) {
   try {
     return await app.listen();
   } catch (e) {
-    await app.service.close();
+    await app.close();
     throw e;
   }
 }
