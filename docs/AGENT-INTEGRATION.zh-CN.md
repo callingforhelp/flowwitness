@@ -12,22 +12,38 @@
 
 第一版用任务队列处理验证，缺失事实进入审核问题。宿主原生事件钩子、定时推理与用户电脑执行属于后续工作。技术来源与证据边界见英文页。
 
-## Claude Code、Codex 与 pi 的模块 CLI
+## Claude Code、Codex 和 pi 的模块 CLI
 
-设置 `FLOWWITNESS_URL`，并从本地私有配置读取 `FLOWWITNESS_TOKEN`。CLI 会发送已有的 Bearer 授权和 `x-flowwitness-client: cli`，由服务端解析主体与范围。模块调用仍需要服务端适配器和对应授权；能运行 CLI 不代表后端已经配置完成。
+通过本地环境私密设置 `FLOWWITNESS_URL` 和 `FLOWWITNESS_TOKEN`。CLI 使用现有 Bearer 认证及 `x-flowwitness-client: cli` 请求头，由服务解析身份和作用域；不要把令牌放进命令或对话。模块还需要服务适配器和已授权身份，CLI 可用不代表后端已就绪。
 
-使用 `flowwitness module <METHOD> <PATH> [JSON|@file]`（`api` 是别名）。只接受已经实现的 `/v1` 模块路径；JSON 输入上限为 1 MiB，路径上限为 8192 个字符，GET 不接受请求体，并拒绝重定向。`issues`、`knowledge`、`agents` 可列出记录；`investigation <id>`、`reproduction <id>`、`video <id>` 可读取单条记录。视频响应包含授权后的证据链接和元数据，不会下载视频字节。
+调用 `flowwitness module <METHOD> <PATH> [JSON|@file]`，别名为 `api`。输出为格式化 JSON，仅允许已实现的模块路由与方法；JSON 输入上限为 1 MiB，路径上限为 8192 字符，不跟随重定向。GET 使用查询参数，不接受请求体。`issues`、`knowledge`、`agents` 列出记录；`investigation <id>`、`reproduction <id>`、`video <id>` 获取单条记录。视频读取返回元数据与获授权的证据链接，不下载视频文件。
+
+以下示例依次创建问题、搜索知识、排队调查与复现、注册代理、领取任务并读取视频。将大写占位符替换为实际记录 ID，目标、版本和选择器必须来自获批准的测试环境。相同幂等键只用于相同输入。注册和排队需要 operator 身份，领取任务需要对应的已注册 agent 身份；runtime 可用 `claude-code`、`codex` 或 `pi`。不要编造审批引用。
 
 ```sh
-flowwitness module POST /v1/issues '{"title":"导出失败","description":"导出按钮显示错误","locale":"zh-CN"}'
+flowwitness module POST /v1/issues '{"title":"Export fails","description":"Export button shows an error","locale":"en"}'
 flowwitness module GET '/v1/knowledge?text=export&limit=10'
 flowwitness module POST /v1/investigations '{"issueId":"ISSUE_ID","requiredCapabilities":["investigation"],"idempotencyKey":"export-investigation-1"}'
 flowwitness module POST /v1/reproductions @reproduction.json
 flowwitness module POST /v1/agents '{"ownerId":"AGENT_SUBJECT_ID","runtime":"codex","capabilities":["investigation"],"enabled":true}'
+# Use the registered agent principal for this call:
 flowwitness module POST /v1/investigations/claim '{"capabilities":["investigation"]}'
 flowwitness module GET /v1/videos/VIDEO_ID
 ```
 
-只使用操作员提供或接口返回的 ID、审批引用、目标环境、版本和选择器。只有完全相同的输入才可重用幂等键。注册和入队需要操作员范围；认领需要匹配的已注册代理身份。租约令牌和私有证据链接必须保密。排队不等于调查或复现完成，读取视频也不会自动渲染或发布。
+`reproduction.json`:
 
-CLI 返回 FlowWitness 格式的指导和证据，但不会授权在客户电脑上执行操作。原生客户电脑控制、图片理解、语音生成和托管视频基础设施仍属于独立的后续集成工作。
+```json
+{
+  "issueId": "ISSUE_ID",
+  "target": {"origin": "https://preview.example.com", "environment": "preview", "revision": "COMMIT_SHA"},
+  "approvalRef": "EXISTING_APPROVAL_REFERENCE",
+  "steps": [{"action": "navigate", "value": "/reports"}, {"action": "assertVisible", "selector": "button.export"}],
+  "limits": {"concurrency": 1, "maxDurationMs": 60000, "maxActions": 2},
+  "idempotencyKey": "export-reproduction-1"
+}
+```
+
+领取结果可能含任务租约令牌，需私密保存以用于心跳和完成操作。CLI 会隐藏配置的认证令牌，但返回的任务凭据与私有证据仍须保密。排队成功不代表调查或复现完成，必须检查最终任务状态和证据。读取视频不会渲染或发布视频。
+
+CLI 返回指导与证据，绝不授权在客户电脑上执行操作。审批引用只记录配置的 preview/test 沙箱已有的独立授权，不由 CLI 创造授权；实际操作仍须遵守用户授权范围及宿主的电脑控制规则。
