@@ -29,6 +29,10 @@ browser verification job remains failed until the machine is moved to a larger
 memory tier or an approved remote browser adapter is configured. No successful
 hosted browser run is claimed.
 
+The service currently scales to zero on the pilot tier. A cold-start probe took
+longer than 15 seconds but recovered within 60 seconds; this is an observed
+pilot behavior, not a support latency SLO.
+
 Promotion to production requires:
 
 1. A memory tier that passes the real Chromium release-A/release-B loop, or an

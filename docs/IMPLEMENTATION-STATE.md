@@ -164,4 +164,5 @@ Compute configuration restart was observed in the service events, and the
 support-scoped issue remained readable afterward. A direct InsForge adapter
 reopen also read a private module artifact through its expiring link. This
 closes the module durability/binding gap; browser capacity, backup/restore,
-alerting, custom domain/TLS, and the external two-release pilot remain open.
+alerting, custom domain/TLS, startup-latency policy, and the external
+two-release pilot remain open.
