@@ -97,3 +97,21 @@ TimeMachine1. A writable mirror checkout published the follow-up CLI/docs/video
 changes as public commit `0489cef` on `origin/main`; the TimeMachine1 checkout
 still shows those files as uncommitted WIP because its own ref database cannot
 be updated by this host.
+
+## Latest checkpoint — 2026-09-12
+
+The TimeMachine1 checkout is now reconciled with public `origin/main` at
+`2ebde0c` and has a clean working tree. Stage 1 is explicitly the pilot core:
+issues/Q&A, the bilingual reasoning bank, agent jobs and CLI, workflow
+verification/query, local durable storage and the bilingual dashboard. Stage 2
+remains in separate modules for approved reproduction and private FFmpeg video;
+deferring those modules does not delete them.
+
+After the host restored loopback permission, validation passed with `npm test`
+(13/13), real Chromium integration (1/1), dashboard checks (2/2), platform
+focused checks (8 pass, 1 opt-in InsForge skip), issues (2/2), agents (2/2),
+reproduction (6/6), knowledge (4/4), video (4/4), FFmpeg (1/1), composition
+(2/2), CLI (3/3), and `git diff --check`. The remaining gates are an
+authenticated InsForge run, a real approved E2B/browser adapter, host-specific
+Claude/Codex/pi discovery receipts, public backend hosting and an external
+pilot.
