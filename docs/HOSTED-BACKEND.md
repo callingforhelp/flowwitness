@@ -2,6 +2,8 @@
 
 [简体中文](HOSTED-BACKEND.zh-CN.md)
 
+[Production decision record](decisions/0001-shared-ec2-insforge-pilot.md)
+
 FlowWitness now has a reachable hosted backend for sponsor review and a
 non-sensitive pilot:
 

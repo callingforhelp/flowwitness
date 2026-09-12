@@ -1,5 +1,7 @@
 # 托管后端检查点
 
+[生产决策记录](decisions/0001-shared-ec2-insforge-pilot.zh-CN.md)
+
 [English](HOSTED-BACKEND.md)
 
 FlowWitness 现在有一个可访问的托管后端，供赞助方审阅和进行无敏感信息试点：
