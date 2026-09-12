@@ -6,7 +6,7 @@ export const relativePath = value => typeof value==='string' && value.length>0 &
 const string = (v,n=1000)=>typeof v==='string'&&v.trim().length>0&&v.length<=n;
 export function workflow(input,application){
  demand(input&&typeof input==='object','Workflow must be an object');
- const w=structuredClone(input); for(const key of ['revision','status','last_run'])delete w[key];
+ const keys=['schema_version','id','application','title','questions','role','locale','source_paths','shared_paths','start_path','steps','redact_selectors'];const w=Object.fromEntries(keys.filter(k=>k in input).map(k=>[k,structuredClone(input[k])]));
  demand(w.schema_version==='1'&&/^[a-z0-9][a-z0-9-]{0,79}$/.test(w.id),'Invalid schema or workflow id');
  demand(w.application===application,'Application mismatch');
  for(const k of ['title','role','locale'])demand(string(w[k],200),`Missing ${k}`);
