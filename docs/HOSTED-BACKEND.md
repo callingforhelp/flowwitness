@@ -12,20 +12,22 @@ non-sensitive pilot:
 
 The hosted service is the same Node.js/Playwright application in this
 repository. It is authenticated with separate admin and support credentials.
-The service uses an InsForge project-admin-only state table and versioned RPCs
-to mirror workflow state, job history, publications, questions, and private
-artifact bytes. A machine restart therefore does not erase the pilot state.
-The admin key is injected into the service environment and is never part of the
-repository or browser UI.
+The service uses project-admin-only InsForge tables and versioned RPCs to mirror
+workflow state, job history, publications, questions, Stage 1 module records,
+and private artifact bytes. A machine restart therefore does not erase the pilot
+state. The support module scope is bound to a configured conversation ID; the
+support token cannot select another conversation. The admin key is injected into
+the service environment and is never part of the repository or browser UI.
 
 This is a hosted pilot backend, not a production certification. The current
 InsForge free plan permits one `shared-1x` machine with 512 MB of memory. The
-HTTP API, authentication, state mirror, image upload, and artifact retrieval
-have passed external checks. The bundled Chromium replay reaches the browser
-launch but cannot reliably create a page at that memory limit, so a browser
-verification job remains failed until the machine is moved to a larger memory
-tier or an approved remote browser adapter is configured. No successful hosted
-browser run is claimed.
+HTTP API, authentication, legacy and module state mirror, support binding,
+image upload, and artifact retrieval have passed external checks, including a
+module record read after a Compute restart. The bundled Chromium replay reaches
+the browser launch but cannot reliably create a page at that memory limit, so a
+browser verification job remains failed until the machine is moved to a larger
+memory tier or an approved remote browser adapter is configured. No successful
+hosted browser run is claimed.
 
 Promotion to production requires:
 

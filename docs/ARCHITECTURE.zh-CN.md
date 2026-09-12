@@ -2,7 +2,7 @@
 
 [English](ARCHITECTURE.md)
 
-本地 alpha 已实现 HTTP 服务、有限浏览器队列、原子 JSON 状态与私密资源。运行方式与限制见 OPERATIONS.zh-CN.md。
+本地 alpha 已实现 HTTP 服务、有限浏览器队列、原子 JSON 状态与私密资源。托管试点使用按范围的 InsForge RPC 快照保存旧工作流和模块状态，本地模式仍使用文件。运行方式与限制见 OPERATIONS.zh-CN.md。
 
 ```mermaid
 flowchart LR

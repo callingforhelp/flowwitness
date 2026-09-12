@@ -142,3 +142,25 @@ job is intentionally not marked passed. The next production gate is a larger
 browser-capable tier (or an explicitly approved remote browser adapter),
 followed by the two-release pilot, custom-domain/TLS operations, backup drill
 and tenant/retention decisions. No successful hosted browser run is claimed.
+
+## Module persistence checkpoint — 2026-09-12
+
+Repository: `/Volumes/TimeMachine1/flowwitness`, `main` at `da1e952` before this
+documentation-only checkpoint. The module runtime now selects the local durable
+adapter by default or the InsForge project-admin adapter when
+`FLOWWITNESS_MODULE_STATE_BACKEND=insforge` (falling back to the legacy state
+backend setting). Trusted admin/support module principals are configured by
+deployment options or environment; support access requires a non-empty server
+conversation binding.
+
+Local composition tests pass 4/4, platform conformance passes 8/8 with the
+explicit InsForge test skipped, and the full npm suite passes 17/17 with its
+explicit remote-store test skipped. The change is pushed as `da1e952`.
+
+The hosted service was redeployed to the existing InsForge Compute pilot with
+the support binding configured. External checks returned health 200, support
+knowledge 200, support issue create/read 201/200, and admin knowledge 200. A
+Compute configuration restart was observed in the service events, and the
+support-scoped issue remained readable afterward. This closes the module
+durability/binding gap; browser capacity, backup/restore, alerting, custom
+domain/TLS, and the external two-release pilot remain open.
