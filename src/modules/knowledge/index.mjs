@@ -5,6 +5,7 @@ import { createEvidenceValidator } from "./evidence.mjs";
 
 export function createModule({ repository, artifacts, jobs, config = {} }) {
   const now = config.now ?? Date.now;
+  const transition = (...args) => (repository.transition ?? repository.update).call(repository, ...args);
   const validator = createEvidenceValidator({ repository, artifacts, now });
   const scopeOf = (p) => {
     demand(p?.application && p?.subjectId, "Authentication required", "unauthenticated", 401);
@@ -43,10 +44,8 @@ export function createModule({ repository, artifacts, jobs, config = {} }) {
     }
     for (const id of clean.evidenceBundleIds) await read(scope, "evidenceBundles", id);
     for (const id of clean.supersedes) await read(scope, "knowledgeEntries", id);
-    const timestamp = new Date(now()).toISOString();
-    const item = { ...clean, schemaVersion: 1, id: randomUUID(), ...scope, version: 1, createdAt: timestamp, updatedAt: timestamp, visibility: "private", evidenceStatus: "unverified", provenance: { subjectId: p.subjectId, authorRole: p.role, jobId: clean.jobId }, feedback: [] };
-    item.evidenceStatus = await validator.validate(scope, item);
-    return repository.create(scope, "knowledgeEntries", item);
+    const item = { ...clean, id: randomUUID(), visibility: "private", evidenceStatus: "unverified", provenance: { subjectId: p.subjectId, authorRole: p.role, jobId: clean.jobId }, feedback: [] };
+    return contextual(scope, await repository.create(scope, "knowledgeEntries", item));
   }
   async function search(p, input = {}) {
     const scope = scopeOf(p), clean = sanitizeSearch(input);
@@ -77,7 +76,7 @@ export function createModule({ repository, artifacts, jobs, config = {} }) {
     const clean = sanitizePublish(input), item = await read(scope, "knowledgeEntries", clean.id);
     const current = await contextual(scope, item);
     demand(current.evidenceStatus === "verified", "Current verified evidence required", "conflict", 409);
-    return repository.update(scope, "knowledgeEntries", item.id, { expectedVersion: clean.expectedVersion ?? item.version, patch: { visibility: "published", evidenceStatus: "verified", publishedBy: p.subjectId, publishedAt: new Date(now()).toISOString() } });
+    return transition(scope, "knowledgeEntries", item.id, { transition: "publish", expectedVersion: clean.expectedVersion ?? item.version, patch: { visibility: "published", evidenceStatus: "verified", publishedBy: p.subjectId, publishedAt: new Date(now()).toISOString() } });
   }
   async function feedback(p, input) {
     const scope = scopeOf(p), clean = sanitizeFeedback(input), item = await get(p, { id: clean.id });

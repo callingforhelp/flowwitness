@@ -116,3 +116,21 @@ test('InsForge integration is explicitly opt-in', { skip: process.env.PLATFORM_I
   assert.equal((await repo.get(s, 'issues', record.id)).id, record.id);
   await repo.remove(s, 'issues', record.id, { expectedVersion: 1 }); await repo.close();
 });
+
+test('trusted publication and private output transitions retain scope, CAS and public protection', async () => {
+  const repo = await createMemoryRepository();
+  try {
+    const entry = await repo.create(scope, 'knowledgeEntries', { visibility: 'private', evidenceStatus: 'unverified' });
+    const patch = { visibility: 'published', evidenceStatus: 'verified' };
+    await assert.rejects(repo.update(scope, 'knowledgeEntries', entry.id, { expectedVersion: 1, patch }), conflict);
+    const published = await repo.transition(scope, 'knowledgeEntries', entry.id, { transition: 'publish', expectedVersion: 1, patch });
+    assert.equal(published.visibility, 'published');
+    await assert.rejects(repo.transition(scope, 'knowledgeEntries', entry.id, { transition: 'publish', expectedVersion: 1, patch }), conflict);
+    await assert.rejects(repo.transition(scope, 'knowledgeEntries', entry.id, { transition: 'publish', expectedVersion: 2, patch: { ...patch, title: 'escape' } }), conflict);
+    await assert.rejects(repo.transition({ ...scope, conversationId: 'other' }, 'knowledgeEntries', entry.id, { transition: 'publish', expectedVersion: 2, patch }), { status: 404 });
+    const video = await repo.create(scope, 'videoProjects', { visibility: 'private' });
+    const reset = { visibility: 'private', publication: null, outputArtifactId: 'out', outputEditHash: 'hash' };
+    await assert.rejects(repo.update(scope, 'videoProjects', video.id, { expectedVersion: 1, patch: reset }), conflict);
+    assert.equal((await repo.transition(scope, 'videoProjects', video.id, { transition: 'private-output', expectedVersion: 1, patch: reset })).outputArtifactId, 'out');
+  } finally { await repo.close(); }
+});

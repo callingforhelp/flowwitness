@@ -69,3 +69,23 @@ test('imports stay unverified; invalid refs, bounds and cancellation fail closed
   assert.equal(await f.module.handle({path:'/v1/issues',method:'GET'}),null);
   assert.equal((await f.module.handle({path:'/v1/videos',method:'DELETE'})).status,405);
 });
+
+test('render attachment CAS failure revokes output and fails before completion', async () => {
+  const f = fixture();
+  const { item } = await f.module.create(operator, { locale: 'en', sourceArtifactId: 'source' });
+  const { job } = await f.module.render(operator, { id: item.id, idempotencyKey: 'cas-render' });
+  job.status = 'leased';
+  let output;
+  const put = f.artifacts.put.bind(f.artifacts);
+  f.artifacts.put = async (...args) => { output = await put(...args); return output; };
+  f.jobs.complete = async () => assert.fail('must not complete before attachment');
+  f.renderer.render = async () => {
+    const current = await f.repository.get(f.scope, 'videoProjects', item.id);
+    await f.repository.update(f.scope, 'videoProjects', item.id, { expectedVersion: current.version, patch: { locale: 'zh' } });
+    return { bytes: Buffer.from('render') };
+  };
+  await assert.rejects(f.module.runRender(operator, { id: job.id, token: 'token' }));
+  assert.equal(job.status, 'failed');
+  assert.ok((await f.artifacts.get(f.scope, output.id)).revokedAt);
+  assert.equal((await f.repository.get(f.scope, 'videoProjects', item.id)).outputArtifactId, null);
+});

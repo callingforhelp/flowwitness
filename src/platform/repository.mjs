@@ -82,6 +82,24 @@ export class Repository {
       this.cas(record, expectedVersion); Object.assign(record, clean); return this.bump(record, now);
     });
   }
+  // Coordinator-only operations: callers must authorize and validate evidence first.
+  // Named transitions deliberately do not expose arbitrary protected-field writes.
+  async transition(scope, collection, id, { expectedVersion, transition, patch }) {
+    const clean = R.assertRecordInput(patch);
+    const allowed = {
+      'knowledgeEntries:publish': ['visibility', 'evidenceStatus', 'publishedBy', 'publishedAt'],
+      'videoProjects:publish': ['visibility', 'publication'],
+      'videoProjects:private-output': ['visibility', 'publication', 'outputArtifactId', 'outputEditHash', 'renderedAt', 'locale', 'edit'],
+    }[`${collection}:${transition}`];
+    if (!allowed || Object.keys(clean).some(field => !allowed.includes(field))) throw conflict('Invalid trusted transition');
+    if (transition === 'publish' && (clean.visibility !== 'published' ||
+        (collection === 'knowledgeEntries' && clean.evidenceStatus !== 'verified'))) throw conflict('Invalid publication');
+    if (transition === 'private-output' && (clean.visibility !== 'private' || clean.publication !== null)) throw conflict('Output must be private');
+    return this.transaction(scope, (state, now) => {
+      const record = this.find(state, scope, collection, id);
+      this.cas(record, expectedVersion); Object.assign(record, clean); return this.bump(record, now);
+    });
+  }
   cas(record, version) {
     if (!record) throw notFound();
     if (!Number.isInteger(version) || version < 1) throw invalid('expectedVersion required');

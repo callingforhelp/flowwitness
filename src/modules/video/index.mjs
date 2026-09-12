@@ -314,6 +314,8 @@ export function createModule({ repository, artifacts, jobs, config = {}, rendere
     return { item: await present(scope, record) };
   }
 
+  const transition = (...args) => (repository.transition ?? repository.update).call(repository, ...args);
+
   async function update(principal, input = {}) {
     requirePrincipal(principal);
     requireRole(principal, ["operator"]);
@@ -349,7 +351,8 @@ export function createModule({ repository, artifacts, jobs, config = {}, rendere
     demand(Object.keys(patch).length > 0, "Nothing to update");
     if (record.outputArtifactId) await artifacts.revoke(scope, record.outputArtifactId);
     Object.assign(patch, { visibility: "private", publication: null, outputArtifactId: null, outputEditHash: null });
-    const next = await repository.update(scope, COLLECTION, record.id, {
+    const next = await transition(scope, COLLECTION, record.id, {
+      transition: "private-output",
       expectedVersion: input.expectedVersion,
       patch,
     });
@@ -426,7 +429,8 @@ export function createModule({ repository, artifacts, jobs, config = {}, rendere
 
     let next = record;
     if (record.visibility !== "published") {
-      next = await repository.update(scope, COLLECTION, record.id, {
+      next = await transition(scope, COLLECTION, record.id, {
+        transition: "publish",
         expectedVersion: record.version,
         patch: {
           visibility: "published",
@@ -468,6 +472,7 @@ export function createModule({ repository, artifacts, jobs, config = {}, rendere
     }, heartbeatMs);
     heartbeat.unref?.();
 
+    let output;
     try {
       const plan = await buildPlan(scope, record, job.id);
       const result = await requireRenderer().render(plan, {
@@ -478,19 +483,15 @@ export function createModule({ repository, artifacts, jobs, config = {}, rendere
       clearInterval(heartbeat);
       controller.signal.throwIfAborted();
       await jobs.heartbeat(principal, { id: job.id, token: input.token });
-      const output = await artifacts.put(scope, {
+      output = await artifacts.put(scope, {
         jobId: job.id,
         leaseToken: input.token,
         kind: "video",
         mediaType: result.mediaType ?? "video/mp4",
         bytes: result.bytes,
       });
-      const settled = await jobs.complete(principal, {
-        id: job.id,
-        token: input.token,
-        resultRef: { collection: "artifacts", id: output.id },
-      });
-      const next = await repository.update(scope, COLLECTION, record.id, {
+      const next = await transition(scope, COLLECTION, record.id, {
+        transition: "private-output",
         expectedVersion: record.version,
         patch: {
           outputArtifactId: output.id,
@@ -500,10 +501,17 @@ export function createModule({ repository, artifacts, jobs, config = {}, rendere
           publication: null,
         },
       });
+      const settled = await jobs.complete(principal, {
+        id: job.id,
+        token: input.token,
+        resultRef: { collection: "artifacts", id: output.id },
+      });
       return { job: settled, item: await present(scope, next), output };
     } catch (error) {
       clearInterval(heartbeat);
       controller.abort(error);
+      // A failed attachment or settlement must never leave usable output.
+      if (output) await artifacts.revoke(scope, output.id);
       if (error?.code === "cancelled") {
         // The job was cancelled underneath the render; cancellation wins and
         // there is nothing to settle. Late results were already rejected.

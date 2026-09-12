@@ -6,7 +6,7 @@ function fixture() {
   const rows = new Map(); let time = Date.parse('2026-09-12T00:00:00Z');
   const key = (s,c,id) => JSON.stringify([s.application,s.conversationId,c,id]);
   const repository = {
-    async create(s,c,r) { rows.set(key(s,c,r.id), structuredClone(r)); return structuredClone(r); },
+    async create(s,c,r) { r = { ...s, version: 1, createdAt: new Date(time).toISOString(), ...r }; rows.set(key(s,c,r.id), structuredClone(r)); return structuredClone(r); },
     async get(s,c,id) { return structuredClone(rows.get(key(s,c,id)) ?? null); },
     async query(s,c) { return { items: [...rows.values()].filter(r => rows.get(key(s,c,r.id)) === r).map(r => structuredClone(r)), nextCursor:null }; },
     async update(s,c,id,{expectedVersion,patch}) { const r = await this.get(s,c,id); assert.equal(r.version,expectedVersion); return this.create(s,c,{...r,...patch,version:r.version+1}); },
@@ -63,4 +63,28 @@ test('routes and bound pagination', async()=>{
   assert.equal((await m.search(p,{limit:1,cursor:page.nextCursor})).items.length,1);
   await assert.rejects(m.search({...p,conversationId:'c2'},{limit:1,cursor:page.nextCursor}),{status:400});
   assert.equal((await m.handle({path:'/v1/knowledge',method:'GET',principal:p,query:{locale:'zh',text:'上传',limit:'1'}})).body.items.length,1);
+});
+
+test('real repository creates private unverified storage and publishes validated evidence', async () => {
+  const { createMemoryRepository } = await import('../src/platform/repository.mjs');
+  const repo = await createMemoryRepository();
+  const f = fixture();
+  await f.evidence();
+  try {
+    // Seed validator-owned evidence through the coordinator fixture, never public create.
+    await repo.transaction(f.scope, state => {
+      return Promise.all(['investigationJobs', 'evidenceBundles'].map(async collection => {
+        const record = await f.repository.get(f.scope, collection, collection === 'investigationJobs' ? 'j' : 'e');
+        state.records.push({ collection, record });
+        return record;
+      }));
+    });
+    const module = createModule({ repository: repo, artifacts: { async get() { return { sha256: 'hash', expiresAt: '2026-09-13T00:00:00Z' }; } }, config: { now: () => Date.parse('2026-09-12T00:00:00Z') } });
+    const entry = await module.create(f.p, { ...f.input, evidenceBundleIds: ['e'] });
+    assert.equal(entry.evidenceStatus, 'verified');
+    const stored = await repo.get(f.scope, 'knowledgeEntries', entry.id);
+    assert.equal(stored.evidenceStatus, 'unverified');
+    assert.equal(stored.visibility, 'private');
+    assert.equal((await module.publish(f.p, { id: entry.id })).visibility, 'published');
+  } finally { await repo.close(); }
 });
