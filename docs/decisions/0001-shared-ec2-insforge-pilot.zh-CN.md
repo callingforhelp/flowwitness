@@ -32,7 +32,7 @@ InsForge 继续作为控制面和事实来源，负责应用状态、任务、�
 | 浏览器执行 | 现有 `flinter-orca-dsh` EC2 主机 | 独立 FlowWitness 服务，端口 `4310`，一次只运行一个回放 |
 | 本地临时空间 | 主机根 EBS 盘 | 仅临时浏览器文件；必须使用私有目录并清理 |
 | 持久制品 | InsForge `flowwitness-private` bucket | 私有对象 key 与按范围元数据；不能公开 bucket |
-| 公网访问 | 临时出站 Cloudflare Tunnel | 不新增入站安全组规则或自定义域名 |
+| 公网访问 | `flowwitness-pilot.useflinter.com` 上的命名出站 Cloudflare Tunnel | 不新增入站安全组规则；命名连接器专用于 FlowWitness |
 
 FlowWitness 单元必须使用 `ubuntu` 身份、私有数据目录和明确的内存/任务限制
 （初始目标：`MemoryMax=900M`，浏览器任务最多一个）。不得停止、替换或重配
@@ -46,18 +46,20 @@ DSH 单元。客户凭据和敏感客户数据不在本试点范围内。
 - `flowwitness-pilot.service` 以 `ubuntu` 身份运行在私有
   `127.0.0.1:4310`，设置 `MemoryMax=900M`，最多一个活动浏览器任务。
 - `dsh.service` 继续监听 `127.0.0.1:3080`；没有修改 DSH 单元或其配置。
-- 当前赞助方地址为 `https://terrain-gilbert-agreement-counter.trycloudflare.com/`，
-  由无账号的出站 Cloudflare quick tunnel 提供。没有新增入站安全组规则、新 EC2、
-  EBS、S3 bucket 或付费 InsForge 规格。
+- 当前赞助方地址为 `https://flowwitness-pilot.useflinter.com/`，由专用命名的出站
+  Cloudflare Tunnel 提供。没有新增入站安全组规则、新 EC2、EBS、S3 bucket 或付费
+  InsForge 规格。
 - 主机已通过私有验收路径完成真实 ARM64 合成版本 A/B 闭环：版本 B 发布、旧答案撤回、
   旧步骤失败、修复、私有 PNG 读取、中英文查询、认证和重启持久化均通过。随后通过公网
   路径完成当前版本 B 的身份/发布、双语查询、认证边界和操作台冒烟检查。[试点 02](../PILOT-02.zh-CN.md)
   记录了新的公开两版本演练，包括独立 workflow ID、签名 delivery 去重、失败证据、修复发布、
   图片删除和重启后的查询。没有使用客户数据或凭据。之前的 quick tunnel 主机名在 EC2 重启后
-  已轮换；当前 v2 发布已在该地址重新验证。
+  已轮换；当前 v2 发布已在命名地址重新验证。无账号 quick tunnel 单元仍保留用于回滚，
+但已停用。
 
-quick tunnel 地址是临时的，连接器重建后可能变化。地址变化时必须更新服务的公网来源
-配置并重新执行当前版本检查；该地址只是试点入口，不是生产入口。
+命名 tunnel 连接器由 `flowwitness-pilot-named-tunnel.service` 管理，只转发到私有的
+`127.0.0.1:4310` FlowWitness 监听。主机名或连接器变化时必须更新服务的公网来源配置，
+并重新执行当前版本检查；这是稳定的赞助方试点入口，但不等于生产认证。
 
 ## 决策证据
 
@@ -89,7 +91,7 @@ quick tunnel 地址是临时的，连接器重建后可能变化。地址变化�
 | DSH 与 Chromium 争用 2 GiB 内存，且无 swap | 一次一个回放、`MemoryMax`、清理，并在接收外部数据前观察内存/OOM |
 | 主机带有旧 DSH 权限 | 使用 `ubuntu`、只用合成数据、不改 DSH；生产前审查并替换主机角色 |
 | 根 EBS 未加密且终止实例时会删除 | 仅作临时空间；持久制品放在私有对象存储，后续生产主机使用加密盘 |
-| 主机没有 Docker 且安全组无入站规则 | 试点使用直接 Node 服务，通过 SSM 和临时出站隧道管理 |
+| 主机没有 Docker 且安全组无入站规则 | 试点使用直接 Node 服务，通过 SSM 和命名出站隧道管理 |
 | 制品字节可能让 InsForge 状态快照膨胀 | 大型录制或视频前完成私有 bucket 适配器 |
 | 共享执行不等于生产隔离 | 保持单应用、仅用于试点；生产前必须通过下列门槛 |
 

@@ -15,18 +15,18 @@ FlowWitness 现在有一个可访问的托管后端，供赞助方审阅和进�
 
 具备浏览器能力的赞助方试点目前与 DSH 并行运行在现有 ARM64 EC2 主机上：
 
-- 接口与操作台：`https://terrain-gilbert-agreement-counter.trycloudflare.com/`
+- 接口与操作台：`https://flowwitness-pilot.useflinter.com/`
 - 合成应用命名空间：`demo-reports-ec2-pilot`
 - FlowWitness 私有监听 `4310` 端口；DSH 继续使用 `3080`
-- 通过出站 Cloudflare quick tunnel 访问；没有新增入站安全组规则
+- 通过命名的出站 Cloudflare Tunnel 访问；没有新增入站安全组规则
 
 2026 年 9 月 12 日，合并后的 `b7da9c4` 版本通过了托管版本 A 回放、私有 PNG 读取、
 明确发布、版本 B 旧步骤失败、修复回放、中英文查询、认证、无效图片和服务重启检查。
 [试点 02](PILOT-02.zh-CN.md) 随后使用独立 workflow ID 在公开路由完成了新的两版本演练，
-也验证了签名 delivery 去重和图片删除。试点只使用合成 fixture 数据。quick tunnel 主机名
-是临时的，连接器重建后可能变化；它不是生产域名，也不代表稳定可用性。此前的
-`commodity-consult-hourly-sen.trycloudflare.com` 地址在 EC2 重启后已轮换；当前地址
-已经重新验证并重新发布。
+也验证了签名 delivery 去重和图片删除。试点只使用合成 fixture 数据。该演练使用的无账号
+quick tunnel 已在命名 tunnel 切换后停用；当前赞助方地址为
+`flowwitness-pilot.useflinter.com`，共享主机上的连接器由
+`flowwitness-pilot-named-tunnel.service` 管理。
 
 托管服务就是本仓库中的 Node.js/Playwright 应用，使用分离的管理员和客服凭据认证。
 服务通过仅项目管理员可调用的 InsForge 表和版本化 RPC，同步工作流状态、任务历史、发布
@@ -38,16 +38,16 @@ FlowWitness 现在有一个可访问的托管后端，供赞助方审阅和进�
 该计划只允许一个 512 MB 的 `shared-1x` 机器；尝试升级到 1024 MB 已被该计划拒绝。它的
 HTTP 接口、认证、状态同步、图片上传和制品读取已通过外部检查，但内置 Chromium 在该内存
 限制下无法稳定创建页面。现有共用 ARM64 EC2 主机是具备浏览器能力的试点路径；在生产前仍
-需要稳定入口、备份/恢复、告警和伙伴拥有的预览应用。
+需要备份/恢复、告警和伙伴拥有的预览应用。
 
 当前试点规格启用了 scale-to-zero。一次冷启动检查超过 15 秒，但在 60 秒内恢复；这只是
 试点观察值，还不是客服延迟 SLO。
 
 进入生产还需要：
 
-1. 可重复运行浏览器并具备稳定命名 TLS 地址的运行环境。共享 EC2 已通过合成版本 A/B
-   闭环，但无账号 quick tunnel 是临时入口，不能作为生产入口；也可以选择付费内存规格或
-   具备相同来源与证据控制的获批准远程浏览器工作进程。
+1. 可重复运行浏览器并具备稳定命名 TLS 地址的运行环境。共享 EC2 和命名 Cloudflare
+   Tunnel 现在提供赞助方试点地址；生产容量仍可选择付费内存规格或具备相同来源与证据
+   控制的获批准远程浏览器工作进程。
 2. 自定义域名/TLS 策略、Webhook 密钥、备份恢复演练、告警，以及由运营方控制的无敏感
    信息预览应用。
 3. 使用伙伴拥有的预览应用重复两版本试点，覆盖当前与过期查询、私密证据访问、中英文响应

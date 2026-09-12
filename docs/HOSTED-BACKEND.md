@@ -17,22 +17,20 @@ non-sensitive pilot:
 The browser-capable sponsor pilot is currently running beside DSH on the
 existing ARM64 EC2 host:
 
-- API and operator app: `https://terrain-gilbert-agreement-counter.trycloudflare.com/`
+- API and operator app: `https://flowwitness-pilot.useflinter.com/`
 - Synthetic application namespace: `demo-reports-ec2-pilot`
 - FlowWitness listens privately on port `4310`; DSH remains on port `3080`
-- Access is an outbound Cloudflare quick tunnel; no inbound security-group rule was added
+- Access is a named outbound Cloudflare Tunnel; no inbound security-group rule was added
 
 On September 12, 2026, the merged `b7da9c4` checkout passed the hosted
 release-A replay, private PNG retrieval, explicit publication, stale release-B
 failure, repair replay, English/Chinese query, authentication, invalid-image,
 and service-restart checks. [Pilot 02](PILOT-02.md) then ran a fresh public-route
 two-release rehearsal with a separate workflow ID, signed delivery deduplication
-and image deletion. The pilot uses synthetic fixture data only. The
-quick-tunnel hostname is temporary and may change when the connector is
-recreated; it is not a production hostname or a durable availability claim. The
-previous `commodity-consult-hourly-sen.trycloudflare.com` address was rotated
-after the EC2 instance was restarted; the release was re-verified and
-re-published at the current address.
+and image deletion. The pilot uses synthetic fixture data only. The accountless
+quick tunnel used by that rehearsal was retired after the named tunnel cutover;
+the current sponsor route is `flowwitness-pilot.useflinter.com` and its connector
+is managed by `flowwitness-pilot-named-tunnel.service` on the shared host.
 
 The hosted service is the same Node.js/Playwright application in this
 repository. It is authenticated with separate admin and support credentials.
@@ -50,8 +48,8 @@ update was rejected by that plan. Its HTTP API, authentication, legacy and
 module state mirror, support binding, image upload and artifact retrieval have
 passed external checks, but its bundled Chromium replay cannot reliably create
 a page at that memory limit. The existing shared ARM64 EC2 host is the
-browser-capable pilot path; it does not remove the need for stable ingress,
-backup/restore, alerting or an adopter-owned preview before production claims.
+browser-capable pilot path; it does not remove the need for backup/restore,
+alerting or an adopter-owned preview before production claims.
 
 The service currently scales to zero on the pilot tier. A cold-start probe took
 longer than 15 seconds but recovered within 60 seconds; this is an observed
@@ -60,10 +58,9 @@ pilot behavior, not a support latency SLO.
 Promotion to production requires:
 
 1. A repeatable browser-capable runtime with a stable named TLS endpoint. The
-   shared EC2 host has passed the synthetic release-A/release-B loop, while its
-   accountless quick tunnel is temporary and must not be treated as production
-   ingress. A paid memory tier or approved remote browser worker remains an
-   alternative.
+   shared EC2 host and named Cloudflare Tunnel now provide the sponsor-pilot
+   route. A paid memory tier or approved remote browser worker remains an
+   alternative for a production capacity decision.
 2. A custom domain/TLS policy, webhook secret, backup/restore drill, alerting,
    and an operator-owned preview application with non-sensitive test data.
 3. A repeat of the two-release pilot with an adopter-owned preview, including

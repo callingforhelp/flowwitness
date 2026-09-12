@@ -57,7 +57,7 @@ npm start
 
 流程需要明确编写或导入，尚无自动录屏或从代码自动发现流程。查询匹配配置好的问题别名，不调用大模型。支持私密上传图片，但不识别图片内容。验证只面向操作者配置的可信应用，不是执行恶意代码的沙箱；登录后的客户会话回放需要额外适配。
 
-一个服务对应一个应用、一个状态写入进程。托管地址可供赞助方审阅：共用 EC2 路径可以运行真实 Chromium 页面步骤，但免费 512 MB 回退仍无法稳定完成；quick tunnel 是临时入口。服务尚未通过生产认证，也不是多租户客服平台。客户电脑执行、图片理解和自动生成配音属于后续工作。详见[发布主线](docs/LAUNCH-SPINE.zh-CN.md)、[第一阶段边界](ROADMAP.zh-CN.md)、[托管后端检查点](docs/HOSTED-BACKEND.zh-CN.md)和[模块组合说明](docs/COMPOSITION.zh-CN.md)。
+一个服务对应一个应用、一个状态写入进程。托管地址可供赞助方审阅：共用 EC2 路径可以通过命名 Cloudflare Tunnel 运行真实 Chromium 页面步骤，但免费 512 MB 回退仍无法稳定完成。服务尚未通过生产认证，也不是多租户客服平台。客户电脑执行、图片理解和自动生成配音属于后续工作。详见[发布主线](docs/LAUNCH-SPINE.zh-CN.md)、[第一阶段边界](ROADMAP.zh-CN.md)、[托管后端检查点](docs/HOSTED-BACKEND.zh-CN.md)和[模块组合说明](docs/COMPOSITION.zh-CN.md)。
 
 ## CLI 与验证
 

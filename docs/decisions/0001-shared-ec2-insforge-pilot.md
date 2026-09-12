@@ -35,7 +35,7 @@ When the pilot service is enabled, it will use:
 | Browser execution | Existing `flinter-orca-dsh` EC2 host | Separate FlowWitness service, port `4310`, one active replay |
 | Local scratch | Host root EBS volume | Temporary browser files only; private directory and cleanup required |
 | Durable artifacts | InsForge `flowwitness-private` bucket | Private object keys and scoped metadata; no public bucket |
-| Public access | Temporary outbound Cloudflare Tunnel | No new inbound security-group rule or custom domain for the pilot |
+| Public access | Named outbound Cloudflare Tunnel at `flowwitness-pilot.useflinter.com` | No new inbound security-group rule; the named connector is dedicated to FlowWitness |
 
 The FlowWitness unit must run as `ubuntu`, use a private data directory, and
 have an explicit memory/task limit (initial target: `MemoryMax=900M`, one queued
@@ -52,9 +52,9 @@ The bounded pilot is deployed from merged revision `b7da9c4` in the isolated
 - `dsh.service` remains active on `127.0.0.1:3080`; the DSH unit and its
   configuration were not changed.
 - The current sponsor URL is
-  `https://terrain-gilbert-agreement-counter.trycloudflare.com/`, provided by an
-  accountless outbound Cloudflare quick tunnel. No inbound security-group rule,
-  new EC2 instance, EBS volume, S3 bucket or paid InsForge tier was added.
+  `https://flowwitness-pilot.useflinter.com/`, provided by the dedicated named
+  outbound Cloudflare Tunnel. No inbound security-group rule, new EC2 instance,
+  EBS volume, S3 bucket or paid InsForge tier was added.
 - The host passed the real ARM64 release-A/release-B synthetic loop through its
   private acceptance path: v2 publication, stale-answer withdrawal, old-step
   failure, repair, private PNG retrieval, English/Chinese query,
@@ -65,12 +65,15 @@ The bounded pilot is deployed from merged revision `b7da9c4` in the isolated
   deduplication, failure evidence, repaired publication, image deletion and
   post-restart query. No customer data or credentials were used. The prior
   quick-tunnel hostname was rotated after the EC2 instance was restarted; the
-  current v2 publication was re-verified at this address.
+  current v2 publication was re-verified at the named address. The accountless
+  quick-tunnel unit remains installed for rollback but is disabled.
 
-The quick-tunnel URL is temporary and may change when the connector is
-recreated. A URL change requires updating the service's public-origin
-configuration and rerunning the current-release check; this route is a pilot
-access path, not production ingress.
+The named tunnel connector is enabled as
+`flowwitness-pilot-named-tunnel.service` and routes only to the private
+FlowWitness listener on `127.0.0.1:4310`. A hostname or connector change
+requires updating the service's public-origin configuration and rerunning the
+current-release check; this is stable sponsor-pilot ingress, not production
+certification.
 
 ## Evidence behind the decision
 
@@ -107,7 +110,7 @@ by sharing a filesystem between hosts.
 | DSH and Chromium contend for 2 GiB RAM with no swap | One replay at a time, `MemoryMax`, cleanup, and memory/OOM observation before any external data |
 | The host carries legacy DSH permissions | Run as `ubuntu`, use synthetic data, do not alter DSH, and review/replace the host role before production |
 | The root EBS volume is unencrypted and delete-on-termination | Treat it as scratch only; keep durable artifacts in private object storage and use an encrypted disk for a later production host |
-| The host has no Docker or inbound security-group rule | Use a direct Node service for the pilot and SSM plus an outbound temporary tunnel |
+| The host has no Docker or inbound security-group rule | Use a direct Node service for the pilot and SSM plus an outbound named tunnel |
 | Artifact bytes can bloat the InsForge state snapshot | Implement the private bucket adapter before large recordings or videos |
 | Shared execution is not production isolation | Keep the service single-application and pilot-only; require the production gates below |
 

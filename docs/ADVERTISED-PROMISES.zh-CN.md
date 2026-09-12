@@ -30,7 +30,7 @@
 | 让电脑操作代理直接帮助客户。 | 第一阶段只返回指引。指引包含前置条件与预期观察，但不会授予浏览器权限或传递凭据。 | 宿主专用的电脑操作适配器，具备确认、取消、不匹配时停止和完成检查。 |
 | GitHub 推送后让代理定期提问或更新。 | 签名推送会生成有作用域且去重的审核队列；已注册工作进程可以认领调查任务。没有常驻代理群、原生生命周期钩子或隐藏的定时推理。 | 试点证明节奏和成本后，再加入带操作员控制的明确摘要/调度集成。 |
 | 使用关系图或 Archify 关联。 | 保存明确的源文件/工作流/运行/证据关系；图接口只暴露这些关系。未复制 Archify 代码，也不要求图数据库。 | 试点使用后维护者确实需要查看关系，再加入可选导出。 |
-| 提供公开客服接口或托管云服务。 | 认证的 Node/Playwright 服务已在[托管后端](HOSTED-BACKEND.zh-CN.md)上线供赞助方审阅，状态和私密制品由 InsForge 保存；[Cloudflare Worker 预览](https://flowwitness-preview.dave-z.workers.dev/)仍是只读概念界面。GitHub Pages 仍只是模拟概念演示。 | 共用 ARM64 EC2 路由已通过公开合成浏览器验证、认证、图片输入、状态重启恢复和接口检查。无账号 tunnel 是临时入口；免费 512 MB 回退仍不能稳定创建 Chromium 页面。生产浏览器验证、稳定入口、租户、自定义域运营和外部采用仍未完成。 |
+| 提供公开客服接口或托管云服务。 | 认证的 Node/Playwright 服务已在[托管后端](HOSTED-BACKEND.zh-CN.md)上线供赞助方审阅，状态和私密制品由 InsForge 保存；[Cloudflare Worker 预览](https://flowwitness-preview.dave-z.workers.dev/)仍是只读概念界面。GitHub Pages 仍只是模拟概念演示。 | 共用 ARM64 EC2 路由已通过公开合成浏览器验证、认证、图片输入、状态重启恢复和接口检查，现在通过命名的 `flowwitness-pilot.useflinter.com` tunnel 提供。免费 512 MB 回退仍不能稳定创建 Chromium 页面。生产浏览器验证、租户、备份/告警运营和外部采用仍未完成。 |
 
 ## 下一道试点门槛
 
