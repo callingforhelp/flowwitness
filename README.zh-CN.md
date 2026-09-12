@@ -2,7 +2,7 @@
 
 **让客户轻松用好你做的产品。**
 
-[English](README.md) · [公开概念演示](https://callingforhelp.github.io/flowwitness/) · [运行说明](docs/OPERATIONS.zh-CN.md) · [API](docs/API.zh-CN.md) · [调研](docs/RESEARCH.zh-CN.md) · [路线图](ROADMAP.zh-CN.md)
+[English](README.md) · [公开概念演示](https://callingforhelp.github.io/flowwitness/) · [试点 01](docs/PILOT-01.zh-CN.md) · [运行说明](docs/OPERATIONS.zh-CN.md) · [API](docs/API.zh-CN.md) · [调研](docs/RESEARCH.zh-CN.md) · [路线图](ROADMAP.zh-CN.md)
 
 FlowWitness 是可自托管的本地 alpha：保存客户操作流程和客服问题，在 Chromium 中检查已批准的预览流程，再把明确审核发布的指引交给已有的客服聊天。界面变动后，验证旧步骤、查看失败证据、修复流程并发布新版答案。
 

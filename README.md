@@ -2,7 +2,7 @@
 
 **Help your customers use what you built.**
 
-[简体中文](README.zh-CN.md) · [Public concept demo](https://callingforhelp.github.io/flowwitness/) · [Runbook](docs/OPERATIONS.md) · [API](docs/API.md) · [Research](docs/RESEARCH.md) · [Roadmap](ROADMAP.md)
+[简体中文](README.zh-CN.md) · [Public concept demo](https://callingforhelp.github.io/flowwitness/) · [Pilot 01](docs/PILOT-01.md) · [Runbook](docs/OPERATIONS.md) · [API](docs/API.md) · [Research](docs/RESEARCH.md) · [Roadmap](ROADMAP.md)
 
 FlowWitness is a self-hosted local alpha that stores customer workflows and support issues, checks approved preview flows in Chromium, and serves explicitly published instructions to your existing support chat. When an application changes, test the old steps, inspect the failure, repair the workflow, and publish a new checked answer.
 
