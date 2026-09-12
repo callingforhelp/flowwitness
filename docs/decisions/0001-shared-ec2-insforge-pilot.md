@@ -2,7 +2,7 @@
 
 [简体中文](0001-shared-ec2-insforge-pilot.zh-CN.md)
 
-**Status:** Accepted for the bounded sponsor pilot; production promotion remains gated
+**Status:** Accepted for the bounded sponsor pilot; shared EC2 pilot deployed; production promotion remains gated
 **Date:** 2026-09-12
 **Owner:** FlowWitness maintainer
 **Review trigger:** After the first external two-release pilot, or before accepting sensitive customer data
@@ -41,6 +41,31 @@ The FlowWitness unit must run as `ubuntu`, use a private data directory, and
 have an explicit memory/task limit (initial target: `MemoryMax=900M`, one queued
 browser job). It must not stop, replace, or reconfigure the DSH unit. Customer
 credentials and sensitive customer data are outside this pilot's scope.
+
+## Current pilot receipt
+
+The bounded pilot is deployed from merged revision `b7da9c4` in the isolated
+`demo-reports-ec2-pilot` application namespace:
+
+- `flowwitness-pilot.service` runs as `ubuntu` on private `127.0.0.1:4310` with
+  `MemoryMax=900M` and one active browser job.
+- `dsh.service` remains active on `127.0.0.1:3080`; the DSH unit and its
+  configuration were not changed.
+- The current sponsor URL is
+  `https://commodity-consult-hourly-sen.trycloudflare.com/`, provided by an
+  accountless outbound Cloudflare quick tunnel. No inbound security-group rule,
+  new EC2 instance, EBS volume, S3 bucket or paid InsForge tier was added.
+- The host passed the real ARM64 release-A/release-B synthetic loop through its
+  private acceptance path: v2 publication, stale-answer withdrawal, old-step
+  failure, repair, private PNG retrieval, English/Chinese query,
+  authentication and restart persistence all passed. A public-route smoke then
+  passed the current v2 identity/publication, bilingual query, authentication
+  boundary and operator app. No customer data or credentials were used.
+
+The quick-tunnel URL is temporary and may change when the connector is
+recreated. A URL change requires updating the service's public-origin
+configuration and rerunning the current-release check; this route is a pilot
+access path, not production ingress.
 
 ## Evidence behind the decision
 

@@ -12,6 +12,23 @@ non-sensitive pilot:
 - Operator UI: `/app/`
 - Public concept edge preview: `https://flowwitness-preview.dave-z.workers.dev/`
 
+## Shared EC2 pilot route
+
+The browser-capable sponsor pilot is currently running beside DSH on the
+existing ARM64 EC2 host:
+
+- API and operator app: `https://commodity-consult-hourly-sen.trycloudflare.com/`
+- Synthetic application namespace: `demo-reports-ec2-pilot`
+- FlowWitness listens privately on port `4310`; DSH remains on port `3080`
+- Access is an outbound Cloudflare quick tunnel; no inbound security-group rule was added
+
+On September 12, 2026, the merged `b7da9c4` checkout passed the hosted
+release-A replay, private PNG retrieval, explicit publication, stale release-B
+failure, repair replay, English/Chinese query, authentication, invalid-image,
+and service-restart checks. The pilot uses synthetic fixture data only. The
+quick-tunnel hostname is temporary and may change when the connector is
+recreated; it is not a production hostname or a durable availability claim.
+
 The hosted service is the same Node.js/Playwright application in this
 repository. It is authenticated with separate admin and support credentials.
 The service uses project-admin-only InsForge tables and versioned RPCs to mirror
@@ -21,9 +38,10 @@ state. The support module scope is bound to a configured conversation ID; the
 support token cannot select another conversation. The admin key is injected into
 the service environment and is never part of the repository or browser UI.
 
-This is a hosted pilot backend, not a production certification. The current
-InsForge free plan permits one `shared-1x` machine with 512 MB of memory; an
-attempted 1024 MB update was rejected by that plan. The
+This is a hosted pilot backend, not a production certification. The original
+InsForge free Compute endpoint above remains the fallback plane. That plan
+permits one `shared-1x` machine with 512 MB of memory; an attempted 1024 MB
+update was rejected by that plan. The
 HTTP API, authentication, legacy and module state mirror, support binding,
 image upload, and artifact retrieval have passed external checks, including a
 module record read after a Compute restart. The bundled Chromium replay reaches
@@ -38,8 +56,11 @@ pilot behavior, not a support latency SLO.
 
 Promotion to production requires:
 
-1. A memory tier that passes the real Chromium release-A/release-B loop, or an
-   approved remote browser worker with the same origin and evidence controls.
+1. A repeatable browser-capable runtime with a stable named TLS endpoint. The
+   shared EC2 host has passed the synthetic release-A/release-B loop, while its
+   accountless quick tunnel is temporary and must not be treated as production
+   ingress. A paid memory tier or approved remote browser worker remains an
+   alternative.
 2. A custom domain/TLS policy, webhook secret, backup/restore drill, alerting,
    and an operator-owned preview application with non-sensitive test data.
 3. A repeat of the two-release pilot, including current-versus-stale query
