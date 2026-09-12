@@ -1,0 +1,43 @@
+{
+  "schema_version": "1",
+  "id": "export-report",
+  "application": "demo-reports",
+  "title": "Export a report",
+  "questions": [
+    "How do I export a report?",
+    "Export report",
+    "导出报告",
+    "如何导出报告？"
+  ],
+  "role": "admin",
+  "locale": "en",
+  "source_paths": [
+    "fixtures/reports.html"
+  ],
+  "shared_paths": [
+    "src/auth/"
+  ],
+  "start_path": "/fixture/",
+  "steps": [
+    {
+      "id": "export",
+      "instruction": "Select Export report.",
+      "instruction_zh": "选择导出报告。",
+      "action": {
+        "type": "click",
+        "selector": "#export"
+      },
+      "assertion": {
+        "type": "visible",
+        "selector": "#download-ready"
+      },
+      "expected": "CSV is ready.",
+      "expected_zh": "CSV 已就绪。"
+    }
+  ],
+  "redact_selectors": [
+    "input[type=password]",
+    "[data-private]"
+  ],
+  "revision": "01d9e951f7451ac1974525a0eb2c819e58aea547cf1f2c60af28ca58d8430364"
+}
