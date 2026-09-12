@@ -1,7 +1,8 @@
 # Validation evidence / 验证记录
 
-2026-09-12. Local alpha plus a hosted sponsor-review backend; production
-browser verification and external pilot certification remain open.
+2026-09-12. Local alpha plus a hosted sponsor-review backend and a shared EC2
+synthetic browser pilot; production certification and external customer pilot
+remain open.
 
 | Boundary | Evidence |
 | --- | --- |
@@ -14,7 +15,7 @@ browser verification and external pilot certification remain open.
 | Hosted backend | InsForge Compute runs the authenticated Node/Playwright service at the generated `.fly.dev` endpoint. Health, setup, workflow persistence, deployment identity, image upload, private artifact retrieval, scoped module reads/writes and the push-only GitHub hook returned successfully; two real GitHub delivery IDs were persisted, a support-scoped issue was still readable after a Compute restart, a direct InsForge module-adapter reopen read a private artifact by its expiring link, and a signed synthetic delivery was deduplicated. One scale-to-zero health probe exceeded 15 seconds and succeeded within 60 seconds. The free 512 MB tier stalled while creating a Chromium page, so no hosted browser run or production readiness is claimed. |
 | Portable skill | Frontmatter validation passed; individual Claude Code/Codex/pi discovery and behavioral smoke tests have not been run |
 | Container | Docker build and authenticated startup passed on GitHub Linux CI; Docker daemon unavailable on development Mac |
-| Public backend / pilot | Hosted pilot endpoint is reachable with authentication and durable state; no external customer pilot has been performed and the browser-memory gate remains open |
+| Public backend / pilot | Shared ARM64 EC2 pilot is reachable through a temporary outbound Cloudflare tunnel. The real synthetic release-A/release-B replay, stale withdrawal, repair, private PNG, publication, bilingual query and restart checks passed; the original free InsForge Compute endpoint remains the fallback and its 512 MB browser gate is open. No external customer pilot or production certification has been performed. |
 
 Reproduce from the repository after npm ci and Playwright Chromium installation:
 
