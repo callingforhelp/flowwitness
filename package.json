@@ -16,6 +16,7 @@
     "test:dashboard": "node scripts/check-dashboard.mjs"
   },
   "dependencies": {
+    "@insforge/sdk": "^1.5.2",
     "playwright": "1.63.0",
     "sharp": "0.35.4"
   }
