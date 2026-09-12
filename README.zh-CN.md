@@ -2,7 +2,7 @@
 
 **让客户轻松用好你做的产品。**
 
-[English](README.md) · [托管后端](docs/HOSTED-BACKEND.zh-CN.md) · [公开概念演示](https://callingforhelp.github.io/flowwitness/) · [Cloudflare 动态预览](https://flowwitness-preview.dave-z.workers.dev/) · [Cloudflare 预览说明](docs/CLOUDFLARE-PREVIEW.zh-CN.md) · [试点 01](docs/PILOT-01.zh-CN.md) · [公开承诺对照表](docs/ADVERTISED-PROMISES.zh-CN.md) · [运行说明](docs/OPERATIONS.zh-CN.md) · [API](docs/API.zh-CN.md) · [调研](docs/RESEARCH.zh-CN.md) · [路线图](ROADMAP.zh-CN.md)
+[English](README.md) · [PRD](docs/PRD.zh-CN.md) · [托管后端](docs/HOSTED-BACKEND.zh-CN.md) · [公开概念演示](https://callingforhelp.github.io/flowwitness/) · [Cloudflare 动态预览](https://flowwitness-preview.dave-z.workers.dev/) · [Cloudflare 预览说明](docs/CLOUDFLARE-PREVIEW.zh-CN.md) · [试点 01](docs/PILOT-01.zh-CN.md) · [公开承诺对照表](docs/ADVERTISED-PROMISES.zh-CN.md) · [运行说明](docs/OPERATIONS.zh-CN.md) · [API](docs/API.zh-CN.md) · [调研](docs/RESEARCH.zh-CN.md) · [路线图](ROADMAP.zh-CN.md)
 
 FlowWitness 是可自托管服务，并提供一个临时托管试点后端：保存客户操作流程和客服问题，在 Chromium 中检查已批准的预览流程，再把明确审核发布的指引交给已有的客服聊天。界面变动后，验证旧步骤、查看失败证据、修复流程并发布新版答案。
 

@@ -2,7 +2,11 @@
 
 [简体中文](ARCHITECTURE.zh-CN.md)
 
-The local alpha implements a single HTTP process with a bounded browser queue, atomic JSON state and private artifacts. See [operations](OPERATIONS.md) for supported configuration and current limits.
+The local alpha implements a single HTTP process with a bounded browser queue,
+atomic JSON state and private artifacts. The hosted pilot runs the same service
+with a remote mirror for the legacy workflow state; module records still need a
+hosted durable adapter before production certification. See
+[operations](OPERATIONS.md) for supported configuration and current limits.
 
 ```mermaid
 flowchart LR

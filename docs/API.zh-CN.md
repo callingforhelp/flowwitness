@@ -1,8 +1,11 @@
-# 查询与指引接口 — 本地 alpha
+# 查询与指引接口 — 本地 alpha 与托管试点
 
 [English](API.md)
 
-HTTP 服务、访问控制、私密图片处理和查询接口已实现，可在本地运行。尚无托管公网接口、MCP 服务或 SDK。实际路由见 RUNTIME-CONTRACT.md，运行方式见 OPERATIONS.zh-CN.md。examples 是消息示例，不是互操作认证。一个服务只管理一个应用，不支持多租户。
+HTTP 服务、访问控制、私密图片处理和查询接口已实现，可在本地运行，也有认证的
+托管试点地址供赞助方审阅。没有托管的多租户接口、MCP 服务或 SDK。实际路由见
+RUNTIME-CONTRACT.md，运行方式见 OPERATIONS.zh-CN.md。examples 是消息示例，不是
+互操作认证。一个服务只管理一个应用，不支持多租户。
 
 ## POST /v1/query
 

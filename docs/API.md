@@ -1,8 +1,13 @@
-# Query and guidance API — local alpha
+# Query and guidance API — local alpha and hosted pilot
 
 [简体中文](API.zh-CN.md)
 
-The HTTP service is implemented and can be run locally. There is no managed public endpoint, MCP server or SDK. See [runtime routes and workflow schema](RUNTIME-CONTRACT.md) and the [runbook](OPERATIONS.md). Examples are illustrative wire shapes, not an OpenAPI conformance claim. The implementation is single-application; multi-tenant authorization and anonymous public access are not implemented.
+The HTTP service is implemented locally and is available as an authenticated
+hosted pilot for sponsor review. There is no managed multi-tenant endpoint, MCP
+server or SDK. See [runtime routes and workflow schema](RUNTIME-CONTRACT.md) and
+the [runbook](OPERATIONS.md). Examples are illustrative wire shapes, not an
+OpenAPI conformance claim. The implementation is single-application;
+multi-tenant authorization and anonymous public access are not implemented.
 
 ## POST /v1/query
 

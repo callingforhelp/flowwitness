@@ -2,7 +2,10 @@
 
 [简体中文](ROADMAP.zh-CN.md)
 
-The local alpha now implements the core runtime. The public Pages concept demo remains simulated; run the operator app for actual checks. External pilots and production hosting are still unverified.
+The local alpha now implements the core runtime. A hosted authenticated pilot
+backend is available for sponsor review, while the public Pages concept demo
+remains simulated. External pilots and production certification are still
+unverified.
 
 ## Foundation — delivered in this repository
 
