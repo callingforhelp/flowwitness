@@ -57,8 +57,9 @@ access or customer-side computer execution would be required. File that need as
 a separate Stage 2 proposal.
 
 The shared ARM64 EC2 pilot route can run the real browser steps and is suitable
-for a bounded rehearsal or adopter pilot. Its accountless quick tunnel is
-temporary and must not be treated as production ingress. The original free
+for a bounded rehearsal or adopter pilot. Its named Cloudflare route is
+`https://flowwitness-pilot.useflinter.com/`; it is stable for sponsor-pilot
+access but still not production certification. The original free
 512 MB hosted fallback still has a browser-capacity gate, so use the shared
 route or an approved browser worker for external runs and keep the hosted
 service's scale-to-zero cold-start behavior in the recorded latency metrics.

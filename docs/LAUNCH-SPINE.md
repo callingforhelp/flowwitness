@@ -37,7 +37,7 @@ Git push
 | Order | Work | Exit evidence | State |
 | --- | --- | --- | --- |
 | 1 | Repeatable launch smoke | `npm run smoke:launch` checks health, auth boundary, operator app, deployment identity, a verified workflow, bilingual support answers and private evidence without mutating state. | **Implemented in this change** |
-| 2 | Stable pilot ingress | Named HTTPS route with a restart/runbook policy; the accountless quick tunnel is retired from adopter use. | Open; current tunnel is rehearsal-only |
+| 2 | Stable pilot ingress | Named HTTPS route with a restart/runbook policy; the accountless quick tunnel is retired from adopter use. | **Implemented for sponsor pilot** at `https://flowwitness-pilot.useflinter.com/`; external adoption remains gated |
 | 3 | Real support connection | One existing chat/backend holds the support credential and trusted conversation binding; no new chat UI. | Open; endpoint contract already exists |
 | 4 | External two-release pilot | Release A publish, release B UI change, stale suppression, failed replay evidence, repaired publication, bilingual queries and measured retention/latency. | Open; synthetic Pilot 02 is not this gate |
 | 5 | Launch hardening | Backup/restore, alerting, retention decision, memory/cold-start observation and operator runbook. | Open; use the existing EC2/InsForge first |
@@ -75,7 +75,8 @@ backend and local alpha, not as production infrastructure.
 
 The shared ARM64 EC2 rehearsal in [Pilot 02](PILOT-02.md) proves the browser,
 publication, stale-answer, bilingual query, artifact and restart path with
-synthetic data. The current public quick tunnel is useful for sponsor review
-but can rotate or disappear. `new.useflinter.com` is not currently an approved
-pilot target. The next material input is an adopter-owned, non-sensitive
-preview target and its deployment identity endpoint.
+synthetic data. The named Cloudflare route at
+`https://flowwitness-pilot.useflinter.com/` now provides the stable sponsor
+pilot ingress; the accountless quick tunnel was retired. The next material
+input is an adopter-owned, non-sensitive preview target and its deployment
+identity endpoint.

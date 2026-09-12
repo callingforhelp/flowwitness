@@ -60,7 +60,7 @@ defines the first adopter's two-release evidence run.
 
 Workflows are explicitly authored or imported; automatic screen recording and code-to-workflow discovery are not implemented. Query matching uses configured question aliases, not an LLM. Images can be privately uploaded, but image recognition is not implemented. Initial replay targets trusted, operator-configured applications; it is not a sandbox for hostile code. Authenticated customer-session replay needs an additional adapter.
 
-This is one application per service, with a single state writer. The hosted endpoint is a sponsor-review pilot: the shared EC2 route can run the real Chromium page step, while the free 512 MB fallback still cannot do so reliably. The quick tunnel is temporary; the service is not production-certified or a multi-tenant hosted helpdesk. Customer computer-use execution, image understanding and generated voice remain future work. See the [launch spine](docs/LAUNCH-SPINE.md), [Stage 1 boundaries](ROADMAP.md), the [hosted backend checkpoint](docs/HOSTED-BACKEND.md), and the [composition notes](docs/COMPOSITION.md).
+This is one application per service, with a single state writer. The hosted endpoint is a sponsor-review pilot: the shared EC2 route can run the real Chromium page step behind a named Cloudflare Tunnel, while the free 512 MB fallback still cannot do so reliably. The service is not production-certified or a multi-tenant hosted helpdesk. Customer computer-use execution, image understanding and generated voice remain future work. See the [launch spine](docs/LAUNCH-SPINE.md), [Stage 1 boundaries](ROADMAP.md), the [hosted backend checkpoint](docs/HOSTED-BACKEND.md), and the [composition notes](docs/COMPOSITION.md).
 
 ## CLI and integrations
 

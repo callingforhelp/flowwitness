@@ -138,10 +138,10 @@ The free compute plan is limited to a single `shared-1x`/512 MB machine. Health,
 authenticated setup, workflow persistence, deployment identity, image intake
 and private artifact retrieval pass from outside the machine. Chromium launches
 but cannot reliably create a page at that memory limit, so the hosted replay
-job is intentionally not marked passed. The next production gate is a larger
-browser-capable tier (or an explicitly approved remote browser adapter),
-followed by the two-release pilot, custom-domain/TLS operations, backup drill
-and tenant/retention decisions. No successful hosted browser run is claimed.
+job is intentionally not marked passed. The browser-capable shared EC2 pilot
+now uses named Cloudflare ingress; the remaining production gates are the
+backup drill, alerting, tenant/retention decisions and the external two-release
+pilot. No successful free-tier hosted browser run is claimed.
 
 ## Module persistence checkpoint — 2026-09-12
 
@@ -187,12 +187,12 @@ needed.
 
 The browser-capacity limitation of the free 512 MB fallback is now separated
 from the browser-capable pilot path. The existing ARM64 EC2 host, shared with
-DSH and reached only through an accountless Cloudflare quick tunnel, completed
+DSH and reached through the named `flowwitness-pilot.useflinter.com` Cloudflare
+Tunnel, completed
 the fresh two-release receipt in [PILOT-02](PILOT-02.md): release A published a
 real Chromium screenshot, release B retained a failed screenshot and withheld
 the stale answer, the repaired two-step workflow was published, English and
 Chinese support queries returned the repaired guide, the signed delivery was
 deduplicated, an uploaded image was deleted, and the service restart preserved
-the publication. This remains synthetic sponsor-review evidence; stable
-production ingress, backup/restore, alerting and an external adopter are still
-open.
+the publication. This remains synthetic sponsor-review evidence; backup/restore,
+alerting and an external adopter are still open.
