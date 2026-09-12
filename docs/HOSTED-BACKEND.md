@@ -20,7 +20,8 @@ support token cannot select another conversation. The admin key is injected into
 the service environment and is never part of the repository or browser UI.
 
 This is a hosted pilot backend, not a production certification. The current
-InsForge free plan permits one `shared-1x` machine with 512 MB of memory. The
+InsForge free plan permits one `shared-1x` machine with 512 MB of memory; an
+attempted 1024 MB update was rejected by that plan. The
 HTTP API, authentication, legacy and module state mirror, support binding,
 image upload, and artifact retrieval have passed external checks, including a
 module record read after a Compute restart. The bundled Chromium replay reaches

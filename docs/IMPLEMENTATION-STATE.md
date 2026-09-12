@@ -167,6 +167,11 @@ closes the module durability/binding gap; browser capacity, backup/restore,
 alerting, custom domain/TLS, startup-latency policy, and the external
 two-release pilot remain open.
 
+The attempted `shared-1x` 1024 MB Compute update was rejected because the
+current free plan caps each machine at 512 MB. No paid capacity was enabled and
+no provider credential was added; the hosted browser gate therefore remains an
+explicit stakeholder decision.
+
 ## Hosted webhook checkpoint — 2026-09-12
 
 The public `callingforhelp/flowwitness` repository now has a push-only GitHub
