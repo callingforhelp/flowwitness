@@ -1,10 +1,460 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>FlowWitness · Operator / 操作台</title><link rel="stylesheet" href="./styles.css"></head>
-<body><header><a class="brand" href="/app/">◉ FlowWitness <span>Operator / 操作台</span></a><span id="connection">Connecting / 正在连接</span><button id="refresh">Refresh / 刷新</button></header>
-<main><section class="intro"><p class="eyebrow">FROM A REAL BROWSER TO CLEAR INSTRUCTIONS / 从真实浏览器到清晰指引</p><h1>Check it. Then share it.<br><span>先验证，再提供操作指引。</span></h1><p>This is the working operator app. Checks open the actual application in a browser and capture screenshots. Publishing makes successful instructions available to support questions.<br>这里是真实操作台。验证会在浏览器中打开实际应用并截图。发布后，成功验证的指引才可用于回答支持问题。</p><a href="/fixture/" target="_blank" rel="noopener">Open the actual demo app ↗ / 打开真实演示应用</a></section>
-<div id="notice" role="status" aria-live="polite" hidden></div><section id="auth" hidden><h2>Connect securely / 安全连接</h2><p>Enter the server access token. It stays only in this page’s memory; reload clears it.<br>输入服务器访问令牌。仅保存在当前页面内存中，刷新页面即清除。</p><form id="auth-form"><label>Access token / 访问令牌<input id="token" type="password" autocomplete="off" required></label><button class="primary">Connect / 连接</button></form></section>
-<nav class="journey" aria-label="Workflow / 工作流程"><a href="#setup">1 · Set up / 设置</a><a href="#check">2 · Check / 验证</a><a href="#publish">3 · Publish / 发布</a><a href="#ask">4 · Ask / 提问</a></nav>
-<div class="workspace"><aside><section id="setup"><p class="eyebrow">1 · SET UP / 设置</p><h2>Your workflows / 工作流程</h2><p>A workflow describes the steps a user should follow.<br>工作流程描述用户需要执行的步骤。</p><button id="demo-setup" class="primary">Set up demo workflow / 创建演示流程</button><div id="workflows" class="workflow-list"></div><details><summary>Import or edit JSON / 导入或编辑 JSON</summary><form id="workflow-form"><label>Workflow JSON / 工作流程 JSON<textarea id="workflow-json" rows="15" spellcheck="false" required></textarea></label><label>Load a JSON file / 加载 JSON 文件<input id="workflow-file" type="file" accept="application/json,.json"></label><button>Save workflow / 保存流程</button></form></details></section><details class="panel"><summary>Deployment settings / 部署设置</summary><p>Point checks at a trusted running app. Saving records a target; it does not deploy code.<br>设置可信的运行中应用。保存仅记录验证目标，不会部署代码。</p><form id="deployment-form"><label>Version / 版本<input name="version" required></label><label>Environment / 环境<input name="environment" required></label><label>Base URL / 应用地址<input name="base_url" type="url" required></label><label>Source revision / 源码版本<input name="source_revision" required></label><label>Identity path / 版本身份路径<input name="identity_path" required></label><button>Save target / 保存目标</button></form></details></aside>
-<div class="content"><section id="check"><p class="eyebrow">2 · CHECK IN A BROWSER / 在浏览器中验证</p><div class="section-title"><h2 id="workflow-title">Choose a workflow / 选择工作流程</h2><span id="workflow-status" class="badge">—</span></div><p id="workflow-description">Set up the demo or import your workflow to begin.<br>创建演示流程或导入工作流程以开始。</p><ol id="workflow-steps"></ol><button id="verify" class="primary" disabled>Run browser check / 执行浏览器验证</button><p id="job-status" aria-live="polite"></p><div id="run-evidence"></div><details><summary>Try an application change / 体验应用变更</summary><p>Version 2 moves Export into the More menu. Run the old steps to see the real failure, then repair and check again.<br>版本 2 将“导出”移入“更多”菜单。验证旧步骤以查看真实失败，然后修复并重新验证。</p><div class="actions"><button id="demo-v2">Move demo to v2 / 切换演示到 v2</button><button id="demo-repair">Repair demo steps / 修复演示步骤</button></div></details></section>
-<section id="publish"><p class="eyebrow">3 · PUBLISH INSTRUCTIONS / 发布操作指引</p><h2>Approve what users receive / 审核用户收到的内容</h2><p>Inspect the check and screenshots above. Publish explicitly when the steps are ready. Unresolved questions must be answered first.<br>检查上方验证结果与截图。确认步骤正确后手动发布；请先解决未回答的问题。</p><button id="publish-run" disabled>Publish this successful run / 发布此次成功验证</button><p id="publication-status" aria-live="polite"></p><div id="questions"></div></section>
-<section id="ask"><p class="eyebrow">4 · ASK A QUESTION / 提问</p><h2>Try the published instructions / 试用已发布指引</h2><p>Answers use published checks matching the application, deployment, role and language. This uses deterministic intent matching, not AI understanding.<br>回答使用与应用、部署、角色和语言匹配的已发布验证。本功能采用确定性意图匹配，并非 AI 理解。</p><form id="query-form"><label>Your question / 你的问题<textarea id="question" rows="3" placeholder="How do I export a report? / 如何导出报告？"></textarea></label><div class="form-row"><label>Role / 角色<input id="query-role" value="admin" required></label><label>Answer language / 回答语言<select id="query-locale"><option value="en">English / 英文</option><option value="zh">Chinese / 中文</option></select></label></div><details><summary>Optional image and context / 可选图片与上下文</summary><p>Images are optional context; image recognition is not available. A question is still needed.<br>图片为可选上下文；当前不支持图像识别。仍需提供文字问题。</p><label>Image / 图片<input id="query-image" type="file" accept="image/png,image/jpeg,image/webp"></label><label class="checkbox"><input id="image-consent" type="checkbox">I consent to uploading this image / 我同意上传此图片</label><label>Deployment version (blank = current) / 部署版本（留空为当前）<input id="query-version"></label><label>Environment (blank = current) / 环境（留空为当前）<input id="query-environment"></label></details><button id="ask-submit" class="primary">Ask / 提交问题</button></form><div id="answer" aria-live="polite"></div></section></div></div><footer>Browser evidence, reviewed instructions. / 浏览器证据，人工审核指引。 <a href="/">Project overview / 项目介绍</a></footer></main><script type="module" src="./app.mjs"></script></body></html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title data-en="FlowWitness · Operator" data-zh="操作台">
+      FlowWitness · Operator
+    </title>
+    <link href="./styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="/app/">
+        ◉ FlowWitness
+        <span>
+          <span data-en="Operator" data-zh="操作台"> Operator </span>
+        </span>
+      </a>
+      <label class="language-control">
+        Language / 语言
+        <select aria-label="Language / 语言" id="ui-language">
+          <option value="en">English</option>
+          <option value="zh">中文</option>
+        </select>
+      </label>
+      <span id="connection">
+        <span data-en="Connecting" data-zh="正在连接"> Connecting </span>
+      </span>
+      <button id="refresh">
+        <span data-en="Refresh" data-zh="刷新"> Refresh </span>
+      </button>
+    </header>
+    <main>
+      <section class="intro">
+        <p class="eyebrow">
+          <span
+            data-en="FROM A REAL BROWSER TO CLEAR INSTRUCTIONS"
+            data-zh="从真实浏览器到清晰指引"
+          >
+            FROM A REAL BROWSER TO CLEAR INSTRUCTIONS
+          </span>
+        </p>
+        <h1>
+          <span
+            data-en="Check it. Then share it."
+            data-zh="先验证，再提供操作指引。"
+          >
+            Check it. Then share it.
+          </span>
+        </h1>
+        <p>
+          <span
+            data-en="This is the working operator app. Checks open the actual application in a browser and capture screenshots. Publishing makes successful instructions available to support questions."
+            data-zh="这里是真实操作台。验证会在浏览器中打开实际应用并截图。发布后，成功验证的指引才可用于回答支持问题。"
+          >
+            This is the working operator app. Checks open the actual application
+            in a browser and capture screenshots. Publishing makes successful
+            instructions available to support questions.
+          </span>
+        </p>
+        <a href="/fixture/" rel="noopener" target="_blank">
+          <span
+            data-en="Open the actual demo app ↗"
+            data-zh="打开真实演示应用"
+          >
+            Open the actual demo app ↗
+          </span>
+        </a>
+      </section>
+      <div aria-live="polite" hidden="" id="notice" role="status"></div>
+      <section hidden="" id="auth">
+        <h2>
+          <span data-en="Connect securely" data-zh="安全连接">
+            Connect securely
+          </span>
+        </h2>
+        <p>
+          <span
+            data-en="Enter the server access token. It stays only in this page’s memory; reload clears it."
+            data-zh="输入服务器访问令牌。仅保存在当前页面内存中，刷新页面即清除。"
+          >
+            Enter the server access token. It stays only in this page’s memory;
+            reload clears it.
+          </span>
+        </p>
+        <form id="auth-form">
+          <label>
+            <span data-en="Access token" data-zh="访问令牌">
+              Access token
+            </span>
+            <input autocomplete="off" id="token" required="" type="password" />
+          </label>
+          <button class="primary">
+            <span data-en="Connect" data-zh="连接"> Connect </span>
+          </button>
+        </form>
+      </section>
+      <nav
+        aria-label="Workflow"
+        class="journey"
+        data-en-aria="Workflow"
+        data-zh-aria="工作流程"
+      >
+        <a href="#setup">
+          <span data-en="1 · Set up" data-zh="设置"> 1 · Set up </span>
+        </a>
+        <a href="#check">
+          <span data-en="2 · Check" data-zh="验证"> 2 · Check </span>
+        </a>
+        <a href="#publish">
+          <span data-en="3 · Publish" data-zh="发布"> 3 · Publish </span>
+        </a>
+        <a href="#ask">
+          <span data-en="4 · Ask" data-zh="提问"> 4 · Ask </span>
+        </a>
+      </nav>
+      <div class="workspace">
+        <aside>
+          <section id="setup">
+            <p class="eyebrow">
+              <span data-en="1 · SET UP" data-zh="设置"> 1 · SET UP </span>
+            </p>
+            <h2>
+              <span data-en="Your workflows" data-zh="工作流程">
+                Your workflows
+              </span>
+            </h2>
+            <p>
+              <span
+                data-en="A workflow describes the steps a user should follow."
+                data-zh="工作流程描述用户需要执行的步骤。"
+              >
+                A workflow describes the steps a user should follow.
+              </span>
+            </p>
+            <button class="primary" id="demo-setup">
+              <span data-en="Set up demo workflow" data-zh="创建演示流程">
+                Set up demo workflow
+              </span>
+            </button>
+            <div class="workflow-list" id="workflows"></div>
+            <details>
+              <summary>
+                <span data-en="Import or edit JSON" data-zh="导入或编辑 JSON">
+                  Import or edit JSON
+                </span>
+              </summary>
+              <form id="workflow-form">
+                <label>
+                  <span data-en="Workflow JSON" data-zh="工作流程 JSON">
+                    Workflow JSON
+                  </span>
+                  <textarea
+                    id="workflow-json"
+                    required=""
+                    rows="15"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+                <label>
+                  <span data-en="Load a JSON file" data-zh="加载 JSON 文件">
+                    Load a JSON file
+                  </span>
+                  <input
+                    accept="application/json,.json"
+                    id="workflow-file"
+                    type="file"
+                  />
+                </label>
+                <button>
+                  <span data-en="Save workflow" data-zh="保存流程">
+                    Save workflow
+                  </span>
+                </button>
+              </form>
+            </details>
+          </section>
+          <details class="panel">
+            <summary>
+              <span data-en="Deployment settings" data-zh="部署设置">
+                Deployment settings
+              </span>
+            </summary>
+            <p>
+              <span
+                data-en="Point checks at a trusted running app. Saving records a target; it does not deploy code."
+                data-zh="设置可信的运行中应用。保存仅记录验证目标，不会部署代码。"
+              >
+                Point checks at a trusted running app. Saving records a target;
+                it does not deploy code.
+              </span>
+            </p>
+            <form id="deployment-form">
+              <label>
+                <span data-en="Version" data-zh="版本"> Version </span>
+                <input name="version" required="" />
+              </label>
+              <label>
+                <span data-en="Environment" data-zh="环境"> Environment </span>
+                <input name="environment" required="" />
+              </label>
+              <label>
+                <span data-en="Base URL" data-zh="应用地址"> Base URL </span>
+                <input name="base_url" required="" type="url" />
+              </label>
+              <label>
+                <span data-en="Source revision" data-zh="源码版本">
+                  Source revision
+                </span>
+                <input name="source_revision" required="" />
+              </label>
+              <label>
+                <span data-en="Identity path" data-zh="版本身份路径">
+                  Identity path
+                </span>
+                <input name="identity_path" required="" />
+              </label>
+              <button>
+                <span data-en="Save target" data-zh="保存目标">
+                  Save target
+                </span>
+              </button>
+            </form>
+          </details>
+        </aside>
+        <div class="content">
+          <section id="check">
+            <p class="eyebrow">
+              <span data-en="2 · CHECK IN A BROWSER" data-zh="在浏览器中验证">
+                2 · CHECK IN A BROWSER
+              </span>
+            </p>
+            <div class="section-title">
+              <h2 id="workflow-title">
+                <span data-en="Choose a workflow" data-zh="选择工作流程">
+                  Choose a workflow
+                </span>
+              </h2>
+              <span class="badge" id="workflow-status"> — </span>
+            </div>
+            <p id="workflow-description">
+              <span
+                data-en="Set up the demo or import your workflow to begin."
+                data-zh="创建演示流程或导入工作流程以开始。"
+              >
+                Set up the demo or import your workflow to begin.
+              </span>
+            </p>
+            <ol id="workflow-steps"></ol>
+            <button class="primary" disabled="" id="verify">
+              <span data-en="Run browser check" data-zh="执行浏览器验证">
+                Run browser check
+              </span>
+            </button>
+            <p aria-live="polite" id="job-status"></p>
+            <div id="run-evidence"></div>
+            <details>
+              <summary>
+                <span
+                  data-en="Try an application change"
+                  data-zh="体验应用变更"
+                >
+                  Try an application change
+                </span>
+              </summary>
+              <p>
+                <span
+                  data-en="Version 2 moves Export into the More menu. Run the old steps to see the real failure, then repair and check again."
+                  data-zh="版本 2 将“导出”移入“更多”菜单。验证旧步骤以查看真实失败，然后修复并重新验证。"
+                >
+                  Version 2 moves Export into the More menu. Run the old steps
+                  to see the real failure, then repair and check again.
+                </span>
+              </p>
+              <div class="actions">
+                <button id="demo-v2">
+                  <span data-en="Move demo to v2" data-zh="切换演示到 v2">
+                    Move demo to v2
+                  </span>
+                </button>
+                <button id="demo-repair">
+                  <span data-en="Repair demo steps" data-zh="修复演示步骤">
+                    Repair demo steps
+                  </span>
+                </button>
+              </div>
+            </details>
+          </section>
+          <section id="publish">
+            <p class="eyebrow">
+              <span data-en="3 · PUBLISH INSTRUCTIONS" data-zh="发布操作指引">
+                3 · PUBLISH INSTRUCTIONS
+              </span>
+            </p>
+            <h2>
+              <span
+                data-en="Approve what users receive"
+                data-zh="审核用户收到的内容"
+              >
+                Approve what users receive
+              </span>
+            </h2>
+            <p>
+              <span
+                data-en="Inspect the check and screenshots above. Publish explicitly when the steps are ready. Unresolved questions must be answered first."
+                data-zh="检查上方验证结果与截图。确认步骤正确后手动发布；请先解决未回答的问题。"
+              >
+                Inspect the check and screenshots above. Publish explicitly when
+                the steps are ready. Unresolved questions must be answered
+                first.
+              </span>
+            </p>
+            <button disabled="" id="publish-run">
+              <span
+                data-en="Publish this successful run"
+                data-zh="发布此次成功验证"
+              >
+                Publish this successful run
+              </span>
+            </button>
+            <p aria-live="polite" id="publication-status"></p>
+            <div id="questions"></div>
+          </section>
+          <section id="ask">
+            <p class="eyebrow">
+              <span data-en="4 · ASK A QUESTION" data-zh="提问">
+                4 · ASK A QUESTION
+              </span>
+            </p>
+            <h2>
+              <span
+                data-en="Try the published instructions"
+                data-zh="试用已发布指引"
+              >
+                Try the published instructions
+              </span>
+            </h2>
+            <p>
+              <span
+                data-en="Answers use published checks matching the application, deployment, role and language. This uses deterministic intent matching, not AI understanding."
+                data-zh="回答使用与应用、部署、角色和语言匹配的已发布验证。本功能采用确定性意图匹配，并非 AI 理解。"
+              >
+                Answers use published checks matching the application,
+                deployment, role and language. This uses deterministic intent
+                matching, not AI understanding.
+              </span>
+            </p>
+            <form id="query-form">
+              <label>
+                <span data-en="Your question" data-zh="你的问题">
+                  Your question
+                </span>
+                <textarea
+                  data-en-placeholder="How do I export a report?"
+                  data-zh-placeholder="如何导出报告？"
+                  id="question"
+                  placeholder="How do I export a report?"
+                  rows="3"
+                >
+How do I export a report?</textarea
+                >
+              </label>
+              <div class="form-row">
+                <label>
+                  <span data-en="Role" data-zh="角色"> Role </span>
+                  <input id="query-role" required="" value="admin" />
+                </label>
+                <label>
+                  <span data-en="Answer language" data-zh="回答语言">
+                    Answer language
+                  </span>
+                  <select id="query-locale">
+                    <option value="en">
+                      <span data-en="English" data-zh="英文"> English </span>
+                    </option>
+                    <option value="zh-CN">
+                      <span data-en="Chinese" data-zh="中文"> Chinese </span>
+                    </option>
+                  </select>
+                </label>
+              </div>
+              <details>
+                <summary>
+                  <span
+                    data-en="Optional image and context"
+                    data-zh="可选图片与上下文"
+                  >
+                    Optional image and context
+                  </span>
+                </summary>
+                <p>
+                  <span
+                    data-en="Images are optional context; image recognition is not available. A question is still needed."
+                    data-zh="图片为可选上下文；当前不支持图像识别。仍需提供文字问题。"
+                  >
+                    Images are optional context; image recognition is not
+                    available. A question is still needed.
+                  </span>
+                </p>
+                <label>
+                  <span data-en="Image" data-zh="图片"> Image </span>
+                  <input
+                    accept="image/png,image/jpeg,image/webp"
+                    id="query-image"
+                    type="file"
+                  />
+                </label>
+                <label class="checkbox">
+                  <input id="image-consent" type="checkbox" />
+                  <span
+                    data-en="I consent to uploading this image"
+                    data-zh="我同意上传此图片"
+                  >
+                    I consent to uploading this image
+                  </span>
+                </label>
+                <label>
+                  <span
+                    data-en="Deployment version (blank = current)"
+                    data-zh="部署版本（留空为当前）"
+                  >
+                    Deployment version (blank = current)
+                  </span>
+                  <input id="query-version" />
+                </label>
+                <label>
+                  <span
+                    data-en="Environment (blank = current)"
+                    data-zh="环境（留空为当前）"
+                  >
+                    Environment (blank = current)
+                  </span>
+                  <input id="query-environment" />
+                </label>
+              </details>
+              <button class="primary" id="ask-submit">
+                <span data-en="Ask" data-zh="提交问题"> Ask </span>
+              </button>
+            </form>
+            <div aria-live="polite" id="answer"></div>
+          </section>
+        </div>
+      </div>
+      <footer>
+        <span
+          data-en="Browser evidence, reviewed instructions."
+          data-zh="浏览器证据，人工审核指引。 "
+        >
+          Browser evidence, reviewed instructions.
+        </span>
+        <a href="/">
+          <span data-en="Project overview" data-zh="项目介绍">
+            Project overview
+          </span>
+        </a>
+      </footer>
+    </main>
+    <script src="./app.mjs" type="module"></script>
+  </body>
+</html>
