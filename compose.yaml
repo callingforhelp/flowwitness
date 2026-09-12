@@ -1,0 +1,20 @@
+services:
+  flowwitness:
+    build: .
+    init: true
+    ports:
+      - "127.0.0.1:4310:4310"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 4310
+      FLOWWITNESS_DATA_DIR: /data
+      FLOWWITNESS_ADMIN_TOKEN: ${FLOWWITNESS_ADMIN_TOKEN:?Set a strong admin token locally}
+      FLOWWITNESS_SUPPORT_TOKEN: ${FLOWWITNESS_SUPPORT_TOKEN:?Set a different support token locally}
+      FLOWWITNESS_WEBHOOK_SECRET: ${FLOWWITNESS_WEBHOOK_SECRET:-}
+      FLOWWITNESS_ALLOWED_ORIGINS: ${FLOWWITNESS_ALLOWED_ORIGINS:-http://127.0.0.1:4310}
+    volumes:
+      - flowwitness-data:/data
+    shm_size: 1gb
+    restart: unless-stopped
+volumes:
+  flowwitness-data:
