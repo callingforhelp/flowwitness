@@ -11,7 +11,7 @@ credentials, personal data or production application were used.
 
 ## Runtime
 
-- Route: `https://commodity-consult-hourly-sen.trycloudflare.com`
+- Route at run time: `https://commodity-consult-hourly-sen.trycloudflare.com`
 - Application namespace: `demo-reports-ec2-pilot`
 - Workflow: `public-pilot-export`
 - Checkout: `b7da9c4` (the deployed application code; later documentation
@@ -20,6 +20,11 @@ credentials, personal data or production application were used.
   loopback port 4310 and DSH stayed on loopback port 3080.
 - Ingress: accountless Cloudflare quick tunnel. The hostname is temporary and
   is not a production TLS or uptime claim.
+
+The EC2 instance was later restarted, which rotated the accountless tunnel to
+`https://terrain-gilbert-agreement-counter.trycloudflare.com`. The current v2
+publication was re-verified and re-published at that address; the run receipt
+below remains tied to the original hostname.
 
 ## Receipt
 

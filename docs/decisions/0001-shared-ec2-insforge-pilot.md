@@ -52,7 +52,7 @@ The bounded pilot is deployed from merged revision `b7da9c4` in the isolated
 - `dsh.service` remains active on `127.0.0.1:3080`; the DSH unit and its
   configuration were not changed.
 - The current sponsor URL is
-  `https://commodity-consult-hourly-sen.trycloudflare.com/`, provided by an
+  `https://terrain-gilbert-agreement-counter.trycloudflare.com/`, provided by an
   accountless outbound Cloudflare quick tunnel. No inbound security-group rule,
   new EC2 instance, EBS volume, S3 bucket or paid InsForge tier was added.
 - The host passed the real ARM64 release-A/release-B synthetic loop through its
@@ -63,7 +63,9 @@ The bounded pilot is deployed from merged revision `b7da9c4` in the isolated
   boundary and operator app. [Pilot 02](../PILOT-02.md) records a fresh public
   two-release rehearsal with a separate workflow ID, signed delivery
   deduplication, failure evidence, repaired publication, image deletion and
-  post-restart query. No customer data or credentials were used.
+  post-restart query. No customer data or credentials were used. The prior
+  quick-tunnel hostname was rotated after the EC2 instance was restarted; the
+  current v2 publication was re-verified at this address.
 
 The quick-tunnel URL is temporary and may change when the connector is
 recreated. A URL change requires updating the service's public-origin

@@ -46,14 +46,15 @@ DSH 单元。客户凭据和敏感客户数据不在本试点范围内。
 - `flowwitness-pilot.service` 以 `ubuntu` 身份运行在私有
   `127.0.0.1:4310`，设置 `MemoryMax=900M`，最多一个活动浏览器任务。
 - `dsh.service` 继续监听 `127.0.0.1:3080`；没有修改 DSH 单元或其配置。
-- 当前赞助方地址为 `https://commodity-consult-hourly-sen.trycloudflare.com/`，
+- 当前赞助方地址为 `https://terrain-gilbert-agreement-counter.trycloudflare.com/`，
   由无账号的出站 Cloudflare quick tunnel 提供。没有新增入站安全组规则、新 EC2、
   EBS、S3 bucket 或付费 InsForge 规格。
 - 主机已通过私有验收路径完成真实 ARM64 合成版本 A/B 闭环：版本 B 发布、旧答案撤回、
   旧步骤失败、修复、私有 PNG 读取、中英文查询、认证和重启持久化均通过。随后通过公网
   路径完成当前版本 B 的身份/发布、双语查询、认证边界和操作台冒烟检查。[试点 02](../PILOT-02.zh-CN.md)
   记录了新的公开两版本演练，包括独立 workflow ID、签名 delivery 去重、失败证据、修复发布、
-  图片删除和重启后的查询。没有使用客户数据或凭据。
+  图片删除和重启后的查询。没有使用客户数据或凭据。之前的 quick tunnel 主机名在 EC2 重启后
+  已轮换；当前 v2 发布已在该地址重新验证。
 
 quick tunnel 地址是临时的，连接器重建后可能变化。地址变化时必须更新服务的公网来源
 配置并重新执行当前版本检查；该地址只是试点入口，不是生产入口。
