@@ -53,7 +53,8 @@ bank, agent jobs and CLI, workflow verification, and the bilingual dashboard.
 and private walkthrough video editing. They require explicit adapters and do not
 change the Stage 1 workflow-to-answer loop. Photo understanding, customer
 computer use, native host hooks, Archify export and managed E2B remain
-later integrations.
+later integrations. The [external pilot checklist](docs/PILOT-ONBOARDING.md)
+defines the first adopter's two-release evidence run.
 
 ## Honest limits
 

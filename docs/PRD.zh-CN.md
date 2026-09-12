@@ -151,5 +151,6 @@ FlowWitness 把少量命名的客户流程放在应用代码旁边。代码变�
 - [路线图](../ROADMAP.zh-CN.md) — 分阶段工作和试点门槛。
 - [公开承诺对照表](ADVERTISED-PROMISES.zh-CN.md) — 对外措辞和证据边界。
 - [托管后端检查点](HOSTED-BACKEND.zh-CN.md) — 线上地址和托管门槛。
+- [外部试点清单](PILOT-ONBOARDING.zh-CN.md) — 首位试点伙伴的双版本流程和证据。
 - [运行时契约](RUNTIME-CONTRACT.zh-CN.md) 与 [模块契约](MODULE-CONTRACT.md) — 接口和适配器验收条件。
 - [验证记录](VALIDATION.md) 与 [试点 01](PILOT-01.zh-CN.md) — 测试和内部试点收据。

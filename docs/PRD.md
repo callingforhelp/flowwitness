@@ -192,6 +192,8 @@ pilot backend.
   evidence boundaries.
 - [Hosted backend checkpoint](HOSTED-BACKEND.md) — live endpoint and remaining
   hosting gates.
+- [External pilot checklist](PILOT-ONBOARDING.md) — the bilingual two-release
+  run and evidence to collect from the first adopter.
 - [Runtime contract](RUNTIME-CONTRACT.md) and [module contract](MODULE-CONTRACT.md)
   — wire and adapter acceptance conditions.
 - [Validation record](VALIDATION.md) and [Pilot 01](PILOT-01.md) — test and
