@@ -17,7 +17,7 @@ non-sensitive pilot:
 The browser-capable sponsor pilot is currently running beside DSH on the
 existing ARM64 EC2 host:
 
-- API and operator app: `https://commodity-consult-hourly-sen.trycloudflare.com/`
+- API and operator app: `https://terrain-gilbert-agreement-counter.trycloudflare.com/`
 - Synthetic application namespace: `demo-reports-ec2-pilot`
 - FlowWitness listens privately on port `4310`; DSH remains on port `3080`
 - Access is an outbound Cloudflare quick tunnel; no inbound security-group rule was added
@@ -29,7 +29,10 @@ and service-restart checks. [Pilot 02](PILOT-02.md) then ran a fresh public-rout
 two-release rehearsal with a separate workflow ID, signed delivery deduplication
 and image deletion. The pilot uses synthetic fixture data only. The
 quick-tunnel hostname is temporary and may change when the connector is
-recreated; it is not a production hostname or a durable availability claim.
+recreated; it is not a production hostname or a durable availability claim. The
+previous `commodity-consult-hourly-sen.trycloudflare.com` address was rotated
+after the EC2 instance was restarted; the release was re-verified and
+re-published at the current address.
 
 The hosted service is the same Node.js/Playwright application in this
 repository. It is authenticated with separate admin and support credentials.

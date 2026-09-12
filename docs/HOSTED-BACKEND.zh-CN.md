@@ -15,7 +15,7 @@ FlowWitness 现在有一个可访问的托管后端，供赞助方审阅和进�
 
 具备浏览器能力的赞助方试点目前与 DSH 并行运行在现有 ARM64 EC2 主机上：
 
-- 接口与操作台：`https://commodity-consult-hourly-sen.trycloudflare.com/`
+- 接口与操作台：`https://terrain-gilbert-agreement-counter.trycloudflare.com/`
 - 合成应用命名空间：`demo-reports-ec2-pilot`
 - FlowWitness 私有监听 `4310` 端口；DSH 继续使用 `3080`
 - 通过出站 Cloudflare quick tunnel 访问；没有新增入站安全组规则
@@ -24,7 +24,9 @@ FlowWitness 现在有一个可访问的托管后端，供赞助方审阅和进�
 明确发布、版本 B 旧步骤失败、修复回放、中英文查询、认证、无效图片和服务重启检查。
 [试点 02](PILOT-02.zh-CN.md) 随后使用独立 workflow ID 在公开路由完成了新的两版本演练，
 也验证了签名 delivery 去重和图片删除。试点只使用合成 fixture 数据。quick tunnel 主机名
-是临时的，连接器重建后可能变化；它不是生产域名，也不代表稳定可用性。
+是临时的，连接器重建后可能变化；它不是生产域名，也不代表稳定可用性。此前的
+`commodity-consult-hourly-sen.trycloudflare.com` 地址在 EC2 重启后已轮换；当前地址
+已经重新验证并重新发布。
 
 托管服务就是本仓库中的 Node.js/Playwright 应用，使用分离的管理员和客服凭据认证。
 服务通过仅项目管理员可调用的 InsForge 表和版本化 RPC，同步工作流状态、任务历史、发布

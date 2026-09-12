@@ -10,7 +10,7 @@ workflow ID。没有使用客户凭据、个人数据或生产应用。
 
 ## 运行环境
 
-- 路由：`https://commodity-consult-hourly-sen.trycloudflare.com`
+- 运行时路由：`https://commodity-consult-hourly-sen.trycloudflare.com`
 - 应用命名空间：`demo-reports-ec2-pilot`
 - Workflow：`public-pilot-export`
 - Checkout：`b7da9c4`（部署的应用代码；后续文档提交不改变运行时代码）
@@ -18,6 +18,10 @@ workflow ID。没有使用客户凭据、个人数据或生产应用。
   4310，DSH 使用回环端口 3080。
 - 入口：无账号 Cloudflare quick tunnel。主机名是临时的，不代表生产 TLS
   或可用性承诺。
+
+EC2 实例随后重启，无账号 tunnel 已轮换为
+`https://terrain-gilbert-agreement-counter.trycloudflare.com`。当前 v2 发布已在该地址
+重新验证并重新发布；下面的运行收据仍对应原主机名。
 
 ## 收据
 
