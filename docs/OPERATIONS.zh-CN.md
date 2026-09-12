@@ -8,9 +8,9 @@
 
 流程保存在服务工作目录下 `workflows/<id>.json`；私密状态和截图默认位于 `.flowwitness/private/`。仅提交审核后的流程文件，勿提交私密状态。手工改文件后需重新通过 CLI 或操作台导入；不会自动监控文件。备份应在服务停止后写入私密存储，一个数据目录只允许一个写入进程。
 
-配置变量完整列表见英文页：HOST/PORT、FLOWWITNESS_APPLICATION、DATA_DIR、PUBLIC_ORIGIN、ALLOWED_ORIGINS、ADMIN_TOKEN、SUPPORT_TOKEN、WEBHOOK_SECRET；CLI 使用 FLOWWITNESS_URL/TOKEN/ROLE/LOCALE。默认单应用 demo-reports，绑定本机 127.0.0.1:4310。
+配置变量完整列表见英文页：HOST/PORT、FLOWWITNESS_APPLICATION、DATA_DIR、PUBLIC_ORIGIN、ALLOWED_ORIGINS、STATE_BACKEND、MODULE_STATE_BACKEND、InsForge 连接、模块身份绑定、ADMIN_TOKEN、SUPPORT_TOKEN、WEBHOOK_SECRET；CLI 使用 FLOWWITNESS_URL/TOKEN/ROLE/LOCALE。默认单应用 demo-reports，绑定本机 127.0.0.1:4310。
 
-对外绑定需两个不同的强随机令牌，建议至少 32 字符。不要公开，操作台只在内存保存。`npm start` 不会自动读 `.env`；显式加载可用 `node --env-file=.env bin/flowwitness.mjs serve`。外部部署需要 TLS、可信来源、私密持久存储和 Chromium 环境。托管模式可设置 `FLOWWITNESS_STATE_BACKEND=insforge`，应用迁移文件并把项目管理员密钥只放在服务端；`FLOWWITNESS_BROWSER_ORIGIN` 可指向服务私有回环地址，让浏览器不经过公网反向代理。客服令牌只给会验证客户角色的可信聊天后端，不放在公共网页中。当前不支持多租户托管。
+对外绑定需两个不同的强随机令牌，建议至少 32 字符。不要公开，操作台只在内存保存。`npm start` 不会自动读 `.env`；显式加载可用 `node --env-file=.env bin/flowwitness.mjs serve`。外部部署需要 TLS、可信来源、私密持久存储和 Chromium 环境。托管模式可设置 `FLOWWITNESS_STATE_BACKEND=insforge`（或模块专用覆盖），应用迁移文件并把项目管理员密钥只放在服务端；模块记录和私有模块制品会使用相同的按范围 InsForge RPC 快照。把可信客服提供的会话写入 `FLOWWITNESS_MODULE_SUPPORT_CONVERSATION_ID`；请求头和请求体不能自行选择会话。`FLOWWITNESS_BROWSER_ORIGIN` 可指向服务私有回环地址，让浏览器不经过公网反向代理。客服令牌只给会验证客户角色的可信聊天后端，不放在公共网页中。当前不支持多租户托管。
 
 ## 接入自己的应用
 

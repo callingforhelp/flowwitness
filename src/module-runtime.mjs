@@ -1,4 +1,4 @@
-import { createLocalRepository, createLocalArtifacts, createJobs, principalScope } from './platform/index.mjs';
+import { createLocalRepository, createInsForgeAdminRepository, createLocalArtifacts, createJobs, principalScope } from './platform/index.mjs';
 import { createModule as issues } from './modules/issues/index.mjs';
 import { createModule as knowledge } from './modules/knowledge/index.mjs';
 import { createModule as agents } from './modules/agents/index.mjs';
@@ -8,8 +8,15 @@ import { createModule as maintenance } from './modules/maintenance/index.mjs';
 
 export const isModulePath = path => /^\/v1\/(issues|knowledge|agents|investigations|reproductions|videos)(?:\/|$)/.test(path) || /^\/v1\/artifacts\/[^/]+\/content$/.test(path);
 
-export async function createModuleRuntime({ dir, workflow, browser, renderer, config = {} } = {}) {
-  const repository = await createLocalRepository({ dir });
+export async function createModuleRuntime({ dir, workflow, browser, renderer, config = {}, stateBackend = 'local', moduleStateBackend, insforgeUrl, insforgeApiKey } = {}) {
+  const backend = moduleStateBackend || stateBackend || 'local';
+  if (!['local', 'insforge'].includes(backend)) throw new Error('Unsupported module state backend');
+  if (backend === 'insforge' && (typeof insforgeUrl !== 'string' || !insforgeUrl.trim() || typeof insforgeApiKey !== 'string' || !insforgeApiKey.trim())) {
+    throw new Error('InsForge module state requires FLOWWITNESS_INSFORGE_URL and FLOWWITNESS_INSFORGE_API_KEY');
+  }
+  const repository = backend === 'insforge'
+    ? await createInsForgeAdminRepository({ baseUrl: insforgeUrl, apiKey: insforgeApiKey })
+    : await createLocalRepository({ dir });
   try {
     const artifacts = createLocalArtifacts({ repository });
     const jobs = createJobs({ repository, config: config.jobs });

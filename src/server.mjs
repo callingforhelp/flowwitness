@@ -38,6 +38,21 @@ export async function createServer(options = {}) {
     supportToken: options.supportToken ?? process.env.FLOWWITNESS_SUPPORT_TOKEN,
     webhookSecret:
       options.webhookSecret ?? process.env.FLOWWITNESS_WEBHOOK_SECRET,
+    moduleStateBackend:
+      options.moduleStateBackend || options.stateBackend ||
+      process.env.FLOWWITNESS_MODULE_STATE_BACKEND || process.env.FLOWWITNESS_STATE_BACKEND || "local",
+    modulePrincipals: {
+      admin: {
+        subjectId: process.env.FLOWWITNESS_MODULE_ADMIN_SUBJECT_ID || "admin",
+        conversationId: process.env.FLOWWITNESS_MODULE_ADMIN_CONVERSATION_ID || null,
+        ...options.modulePrincipals?.admin,
+      },
+      support: {
+        subjectId: process.env.FLOWWITNESS_MODULE_SUPPORT_SUBJECT_ID || "support",
+        conversationId: process.env.FLOWWITNESS_MODULE_SUPPORT_CONVERSATION_ID || null,
+        ...options.modulePrincipals?.support,
+      },
+    },
     ttl: options.ttl ?? 86400000,
     stepTimeout: options.stepTimeout ?? 5000,
     allowedOrigins:
@@ -75,6 +90,9 @@ export async function createServer(options = {}) {
   try {
     if (options.modules !== false) moduleRuntime = await createModuleRuntime({
       dir: path.join(store.private, "modules"),
+      moduleStateBackend: config.moduleStateBackend,
+      insforgeUrl: options.insforgeUrl ?? process.env.FLOWWITNESS_INSFORGE_URL,
+      insforgeApiKey: options.insforgeApiKey ?? process.env.FLOWWITNESS_INSFORGE_API_KEY,
       browser: options.browser, renderer: options.renderer, config: options.moduleConfig,
       workflow: options.workflowAdapter || {
         impact: input => service.impact(input),
@@ -183,7 +201,7 @@ export async function createServer(options = {}) {
       }
       if (moduleRuntime && isModulePath(p)) {
         // These bindings are deployment configuration, never request body/header claims.
-        const binding = options.modulePrincipals?.[role] || {};
+        const binding = config.modulePrincipals[role] || {};
         const principal = {
           application: config.application,
           subjectId: binding.subjectId || role,

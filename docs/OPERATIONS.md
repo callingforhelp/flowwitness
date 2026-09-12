@@ -21,8 +21,11 @@ Workflow records are written to `workflows/<id>.json` under the service's workin
 | FLOWWITNESS_ALLOWED_ORIGINS | Comma-separated origins the operator may select for browser checks |
 | FLOWWITNESS_BROWSER_ORIGIN | Optional private origin the hosted runner uses for its browser; the public deployment origin remains in customer guidance |
 | FLOWWITNESS_STATE_BACKEND | `local` (default) or `insforge` for a remotely durable state snapshot |
+| FLOWWITNESS_MODULE_STATE_BACKEND | Optional module-record backend override: `local` or `insforge`; defaults to `FLOWWITNESS_STATE_BACKEND` |
 | FLOWWITNESS_INSFORGE_URL | InsForge project URL required by the `insforge` state backend |
 | FLOWWITNESS_INSFORGE_API_KEY | Project-admin key for server-only state RPCs; never expose it to a browser or commit it |
+| FLOWWITNESS_MODULE_ADMIN_SUBJECT_ID / FLOWWITNESS_MODULE_ADMIN_CONVERSATION_ID | Optional trusted admin module identity and conversation scope |
+| FLOWWITNESS_MODULE_SUPPORT_SUBJECT_ID / FLOWWITNESS_MODULE_SUPPORT_CONVERSATION_ID | Trusted support module identity; the conversation ID is required for module access |
 | FLOWWITNESS_STATE_MAX_BYTES | Maximum serialized hosted snapshot, default 8 MB; screenshots count toward this limit |
 | FLOWWITNESS_ADMIN_TOKEN | Management credential for externally bound/authenticated mode |
 | FLOWWITNESS_SUPPORT_TOKEN | Different credential for trusted support backend queries/images/artifacts |
@@ -32,7 +35,7 @@ Workflow records are written to `workflows/<id>.json` under the service's workin
 
 Use two distinct tokens of at least 32 random characters. Keep them in a local environment or secret manager. `.env.example` has no credentials. To load an explicitly prepared `.env`, run `node --env-file=.env bin/flowwitness.mjs serve`; `npm start` does not automatically load it. Dashboard tokens live in memory and are cleared on reload. Local unauthenticated mode is for a trusted machine only; it rejects foreign origins and requires a client header for mutations.
 
-External deployments need TLS termination, an operator-controlled allowed origin, private durable disk or the InsForge state backend, and a running Chromium-compatible environment. For a hosted deployment, set `FLOWWITNESS_STATE_BACKEND=insforge`, apply the migrations in `migrations/`, and keep the project-admin key server-side. `FLOWWITNESS_BROWSER_ORIGIN` may point at the service's private loopback so a reverse-proxy public origin is not used for the browser's own requests. Do not expose the management token in customer-side JavaScript. The support token is for a trusted chat backend that verifies customer role, not a public browser widget. One application per instance; tenant isolation across many customers is not implemented.
+External deployments need TLS termination, an operator-controlled allowed origin, private durable disk or the InsForge state backend, and a running Chromium-compatible environment. For a hosted deployment, set `FLOWWITNESS_STATE_BACKEND=insforge` (or the module-specific override), apply the migrations in `migrations/`, and keep the project-admin key server-side. Module records and private module artifacts then use the same scoped InsForge RPC snapshot as the legacy workflow state. Set `FLOWWITNESS_MODULE_SUPPORT_CONVERSATION_ID` to the conversation supplied by the trusted support integration; request headers and bodies cannot choose it. `FLOWWITNESS_BROWSER_ORIGIN` may point at the service's private loopback so a reverse-proxy public origin is not used for the browser's own requests. Do not expose the management token in customer-side JavaScript. The support token is for a trusted chat backend that verifies customer role, not a public browser widget. One application per instance; tenant isolation across many customers is not implemented.
 
 ## Your own application
 
