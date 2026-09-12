@@ -24,9 +24,11 @@ Sources checked September 12, 2026: [Claude skills](https://code.claude.com/docs
 
 ## Module CLI for Claude Code, Codex and pi
 
-Set `FLOWWITNESS_URL` and load `FLOWWITNESS_TOKEN` from private local configuration. The CLI sends the existing Bearer authorization plus `x-flowwitness-client: cli`; the server resolves the principal and scope. Module calls require the corresponding server adapter and authorization. CLI availability does not prove that the backend is configured.
+Set `FLOWWITNESS_URL` to the configured service and load `FLOWWITNESS_TOKEN` privately from local environment configuration. The CLI sends the existing Bearer authorization and `x-flowwitness-client: cli` headers; the service resolves the principal and scope. Do not place tokens in commands, transcripts or examples. Modules require configured service adapters and an authorized principal; CLI availability does not prove backend readiness.
 
-Use `flowwitness module <METHOD> <PATH> [JSON|@file]` (`api` is an alias). Only implemented `/v1` module routes are accepted. JSON input is limited to 1 MiB, paths to 8192 characters, GET requests have no body, and redirects are refused. `issues`, `knowledge`, and `agents` list records; `investigation <id>`, `reproduction <id>`, and `video <id>` fetch one record. Video responses contain authorized evidence links and metadata; they do not download video bytes.
+Use `flowwitness module <METHOD> <PATH> [JSON|@file]` (`api` is an alias). Responses are formatted JSON. Only implemented JSON module route/method pairs are accepted, with a 1 MiB JSON input limit and an 8192-character path limit. GET accepts query parameters, not a body. Redirects are refused. `issues`, `knowledge`, and `agents` list records; `investigation <id>`, `reproduction <id>`, and `video <id>` fetch individual records through the same client. Video fetch returns metadata and authorized evidence links, not downloaded video bytes.
+
+Replace uppercase IDs with returned records, use the actual approved target/revision/selectors, and reuse an idempotency key only for identical input. Registration and enqueue calls need operator scope; claim needs the matching registered agent identity. Choose `claude-code`, `codex`, or `pi` as the registration runtime. Never invent an approval reference.
 
 ```sh
 flowwitness module POST /v1/issues '{"title":"Export fails","description":"Export button shows an error","locale":"en"}'
@@ -34,10 +36,24 @@ flowwitness module GET '/v1/knowledge?text=export&limit=10'
 flowwitness module POST /v1/investigations '{"issueId":"ISSUE_ID","requiredCapabilities":["investigation"],"idempotencyKey":"export-investigation-1"}'
 flowwitness module POST /v1/reproductions @reproduction.json
 flowwitness module POST /v1/agents '{"ownerId":"AGENT_SUBJECT_ID","runtime":"codex","capabilities":["investigation"],"enabled":true}'
+# Use the registered agent principal for this call:
 flowwitness module POST /v1/investigations/claim '{"capabilities":["investigation"]}'
 flowwitness module GET /v1/videos/VIDEO_ID
 ```
 
-Use IDs, approval references, targets, revisions and selectors returned or supplied by the operator. Reuse an idempotency key only for identical input. Registration and enqueue calls need operator scope; claim needs the matching registered agent identity. Keep lease tokens and private evidence links private. A queued job is not a completed investigation or reproduction, and fetching a video does not render or publish it.
+`reproduction.json`:
 
-The CLI returns FlowWitness guidance and evidence; it never authorizes actions on a customer's computer. Native customer computer-use execution, image understanding, generated voice and hosted video infrastructure remain separate integration work.
+```json
+{
+  "issueId": "ISSUE_ID",
+  "target": {"origin": "https://preview.example.com", "environment": "preview", "revision": "COMMIT_SHA"},
+  "approvalRef": "EXISTING_APPROVAL_REFERENCE",
+  "steps": [{"action": "navigate", "value": "/reports"}, {"action": "assertVisible", "selector": "button.export"}],
+  "limits": {"concurrency": 1, "maxDurationMs": 60000, "maxActions": 2},
+  "idempotencyKey": "export-reproduction-1"
+}
+```
+
+Keep claim output private: it can contain a job lease token needed for heartbeat/completion. The configured authentication token is redacted from CLI output, but returned job credentials and private evidence still require private handling. A queued job is not a completed investigation or reproduction; inspect the eventual job and evidence. Fetching a video does not render or publish it.
+
+The CLI returns guidance and evidence and never authorizes actions on a customer's computer. An approval reference records separate existing authorization for the configured preview/test sandbox; it is not a grant created by the CLI. Follow the user's authorized scope and the host's computer-use controls before taking any action.
