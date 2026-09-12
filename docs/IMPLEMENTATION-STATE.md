@@ -173,6 +173,7 @@ The public `callingforhelp/flowwitness` repository now has a push-only GitHub
 webhook targeting the hosted `/v1/webhooks/github` endpoint. Its HMAC secret is
 held in the private deployment environment and is not in the repository. A
 synthetic complete signed push returned 200; resending the same delivery ID
-returned 200 with `duplicate=true`. The next real repository push will provide
-the first external delivery receipt. Digest scheduling remains intentionally
-unimplemented until a pilot shows that it is needed.
+returned 200 with `duplicate=true`. Two real GitHub delivery GUIDs from later
+repository pushes are present in the hosted InsForge delivery state. Digest
+scheduling remains intentionally unimplemented until a pilot shows that it is
+needed.
