@@ -1,117 +1,356 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="FlowWitness: evidence-grounded customer guidance. Explore a local interactive simulation and the open source specification."><title>FlowWitness — Evidence before answers</title><style>
-    :root { --paper:#f5f3e9; --ink:#1b3028; --muted:#526157; --green:#285c3c; --lime:#d7e791; --line:#c6ccbc; --white:#fffef8; }
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Help your customers use what you built. Try the FlowWitness concept demo for customer guidance that follows UI changes.">
+  <title>FlowWitness — Help your customers use what you built</title>
+  <style>
+    :root { --paper:#faf9f5; --white:#fff; --ink:#203a30; --muted:#627068; --green:#21634b; --soft:#edf5ef; --line:#dce3dc; --amber:#80551b; }
     * { box-sizing:border-box; }
-    html { scroll-behavior:smooth; }
-    body { margin:0; background:var(--paper); color:var(--ink); font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:1.6; }
-    a { color:inherit; text-underline-offset:4px; }
-    a:hover { text-decoration-thickness:2px; }
-    a:focus-visible { outline:3px solid var(--green); outline-offset:5px; }
-    .skip { position:absolute; left:16px; top:-100px; padding:12px; background:var(--white); z-index:10; }
-    .skip:focus { top:12px; }
-    .wrap { max-width:1200px; padding:0 40px; margin:auto; }
-    header { display:flex; justify-content:space-between; align-items:center; gap:24px; padding:26px 0; border-bottom:1px solid var(--line); }
-    .brand { display:inline-flex; gap:10px; align-items:center; font-size:21px; font-weight:700; letter-spacing:-.8px; text-decoration:none; }
-    .mark { width:26px; height:26px; background:var(--green); border-radius:50% 50% 4px 50%; display:inline-grid; place-items:center; color:var(--lime); font-size:19px; }
-    nav { display:flex; gap:24px; font-size:14px; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.6 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    .wrap { max-width:1160px; margin:auto; padding:0 28px; }
+    a { color:var(--green); text-underline-offset:4px; }
+    button,input,select { font:inherit; }
+    button,.button { border:1px solid var(--line); border-radius:8px; background:white; color:var(--ink); padding:10px 16px; cursor:pointer; font-size:14px; font-weight:600; }
+    button:hover,.button:hover { background:var(--soft); }
+    .primary { background:var(--green); color:white; border-color:var(--green); }
+    .primary:hover { background:#194c39; }
+    .button { display:inline-block; text-decoration:none; }
+    :focus-visible { outline:3px solid #a26720; outline-offset:4px; }
+    .skip { position:absolute; top:-100px; background:white; padding:12px; z-index:10; }
+    .skip:focus { top:10px; }
+    header,nav,.actions,.app-bar,.section-heading,.controls,footer { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+    header { justify-content:space-between; padding:24px 0; border-bottom:1px solid var(--line); }
+    .brand { color:var(--ink); font-size:22px; font-weight:750; letter-spacing:-1px; text-decoration:none; }
+    nav { font-size:14px; gap:24px; }
     nav a { text-decoration:none; }
-    .eyebrow { font-size:11px; text-transform:uppercase; font-weight:700; letter-spacing:1.6px; }
-    .status { display:inline-flex; align-items:center; gap:9px; border:1px solid var(--line); padding:6px 11px; border-radius:30px; font-size:12px; }
-    .status::before { content:""; width:7px; height:7px; border-radius:50%; background:var(--green); }
-    .hero { padding:66px 0 64px; display:grid; grid-template-columns:1.2fr 1fr; gap:64px; align-items:center; }
     h1,h2,h3,p { margin-top:0; }
-    h1 { font-family:Georgia,'Times New Roman',serif; font-weight:400; font-size:clamp(46px,5.2vw,70px); line-height:1.04; letter-spacing:-2.8px; margin:25px 0; }
-    h1 em { color:var(--green); font-weight:400; }
-    .lead { font-size:18px; line-height:1.6; color:var(--muted); max-width:510px; }
-    .actions { display:flex; align-items:center; flex-wrap:wrap; gap:22px; margin-top:30px; }
-    .button { display:inline-block; background:var(--green); color:var(--white); padding:12px 20px; border-radius:5px; text-decoration:none; font-weight:700; font-size:14px; }
-    .button:hover { background:var(--ink); }
-    .text-link { font-size:14px; font-weight:700; }
-    .availability { margin:18px 0 0; font-size:12px; color:var(--muted); }
-    .diagram { margin:0; background:#e9eddf; border:1px solid var(--line); border-radius:12px; padding:28px; }
-    .diagram figcaption { display:flex; justify-content:space-between; gap:12px; padding-bottom:22px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
-    .diagram figcaption span:last-child { color:var(--muted); }
-    .flow { margin:0; padding:0; list-style:none; }
-    .flow li { background:var(--white); border:1px solid var(--line); border-radius:8px; padding:18px 20px; position:relative; }
-    .flow li + li { margin-top:28px; }
-    .flow li + li::before { content:"↓"; position:absolute; top:-28px; left:50%; transform:translateX(-50%); height:27px; line-height:27px; color:var(--green); }
-    .flow .last { background:var(--green); color:var(--white); border-color:var(--green); }
-    .step-top { display:flex; gap:12px; justify-content:space-between; align-items:center; }
-    .step-title { font-size:13px; font-weight:700; }
-    .badge { font-size:9px; letter-spacing:.6px; padding:2px 6px; border:1px solid var(--line); border-radius:3px; white-space:nowrap; }
-    .flow p { font-size:14px; line-height:1.5; margin:6px 0 0; color:var(--muted); }
-    .flow .last p { color:#e0ebd9; }
-    .flow .last .badge { color:var(--lime); border-color:#90ae85; }
-    .note { font-size:11px; margin:16px 0 0; color:var(--muted); }
-    .principle { border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:24px 0; display:flex; justify-content:space-between; gap:32px; align-items:center; }
-    .principle p { margin:0; font-family:Georgia,'Times New Roman',serif; font-size:26px; letter-spacing:-.5px; }
-    .principle .eyebrow { flex-shrink:0; }
-    section { padding:65px 0; }
-    h2 { font-family:Georgia,'Times New Roman',serif; font-size:40px; font-weight:400; line-height:1.15; letter-spacing:-1px; margin:12px 0 20px; }
-    .section-head { display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:end; margin-bottom:32px; }
-    .section-head p { color:var(--muted); margin-bottom:20px; }
-    .cards { display:grid; grid-template-columns:repeat(3,1fr); gap:26px; }
-    .card { padding-top:20px; border-top:2px solid var(--green); }
-    .number { color:var(--green); font-family:Georgia,serif; font-size:24px; }
-    h3 { font-size:18px; line-height:1.3; margin:12px 0; letter-spacing:-.3px; }
-    .card p { font-size:14px; color:var(--muted); }
-    .roadmap { padding:35px; background:var(--ink); border-radius:9px; color:var(--paper); display:grid; grid-template-columns:1fr 1fr; gap:45px; }
-    .roadmap h2 { font-size:32px; margin-top:12px; }
-    .roadmap p,.roadmap li { color:#d0d9cb; font-size:14px; }
-    .roadmap ul { padding-left:19px; margin-bottom:25px; }
-    .roadmap li { margin-bottom:8px; }
-    .roadmap a:focus-visible { outline-color:var(--lime); }
-    .later { border-left:1px solid #55665a; padding-left:35px; }
-    .roadmap .eyebrow { color:var(--lime); }
-    .closing { display:flex; justify-content:space-between; align-items:center; gap:35px; padding:55px 0; }
-    .closing h2 { font-size:31px; margin:0 0 10px; }
-    .closing p { margin:0; max-width:620px; font-size:14px; color:var(--muted); }
-    .closing .button { flex-shrink:0; }
-    footer { border-top:1px solid var(--line); padding:22px 0 30px; display:flex; gap:20px; justify-content:space-between; font-size:12px; color:var(--muted); }
-    @media(max-width:900px) { .hero { gap:30px; } .wrap { padding:0 24px; } h1 { font-size:53px; } .diagram { padding:18px; } }
-    @media(max-width:700px) { header { align-items:flex-start; } nav { gap:14px; flex-wrap:wrap; justify-content:flex-end; font-size:12px; } .hero { grid-template-columns:1fr; padding:40px 0; gap:36px; } h1 { max-width:540px; font-size:clamp(44px,9vw,62px); }  .principle,.closing { align-items:flex-start; flex-direction:column; gap:15px; } .principle p { font-size:24px; } section { padding:45px 0; } .section-head,.cards,.roadmap { grid-template-columns:1fr; gap:20px; } .section-head { margin-bottom:15px; } h2 { font-size:34px; } .cards { gap:15px; } .roadmap { padding:25px; gap:25px; } .later { border-left:0; border-top:1px solid #55665a; padding:25px 0 0; } footer { flex-wrap:wrap; } }
-    @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+    h1 { font-size:clamp(40px,5.7vw,66px); max-width:840px; line-height:1.1; letter-spacing:-2.5px; margin:22px 0; }
+    h2 { font-size:clamp(26px,3vw,36px); line-height:1.2; letter-spacing:-1px; margin-bottom:14px; }
+    h3 { font-size:19px; line-height:1.35; margin-bottom:10px; }
+    .hero { padding:56px 0 42px; }
+    .hero .lead { max-width:780px; font-size:19px; color:var(--muted); }
+    .badge { display:inline-block; background:var(--soft); color:var(--green); border:1px solid var(--line); border-radius:6px; padding:6px 10px; font-size:13px; font-weight:650; }
+    .muted,.note { color:var(--muted); }
+    .note { font-size:13px; }
+    .eyebrow { font-size:12px; font-weight:750; letter-spacing:1.3px; text-transform:uppercase; color:var(--green); margin-bottom:12px; }
+    section { padding:40px 0; }
+    .section-heading { justify-content:space-between; align-items:flex-start; }
+    .demo-grid { display:grid; grid-template-columns:1.15fr 1fr; gap:24px; align-items:stretch; }
+    .panel { border:1px solid var(--line); border-radius:12px; background:var(--white); overflow:hidden; }
+    .panel-label { background:#f0f2ed; padding:12px 20px; font-size:12px; font-weight:650; border-bottom:1px solid var(--line); }
+    .app-body,.chat-body { padding:24px; }
+    .app-bar { justify-content:space-between; margin-bottom:24px; }
+    .app-bar h3 { margin:0; }
+    .tabs { border-bottom:1px solid var(--line); margin-bottom:22px; }
+    .tab { display:inline-block; border-bottom:3px solid var(--green); padding:0 10px 10px; font-weight:650; }
+    .toolbar { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px; }
+    .toolbar h2 { font-size:26px; margin:0; }
+    .menu-wrap { position:relative; }
+    .menu { position:absolute; top:calc(100% + 8px); right:0; background:white; padding:6px; border:1px solid var(--line); border-radius:8px; z-index:2; box-shadow:0 8px 24px #203a301a; min-width:175px; }
+    .menu button { width:100%; text-align:left; }
+    .export { box-shadow:0 0 0 3px #d9ebdf; }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    th { text-align:left; font-weight:600; color:var(--muted); background:#fafbf8; }
+    td,th { padding:13px 8px; border-bottom:1px solid #edf0eb; }
+    td:last-child,th:last-child { text-align:right; }
+    .table-scroll { overflow-x:auto; }
+    .ready { color:var(--green); font-size:12px; }
+    .notice { min-height:46px; margin:18px 0 0; font-size:13px; color:var(--green); }
+    .speaker { font-size:12px; font-weight:700; color:var(--muted); margin-bottom:8px; }
+    .question-bubble { margin:0 0 22px auto; padding:12px 16px; background:#f0f2ee; border-radius:12px 12px 2px 12px; max-width:90%; }
+    .answer { padding:18px; background:var(--soft); border-radius:2px 12px 12px; }
+    .answer p { margin-bottom:10px; }
+    .answer ol { padding-left:23px; margin:10px 0; }
+    .answer li { margin:7px 0; }
+    .answer small { color:var(--muted); }
+    details { margin-top:20px; font-size:13px; }
+    summary { cursor:pointer; color:var(--green); font-weight:600; }
+    label { display:block; font-weight:600; margin:14px 0 5px; }
+    input,select { width:100%; padding:10px; border:1px solid var(--line); border-radius:6px; background:white; color:var(--ink); }
+    .controls { margin-top:16px; }
+    .developer { margin-top:28px; padding:26px; background:#f0f2ec; border:1px solid var(--line); border-radius:12px; }
+    .developer h2 { font-size:24px; }
+    .developer p { max-width:820px; }
+    .status-line { font-weight:700; }
+    .needs-update { color:var(--amber); }
+    .developer .status-line { margin:20px 0 5px; }
+    .cards { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+    .card { border-top:2px solid var(--line); padding-top:20px; }
+    .number { color:var(--green); font-weight:700; font-size:13px; }
+    .card h3 { margin-top:12px; }
+    .card p { color:var(--muted); font-size:15px; }
+    .roadmap { display:grid; grid-template-columns:1fr 1.4fr; gap:40px; padding:30px; background:white; border:1px solid var(--line); border-radius:12px; }
+    .roadmap h2 { font-size:26px; }
+    .roadmap p { color:var(--muted); }
+    .sponsor { max-width:800px; }
+    .documents { display:flex; gap:22px; flex-wrap:wrap; font-size:14px; margin:24px 0; }
+    footer { justify-content:space-between; padding:22px 0; border-top:1px solid var(--line); color:var(--muted); font-size:12px; }
+    [hidden] { display:none !important; }
+    [lang="zh-CN"] h1 { letter-spacing:-1px; line-height:1.25; }
+    @media(max-width:800px) { .demo-grid,.roadmap { grid-template-columns:1fr; } .cards { gap:18px; } h1 { letter-spacing:-1.5px; } }
+    @media(max-width:560px) { .wrap { padding:0 18px; } header { gap:14px; } nav { gap:14px; font-size:12px; } .hero { padding-top:36px; } .cards { grid-template-columns:1fr; } .app-body,.chat-body,.developer,.roadmap { padding:18px; } .controls { align-items:stretch; flex-direction:column; } .toolbar { align-items:flex-start; } section { padding:30px 0; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main" data-en="Skip to content" data-zh="跳至正文">Skip to content</a>
+  <div class="wrap">
+    <header>
+      <a class="brand" href="./">FlowWitness</a>
+      <nav aria-label="Main" data-aria-en="Main" data-aria-zh="主导航">
+        <a href="#demo" data-en="See it in action" data-zh="体验演示">See it in action</a>
+        <a href="#builders" data-en="For builders" data-zh="给开发者">For builders</a>
+        <a href="https://github.com/callingforhelp/flowwitness/">GitHub ↗</a>
+      </nav>
+      <button id="language" type="button" aria-label="Switch to Chinese">中文</button>
+    </header>
+    <main id="main">
+      <div class="hero">
+        <span class="badge" data-en="Interactive concept demo · CLI and service in development" data-zh="交互概念演示 · CLI 与服务正在开发中">Interactive concept demo · CLI and service in development</span>
+        <h1 data-en="Help your customers use what you built." data-zh="让客户轻松用好你做的产品。">Help your customers use what you built.</h1>
+        <p class="lead" data-en="Connect your repository and coding agent. Let customers ask in the chat they already use. FlowWitness is designed to turn your product’s workflows into clear steps—and keep those steps up to date when your UI changes." data-zh="连接代码仓库与编码智能体，让客户在已有的聊天入口提问。FlowWitness 的目标是把产品操作流程变成清晰的步骤，并在界面变化后及时更新指引。">Connect your repository and coding agent. Let customers ask in the chat they already use. FlowWitness is designed to turn your product’s workflows into clear steps—and keep those steps up to date when your UI changes.</p>
+        <div class="actions">
+          <a class="button primary" href="#demo" data-en="Try the customer experience ↓" data-zh="体验客户如何获得帮助 ↓">Try the customer experience ↓</a>
+          <a href="#builders" data-en="How it would fit your product" data-zh="了解如何接入你的产品">How it would fit your product</a>
+        </div>
+      </div>
+      <section id="demo">
+        <p class="eyebrow" data-en="The customer experience" data-zh="客户体验">The customer experience</p>
+        <h2 data-en="A question. Steps you can follow." data-zh="提出问题，照着步骤操作。">A question. Steps you can follow.</h2>
+        <p class="muted" data-en="Try the highlighted button in this sample app. The conversation beside it explains exactly where to go." data-zh="试试示例应用中高亮的按钮。旁边的对话会告诉你具体该怎么操作。">Try the highlighted button in this sample app. The conversation beside it explains exactly where to go.</p>
+        <p class="note" data-en="Illustrative app and chat · Fixed sample answers · Everything runs locally in this page; no AI or live service is connected." data-zh="应用与聊天均为示例 · 使用固定样例答案 · 所有操作仅在本页运行，未连接 AI 或真实服务。">Illustrative app and chat · Fixed sample answers · Everything runs locally in this page; no AI or live service is connected.</p>
+        <div class="demo-grid">
+          <div class="panel">
+            <div class="panel-label" data-en="YOUR PRODUCT · SAMPLE APP" data-zh="你的产品 · 示例应用">YOUR PRODUCT · SAMPLE APP</div>
+            <div class="app-body">
+              <div class="app-bar">
+                <h3 data-en="Project: Reports" data-zh="项目：报告">Project: Reports</h3>
+                <span class="badge" data-en="Administrator" data-zh="管理员">Administrator</span>
+              </div>
+              <div class="tabs"><span class="tab" data-en="Data" data-zh="数据">Data</span></div>
+              <div class="toolbar">
+                <h2 data-en="Reports" data-zh="报告">Reports</h2>
+                <button type="button" class="primary export" id="export-direct" data-en="Export report" data-zh="导出报告">Export report</button>
+                <div class="menu-wrap" id="more-wrap" hidden>
+                  <button type="button" id="more" class="export" aria-expanded="false" aria-controls="more-menu" data-en="More ···" data-zh="更多 ···">More ···</button>
+                  <div id="more-menu" class="menu" hidden>
+                    <button type="button" id="export-menu" data-en="Export report" data-zh="导出报告">Export report</button>
+                  </div>
+                </div>
+              </div>
+              <div class="table-scroll">
+                <table>
+                  <caption class="note" data-en="Sample project data · 3 reports" data-zh="示例项目数据 · 3 份报告">Sample project data · 3 reports</caption>
+                  <thead><tr><th scope="col" data-en="Report" data-zh="报告名称">Report</th><th scope="col" data-en="Status" data-zh="状态">Status</th><th scope="col" data-en="Rows" data-zh="行数">Rows</th></tr></thead>
+                  <tbody>
+                    <tr><td data-en="September sales" data-zh="九月销售">September sales</td><td class="ready" data-en="Ready" data-zh="就绪">Ready</td><td>1,248</td></tr>
+                    <tr><td data-en="Customer activity" data-zh="客户活跃情况">Customer activity</td><td class="ready" data-en="Ready" data-zh="就绪">Ready</td><td>862</td></tr>
+                    <tr><td data-en="Monthly revenue" data-zh="月度收入">Monthly revenue</td><td class="ready" data-en="Ready" data-zh="就绪">Ready</td><td>310</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p id="app-notice" class="notice" role="status"></p>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-label" data-en="YOUR EXISTING SUPPORT CHAT · ILLUSTRATION" data-zh="你已有的客服聊天 · 效果示意">YOUR EXISTING SUPPORT CHAT · ILLUSTRATION</div>
+            <div class="chat-body">
+              <p class="speaker" data-en="Customer" data-zh="客户">Customer</p>
+              <p class="question-bubble" id="customer-question">How do I export a report?</p>
+              <p class="speaker" data-en="Your assistant, using FlowWitness guidance" data-zh="你的助手，使用 FlowWitness 提供的指引">Your assistant, using FlowWitness guidance</p>
+              <div class="answer" id="result" aria-live="polite" aria-atomic="true"></div>
+              <details>
+                <summary data-en="Try another question or role" data-zh="尝试其他问题或角色">Try another question or role</summary>
+                <label for="question" data-en="Customer question" data-zh="客户问题">Customer question</label>
+                <input id="question" value="How do I export a report?" autocomplete="off">
+                <p class="note" data-en="This concept demo only understands the report export question." data-zh="此概念演示仅支持导出报告这一问题。">This concept demo only understands the report export question.</p>
+                <label for="role" data-en="Customer role" data-zh="客户角色">Customer role</label>
+                <select id="role"><option value="admin" data-en="Administrator" data-zh="管理员">Administrator</option><option value="viewer" data-en="Viewer" data-zh="只读用户">Viewer</option></select>
+                <div class="controls"><button id="ask" type="button" data-en="Ask" data-zh="提问">Ask</button><button id="preset" type="button" data-en="Use export question" data-zh="使用导出问题">Use export question</button></div>
+              </details>
+            </div>
+          </div>
+        </div>
+        <div class="developer" id="developer">
+          <p class="eyebrow" data-en="Behind the customer answer" data-zh="客户答案的背后">Behind the customer answer</p>
+          <h2 data-en="For developers: keep answers up to date" data-zh="给开发者：让答案跟上界面变化">For developers: keep answers up to date</h2>
+          <p class="muted" data-en="Move Export into a More menu, then see how the answer changes. These checks are simulated; the demo does not inspect code or run a browser check." data-zh="把导出按钮移入“更多”菜单，看看答案如何变化。以下检查均为模拟；演示不会检查代码或执行浏览器验证。">Move Export into a More menu, then see how the answer changes. These checks are simulated; the demo does not inspect code or run a browser check.</p>
+          <div class="controls">
+            <button type="button" data-action="release-v2" data-en="1. Change the sample UI" data-zh="1. 修改示例界面">1. Change the sample UI</button>
+            <button type="button" data-action="fail" data-en="2. Check old instructions" data-zh="2. 检查旧指引">2. Check old instructions</button>
+            <button type="button" data-action="approve-and-pass" data-en="3. Update instructions" data-zh="3. 更新指引">3. Update instructions</button>
+            <button type="button" data-action="reset" data-en="Reset demo" data-zh="重置演示">Reset demo</button>
+          </div>
+          <p id="developer-status" class="status-line" role="status"></p>
+          <p id="developer-detail" class="note"></p>
+        </div>
+        <noscript>Enable JavaScript for the interactive demo and language switch. / 请启用 JavaScript 以使用交互演示与语言切换。</noscript>
+      </section>
+      <section id="builders">
+        <p class="eyebrow" data-en="For builders · Planned integration" data-zh="给开发者 · 规划中的接入方式">For builders · Planned integration</p>
+        <h2 data-en="You build the product. Help comes with it." data-zh="做好产品，也让客户知道怎么用。">You build the product. Help comes with it.</h2>
+        <div class="cards">
+          <article class="card"><span class="number">01</span><h3 data-en="Connect your repo and agent" data-zh="连接仓库与智能体">Connect your repo and agent</h3><p data-en="Your coding agent uses the planned CLI to record a customer workflow and save its steps alongside your code." data-zh="编码智能体通过规划中的 CLI 录制客户操作流程，将步骤与代码一起保存。">Your coding agent uses the planned CLI to record a customer workflow and save its steps alongside your code.</p></article>
+          <article class="card"><span class="number">02</span><h3 data-en="Answer in your existing chat" data-zh="在已有聊天入口回答">Answer in your existing chat</h3><p data-en="Your support assistant would call a FlowWitness guidance endpoint and return the right steps. Keep your existing chat UI; the endpoint is planned, not available today." data-zh="你的客服助手将调用 FlowWitness 指引接口，向客户返回操作步骤。继续使用已有的聊天界面；该接口仍在规划中，当前不可用。">Your support assistant would call a FlowWitness guidance endpoint and return the right steps. Keep your existing chat UI; the endpoint is planned, not available today.</p></article>
+          <article class="card"><span class="number">03</span><h3 data-en="Check again when the UI changes" data-zh="界面变化后重新检查">Check again when the UI changes</h3><p data-en="The planned service checks affected workflows in a headless browser, flags old instructions, and helps you update them before customers rely on them." data-zh="规划中的服务将在无头浏览器中检查受影响的流程，标记过期指引，帮助你在客户使用前完成更新。">The planned service checks affected workflows in a headless browser, flags old instructions, and helps you update them before customers rely on them.</p></article>
+        </div>
+      </section>
+      <section id="roadmap">
+        <div class="roadmap">
+          <div><h2 data-en="What exists today" data-zh="现在已有">What exists today</h2><p data-en="This local interactive demo and open source product documents. The demo uses fixed sample data and simulated checks. There is no working CLI or hosted service yet." data-zh="本地交互演示与开源产品文档。演示使用固定样例数据和模拟检查，目前还没有可用的 CLI 或托管服务。">This local interactive demo and open source product documents. The demo uses fixed sample data and simulated checks. There is no working CLI or hosted service yet.</p></div>
+          <div><h2 data-en="What we build next" data-zh="接下来要做">What we build next</h2><h3 data-en="Stage 1 · Record, check, answer" data-zh="第一阶段 · 录制、检查、回答">Stage 1 · Record, check, answer</h3><p data-en="CLI workflow recording, a service that checks workflows in a headless browser, and a guidance endpoint for your existing assistant." data-zh="实现 CLI 流程录制、无头浏览器流程检查服务，以及供已有助手调用的指引接口。">CLI workflow recording, a service that checks workflows in a headless browser, and a guidance endpoint for your existing assistant.</p><h3 data-en="Stage 2 · Show and assist" data-zh="第二阶段 · 演示与协助操作">Stage 2 · Show and assist</h3><p data-en="Explore walkthrough videos and customer-agent execution with explicit customer consent. Both are future work." data-zh="探索操作演示视频，以及经客户明确授权的智能体代操作。这两项都属于后续工作。">Explore walkthrough videos and customer-agent execution with explicit customer consent. Both are future work.</p></div>
+        </div>
+      </section>
+      <section class="sponsor">
+        <h2 data-en="Help build the first working workflow." data-zh="一起跑通第一个真实流程。">Help build the first working workflow.</h2>
+        <p class="muted" data-en="We welcome engineering support and a pilot partner with one non-sensitive product workflow. The first milestone: a code change triggers a real browser check, updated instructions, and an answer that matches the changed UI." data-zh="欢迎工程贡献，也欢迎试点伙伴提供一个不含敏感信息的产品流程。首个里程碑：代码变更触发真实浏览器检查，更新操作指引，并给出与新界面一致的答案。">We welcome engineering support and a pilot partner with one non-sensitive product workflow. The first milestone: a code change triggers a real browser check, updated instructions, and an answer that matches the changed UI.</p>
+        <a href="https://github.com/callingforhelp/flowwitness/issues" data-en="Discuss a contribution or pilot ↗" data-zh="讨论贡献或试点 ↗">Discuss a contribution or pilot ↗</a>
+        <div class="documents">
+          <a data-path-en="README.md" data-path-zh="README.zh-CN.md" href="https://github.com/callingforhelp/flowwitness/blob/main/README.md" data-en="Project overview" data-zh="项目概览">Project overview</a>
+          <a data-path-en="docs/PRODUCT.md" data-path-zh="docs/PRODUCT.zh-CN.md" href="https://github.com/callingforhelp/flowwitness/blob/main/docs/PRODUCT.md" data-en="Product & architecture" data-zh="产品与技术架构">Product & architecture</a>
+          <a data-path-en="ROADMAP.md" data-path-zh="ROADMAP.zh-CN.md" href="https://github.com/callingforhelp/flowwitness/blob/main/ROADMAP.md" data-en="Roadmap" data-zh="路线图">Roadmap</a>
+          <a data-path-en="docs/RESEARCH.md" data-path-zh="docs/RESEARCH.zh-CN.md" href="https://github.com/callingforhelp/flowwitness/blob/main/docs/RESEARCH.md" data-en="Research" data-zh="研究文档">Research</a>
+        </div>
+      </section>
+    </main>
+    <footer><span data-en="FlowWitness · MIT open source" data-zh="FlowWitness · MIT 开源许可">FlowWitness · MIT open source</span><span data-en="Help your customers use what you built." data-zh="让客户轻松用好你做的产品。">Help your customers use what you built.</span></footer>
+  </div>
+  <script type="module">
+    import { initialState, transition, answer } from './demo.mjs';
 
-button,input,select {font:inherit} button {cursor:pointer} button:focus-visible,input:focus-visible,select:focus-visible {outline:3px solid var(--green);outline-offset:3px} button {border:1px solid var(--line);border-radius:5px;padding:10px 14px;background:var(--white);color:var(--ink)} button:hover {background:var(--lime)} .demo {border:1px solid var(--line);border-radius:12px;padding:30px;background:var(--white);margin-bottom:55px} .demo-grid {display:grid;grid-template-columns:1fr 1fr;gap:30px} .controls {display:flex;flex-wrap:wrap;gap:10px;margin:18px 0} label {display:block;font-size:13px;font-weight:bold;margin:14px 0 5px} input,select {width:100%;padding:12px;border:1px solid var(--line);border-radius:5px;background:white;color:var(--ink)} .answer {padding:22px;background:#e9eddf;border-radius:8px;min-height:230px} .graph {display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:25px 0;font-size:13px} .node {border:1px solid var(--line);padding:9px;border-radius:5px} .demo-label {color:#704914;font-weight:bold;font-size:13px} .status-line {font-weight:bold} .documents {display:flex;flex-wrap:wrap;gap:20px;margin:24px 0} [lang=zh-CN] h1 {letter-spacing:-1px;line-height:1.2} @media(max-width:700px){.demo-grid{grid-template-columns:1fr}.demo{padding:20px}header{flex-wrap:wrap}nav{justify-content:flex-start}}
-</style></head><body><a data-en="Skip to content" data-zh="跳至正文" class="skip" href="#main">Skip to content</a><div class="wrap"><header><a class="brand" href="./"><span class="mark" aria-hidden="true">↗</span>FlowWitness</a><nav><a data-en="Try the demo" data-zh="体验演示" href="#demo">Try the demo</a><a data-en="Roadmap" data-zh="路线图" href="#roadmap">Roadmap</a><a data-en="GitHub ↗" data-zh="GitHub ↗" href="https://github.com/callingforhelp/flowwitness/">GitHub ↗</a></nav><button id="language" type="button" aria-label="Switch to Chinese / 切换为中文">中文</button></header><main id="main"><div class="hero"><div><span data-en="Open source · Interactive demo + specifications" data-zh="开源项目 · 交互演示与规格文档" class="status">Open source · Interactive demo + specifications</span><h1 data-en="Customer guidance that keeps up with your UI." data-zh="让客户指引跟上产品界面的变化。" >Customer guidance that keeps up with your UI.</h1><p data-en="Your coding agent ships a change. Your customer still needs a way through. Explore how version-matched evidence can keep outdated instructions out of customer answers." data-zh="编码智能体发布了新功能，客户仍然需要清晰的操作指引。探索如何用版本匹配的证据，避免向客户提供过期步骤。" class="lead">Your coding agent ships a change. Your customer still needs a way through. Explore how version-matched evidence can keep outdated instructions out of customer answers.</p><div class="actions"><a data-en="Try the local demo ↓" data-zh="体验本地演示 ↓" class="button" href="#demo">Try the local demo ↓</a><a data-en="Explore the specification ↗" data-zh="阅读产品规格 ↗" data-path-en="docs/PRODUCT.md" data-path-zh="docs/PRODUCT.zh-CN.md" href="https://github.com/callingforhelp/flowwitness/blob/main/docs/PRODUCT.md">Explore the specification ↗</a></div><p data-en="Available today: this interactive simulation and project specifications. CLI, backend, vision, sandbox replay, and video generation are planned." data-zh="当前已有：此交互模拟与项目规格文档。CLI、后端、视觉理解、沙箱回放与视频生成功能仍在规划中。" class="availability">Available today: this interactive simulation and project specifications. CLI, backend, vision, sandbox replay, and video generation are planned.</p></div><figure class="diagram"><figcaption data-en="One changed screen. One answer that needs proof." data-zh="界面变了，答案需要重新验证。" >One changed screen. One answer that needs proof.</figcaption><ol class="flow"><li><strong data-en="01 / Map the workflow" data-zh="01 / 建立流程关联" >01 / Map the workflow</strong><p data-en="Source → screen → flow → evidence." data-zh="源码 → 页面 → 流程 → 证据。" >Source → screen → flow → evidence.</p></li><li><strong data-en="02 / Detect stale guidance" data-zh="02 / 识别过期指引" >02 / Detect stale guidance</strong><p data-en="A release changes the Export location. Old evidence no longer matches." data-zh="新版本移动了导出入口，旧证据不再匹配。" >A release changes the Export location. Old evidence no longer matches.</p></li><li><strong data-en="03 / Verify before answering" data-zh="03 / 先验证，再回答" >03 / Verify before answering</strong><p data-en="Only matching verified evidence can unlock actionable steps." data-zh="只有经过验证且版本匹配的证据，才能用于输出操作步骤。" >Only matching verified evidence can unlock actionable steps.</p></li></ol><p data-en="Proposed product loop. The demo below simulates its decisions." data-zh="以上为拟议产品流程，下方演示模拟其决策逻辑。" class="note">Proposed product loop. The demo below simulates its decisions.</p></figure></div><section class="demo" id="demo"><p data-en="Interactive demo · Synthetic data · Runs only in this browser" data-zh="交互演示 · 合成数据 · 仅在当前浏览器内运行" class="demo-label">Interactive demo · Synthetic data · Runs only in this browser</p><h2 data-en="When Export moves, what should support say?" data-zh="导出入口变了，客服应该怎么回答？" >When Export moves, what should support say?</h2><p data-en="Try the sequence below. Replay outcomes and evidence are simulated: no real browser replay, endpoint, upload, or external service is used. Your question stays on this page." data-zh="按顺序体验下方操作。回放结果与证据均为模拟：不执行真实浏览器回放，不调用接口，不上传数据，也不连接外部服务。问题仅保留在此页面内。" >Try the sequence below. Replay outcomes and evidence are simulated: no real browser replay, endpoint, upload, or external service is used. Your question stays on this page.</p><div class="controls"><button data-en="1. Reset to verified v1" data-zh="1. 重置为已验证 v1" type="button" data-action="reset">1. Reset to verified v1</button><button data-en="2. Move Export in v2" data-zh="2. 在 v2 移动导出入口" type="button" data-action="release-v2">2. Move Export in v2</button><button data-en="3. Simulate failed replay" data-zh="3. 模拟回放失败" type="button" data-action="fail">3. Simulate failed replay</button><button data-en="4. Approve steps + simulate pass" data-zh="4. 批准步骤并模拟验证通过" type="button" data-action="approve-and-pass">4. Approve steps + simulate pass</button></div><div class="graph" id="graph"></div><div class="demo-grid"><div><label data-en="Customer question" data-zh="客户问题" for="question">Customer question</label><input id="question" value="How do I export a report?" autocomplete="off"><p data-en="This fixture recognizes “export report” only. Other questions ask for clarification." data-zh="此示例仅识别“导出报告”意图，其他问题会要求澄清。" class="note">This fixture recognizes “export report” only. Other questions ask for clarification.</p><label data-en="Customer role" data-zh="客户角色" for="role">Customer role</label><select id="role"><option data-en="Administrator" data-zh="管理员" value="admin">Administrator</option><option data-en="Viewer" data-zh="只读用户" value="viewer">Viewer</option></select><div class="controls"><button data-en="Ask" data-zh="提问" id="ask" type="button">Ask</button><button data-en="Use export question" data-zh="使用导出问题" id="preset" type="button">Use export question</button></div></div><div class="answer" id="result" aria-live="polite" aria-atomic="true"></div></div><noscript>Enable JavaScript for the interactive demo and language switch. / 请启用 JavaScript 以使用交互演示与语言切换。</noscript></section><section id="approach"><h2 data-en="A small set of flows. A traceable answer." data-zh="从少量关键流程开始，让答案有据可查。" >A small set of flows. A traceable answer.</h2><div class="cards"><article class="card"><h3 data-en="Keep workflows in Git" data-zh="在 Git 中管理流程" >Keep workflows in Git</h3><p data-en="The specification connects source files, screens, steps, and evidence. Start with three to five important customer workflows." data-zh="规格将源文件、页面、操作步骤与证据关联起来。从三到五个关键客户流程开始。" >The specification connects source files, screens, steps, and evidence. Start with three to five important customer workflows.</p></article><article class="card"><h3 data-en="Withhold outdated steps" data-zh="阻止过期步骤" >Withhold outdated steps</h3><p data-en="The working demo enforces release and role checks. Stale or failed evidence produces no actionable answer. Production verification remains planned." data-zh="当前演示实际执行版本与角色检查。证据过期或验证失败时不提供操作步骤。生产环境验证仍待实现。" >The working demo enforces release and role checks. Stale or failed evidence produces no actionable answer. Production verification remains planned.</p></article><article class="card"><h3 data-en="Make uncertainty visible" data-zh="明确表达不确定性" >Make uncertainty visible</h3><p data-en="The demo asks for clarification on unknown questions and unsupported roles. It uses a fixed synthetic fixture, not an AI model." data-zh="演示会对未知问题和不支持的角色请求澄清。它使用固定合成样例，不调用 AI 模型。" >The demo asks for clarification on unknown questions and unsupported roles. It uses a fixed synthetic fixture, not an AI model.</p></article></div></section><section id="roadmap" class="roadmap"><div><span data-en="Stage 1 / Planned foundation" data-zh="第一阶段 / 规划中的基础能力" class="eyebrow">Stage 1 / Planned foundation</span><h2 data-en="Make the core loop trustworthy." data-zh="建立可信的核心闭环。" >Make the core loop trustworthy.</h2><p data-en="Implement Git-tracked workflows, source relationships, change detection, build-specific sandbox verification, and basic agent-readable guidance. Define screenshot-plus-question intake with clarification for ambiguous context." data-zh="实现 Git 流程管理、源码关联、变更检测、按构建版本进行沙箱验证，以及基础的智能体可读指引。定义截图加问题的输入契约，并对模糊上下文请求澄清。" >Implement Git-tracked workflows, source relationships, change detection, build-specific sandbox verification, and basic agent-readable guidance. Define screenshot-plus-question intake with clarification for ambiguous context.</p><p data-en="Screenshot intake is a contract, not working image understanding. The current demo does not accept or analyze images." data-zh="截图输入目前是契约设计，并非已实现的图像理解能力。当前演示不接收或分析图片。" >Screenshot intake is a contract, not working image understanding. The current demo does not accept or analyze images.</p></div><div class="later"><span data-en="Stage 2 / Future exploration" data-zh="第二阶段 / 未来探索" class="eyebrow">Stage 2 / Future exploration</span><h2 data-en="Richer ways to help." data-zh="更丰富的帮助方式。" >Richer ways to help.</h2><p data-en="Explore narrated walkthrough videos, broader image understanding, and customer-side execution with explicit consent. These capabilities are planned, not available today." data-zh="探索带解说的操作视频、更广泛的图像理解，以及经过明确授权的客户侧执行。这些能力尚在规划，当前不可用。" >Explore narrated walkthrough videos, broader image understanding, and customer-side execution with explicit consent. These capabilities are planned, not available today.</p></div></section><section><h2 data-en="What support would unlock" data-zh="支持将推动什么" >What support would unlock</h2><p data-en="The first milestone: one local end-to-end fixture connecting a source change to a stale workflow, an actual browser verification run, and a version-matched answer with saved evidence." data-zh="首个里程碑：完成一个本地端到端样例，将源码变更、流程过期、真实浏览器验证，以及附有留存证据的版本匹配答案串联起来。" >The first milestone: one local end-to-end fixture connecting a source change to a stale workflow, an actual browser verification run, and a version-matched answer with saved evidence.</p><p data-en="Engineering support would help build that loop. A pilot partner could contribute one non-sensitive SaaS workflow and evaluate whether the evidence and fallback answers are useful. Scope and acceptance criteria would be agreed before a pilot; there is no delivery date or outcome guarantee." data-zh="工程支持将帮助实现这一闭环。试点伙伴可提供一个不含敏感信息的 SaaS 流程，评估证据与无法回答时的提示是否实用。试点前共同确定范围与验收标准；目前不承诺交付日期或结果。" >Engineering support would help build that loop. A pilot partner could contribute one non-sensitive SaaS workflow and evaluate whether the evidence and fallback answers are useful. Scope and acceptance criteria would be agreed before a pilot; there is no delivery date or outcome guarantee.</p><a data-en="Discuss a contribution or pilot in GitHub Issues ↗" data-zh="在 GitHub Issues 讨论贡献或试点 ↗" href="https://github.com/callingforhelp/flowwitness/issues">Discuss a contribution or pilot in GitHub Issues ↗</a><div class="documents"><a data-en="Project overview" data-zh="项目概览" data-path-en="README.md" data-path-zh="README.zh-CN.md" href="https://github.com/callingforhelp/flowwitness/blob/main/README.md">Project overview</a><a data-en="Product specification" data-zh="产品规格" data-path-en="docs/PRODUCT.md" data-path-zh="docs/PRODUCT.zh-CN.md" href="https://github.com/callingforhelp/flowwitness/blob/main/docs/PRODUCT.md">Product specification</a><a data-en="Research" data-zh="研究文档" data-path-en="docs/RESEARCH.md" data-path-zh="docs/RESEARCH.zh-CN.md" href="https://github.com/callingforhelp/flowwitness/blob/main/docs/RESEARCH.md">Research</a><a data-en="Roadmap" data-zh="路线图" data-path-en="ROADMAP.md" data-path-zh="ROADMAP.zh-CN.md" href="https://github.com/callingforhelp/flowwitness/blob/main/ROADMAP.md">Roadmap</a></div></section></main><footer><span data-en="FlowWitness · MIT open source" data-zh="FlowWitness · MIT 开源许可" >FlowWitness · MIT open source</span><span data-en="Evidence before answers." data-zh="先有证据，再给答案。" >Evidence before answers.</span></footer></div><script type="module">
-import { initialState, transition, answer } from './demo.mjs';
-let state = initialState();
-let lang = 'en';
-try { if (localStorage.getItem('flowwitness-language') === 'zh') lang = 'zh'; } catch {}
-const el = id => document.getElementById(id);
-const words = (en, zh) => lang === 'zh' ? zh : en;
-function render() {
- const status = {verified: words('Verified (simulated)','已验证（模拟）'), stale: words('Stale','已过期'), unavailable: words('Unavailable','不可用')}[state.status];
- const nodes = [words('Source: ExportPanel.tsx','源码：ExportPanel.tsx'), words('Screen: Data','页面：数据'), words('Flow: export report','流程：导出报告'), words('Evidence: ','证据：') + state.evidenceVersion + ' · ' + status];
- el('graph').replaceChildren();
- nodes.forEach((label,i) => { if(i) el('graph').append(document.createTextNode(' → ')); const n=document.createElement('span'); n.className='node'; n.textContent=label; el('graph').append(n); });
- const response = answer(state, el('question').value, el('role').value);
- el('result').replaceChildren();
- const line = document.createElement('p'); line.className='status-line'; line.textContent = words('Application release: ','应用版本：') + state.release + ' · ' + status; el('result').append(line);
- const messages = {
- verified: words('Verified demo answer for ','模拟验证答案，适用版本：') + state.release,
- unavailable: words('No actionable answer. Evidence is stale, failed, or does not match this release. Approve updated steps and simulate a successful replay to continue.','无法提供操作步骤。证据已过期、验证失败或与当前版本不匹配。请批准更新后的步骤并模拟回放成功。'),
- clarify: words('This demo only knows report export. Try “How do I export a report?” For other requests, please clarify the workflow; this fixture has no evidence for it.','此演示仅支持导出报告。请尝试“如何导出报告？”。其他请求需要澄清具体流程，此样例没有对应证据。'),
- role: words('No verified steps for the Viewer role. Confirm an Administrator role or request role-specific verification.','没有适用于只读用户的已验证步骤。请确认管理员角色，或请求针对该角色的验证。')
- };
- const msg=document.createElement('p'); msg.textContent=messages[response.kind]; el('result').append(msg);
- if(response.steps.length) {const list=document.createElement('ol'); const labels={project:words('Open your project.','打开项目。'),data:words('Choose Data.','选择“数据”。'),menu:words('Open the More menu.','打开“更多”菜单。'),export:words('Select Export report.','选择“导出报告”。')}; response.steps.forEach(step=>{const li=document.createElement('li');li.textContent=labels[step];list.append(li)});el('result').append(list);}
- const note=document.createElement('small');note.textContent=words('Synthetic evidence only. No real replay was executed.','仅为合成证据，未执行真实回放。');el('result').append(note);
-}
-function setLanguage() {
- document.documentElement.lang=lang==='zh'?'zh-CN':'en';
- document.querySelectorAll('[data-en]').forEach(n=>n.textContent=n.dataset[lang]);
- document.querySelectorAll('[data-path-en]').forEach(n=>n.href='https://github.com/callingforhelp/flowwitness/blob/main/'+n.dataset[lang==='zh'?'pathZh':'pathEn']);
- el('language').textContent=lang==='zh'?'English':'中文';
- el('language').setAttribute('aria-label',words('Switch to Chinese / 切换为中文','Switch to English / 切换为英文'));
- document.title=words('FlowWitness — Evidence before answers','FlowWitness — 先有证据，再给答案');
- document.querySelector('meta[name="description"]').content=words('FlowWitness: evidence-grounded customer guidance. Explore a local interactive simulation and the open source specification.','FlowWitness：以证据为基础的客户指引。体验本地交互模拟，了解开源产品规格。');
- if(['How do I export a report?','如何导出报告？'].includes(el('question').value)) el('question').value=words('How do I export a report?','如何导出报告？');
- render();
-}
-el('language').addEventListener('click',()=>{lang=lang==='en'?'zh':'en';try{localStorage.setItem('flowwitness-language',lang)}catch{}setLanguage()});
-document.querySelectorAll('[data-action]').forEach(button=>button.addEventListener('click',()=>{state=transition(state,button.dataset.action);render()}));
-el('ask').addEventListener('click',render);el('role').addEventListener('change',render);el('question').addEventListener('input',render);
-el('question').addEventListener('keydown',e=>{if(e.key==='Enter')render()});
-el('preset').addEventListener('click',()=>{el('question').value=words('How do I export a report?','如何导出报告？');render()});
-setLanguage();
-</script></body></html>
+    const el = id => document.getElementById(id);
+    let state = initialState();
+    let lang = 'en';
+    let lastAction = 'reset';
+    let exportShown = false;
+    try {
+      if (localStorage.getItem('flowwitness-language') === 'zh') lang = 'zh';
+    } catch {}
+    const words = (en, zh) => lang === 'zh' ? zh : en;
+
+    function closeMenu() {
+      el('more-menu').hidden = true;
+      el('more').setAttribute('aria-expanded', 'false');
+    }
+
+    function render() {
+      const updatedUI = state.release === 'v2';
+      el('export-direct').hidden = updatedUI;
+      el('more-wrap').hidden = !updatedUI;
+      el('app-notice').textContent = exportShown
+        ? words('Sample CSV ready. This is a local simulation; no file is downloaded.', '示例 CSV 已就绪。这是本地模拟，不会下载文件。')
+        : words('Sample app: open Project: Reports → Data, then try Export report.', '示例应用：打开“项目：报告” → “数据”，再试试“导出报告”。');
+      const ready = state.status === 'verified' && state.evidenceVersion === state.release;
+      el('developer-status').textContent = ready
+        ? words('Ready to help', '可以提供指引')
+        : words('Instructions need an update', '操作指引需要更新');
+      el('developer-status').classList.toggle('needs-update', !ready);
+      const detail = {
+        reset: words('The sample instructions match the visible Export button. All checks here are simulated.', '示例指引与当前可见的导出按钮一致。这里的检查均为模拟。'),
+        'release-v2': words('Export is now inside More in the sample app above. The old instructions are held back until you update them.', '上方示例应用的导出按钮已移入“更多”。更新完成前，暂不向客户提供旧步骤。'),
+        fail: words('Simulated check failed. The demo withholds instructions; no real browser check was run.', '模拟检查失败。演示暂不提供操作步骤；未执行真实浏览器检查。'),
+        'approve-and-pass': words('Instructions updated; simulated check passed. The customer answer above now matches the sample UI.', '指引已更新，模拟检查通过。上方客户答案已与示例界面一致。')
+      };
+      el('developer-detail').textContent = detail[lastAction];
+      el('customer-question').textContent = el('question').value;
+      const response = answer(state, el('question').value, el('role').value);
+      const messages = {
+        verified: words('Here’s how to export your report:', '你可以这样导出报告：'),
+        unavailable: words('The instructions need a check before I can guide you. Please ask your support team for help, or try again after the instructions are updated.', '操作指引需要先检查才能使用。请联系支持团队，或在指引更新后重试。'),
+        clarify: words('This sample only covers exporting reports. Try “How do I export a report?”', '此示例仅涵盖导出报告。请试试“如何导出报告？”。'),
+        role: words('These steps are for administrators. Please ask an administrator to help export your report.', '这些步骤适用于管理员。请联系管理员协助导出报告。')
+      };
+      const message = document.createElement('p');
+      message.textContent = messages[response.kind];
+      el('result').replaceChildren(message);
+      if (response.steps.length) {
+        const list = document.createElement('ol');
+        const labels = {
+          project: words('Open Project: Reports.', '打开“项目：报告”。'),
+          data: words('Choose Data.', '选择“数据”。'),
+          menu: words('Open the More menu.', '打开“更多”菜单。'),
+          export: words('Select Export report.', '选择“导出报告”。')
+        };
+        response.steps.forEach(step => {
+          const item = document.createElement('li');
+          item.textContent = labels[step];
+          list.append(item);
+        });
+        el('result').append(list);
+      }
+      const note = document.createElement('small');
+      note.textContent = words('Sample answer · Simulated checking', '示例答案 · 模拟检查');
+      el('result').append(note);
+    }
+
+    function setLanguage() {
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+      document.querySelectorAll('[data-en]').forEach(node => { node.textContent = node.dataset[lang]; });
+      document.querySelectorAll('[data-aria-en]').forEach(node => {
+        node.setAttribute('aria-label', node.dataset[lang === 'zh' ? 'ariaZh' : 'ariaEn']);
+      });
+      document.querySelectorAll('[data-path-en]').forEach(node => {
+        node.href = 'https://github.com/callingforhelp/flowwitness/blob/main/' + node.dataset[lang === 'zh' ? 'pathZh' : 'pathEn'];
+      });
+      el('language').textContent = lang === 'zh' ? 'English' : '中文';
+      el('language').setAttribute('aria-label', words('Switch to Chinese', '切换为英文'));
+      document.title = words('FlowWitness — Help your customers use what you built', 'FlowWitness — 让客户轻松用好你做的产品');
+      document.querySelector('meta[name="description"]').content = words(
+        'Help your customers use what you built. Try the FlowWitness concept demo for customer guidance that follows UI changes.',
+        '让客户轻松用好你做的产品。体验 FlowWitness 概念演示，了解随界面变化更新的客户操作指引。'
+      );
+      if (['How do I export a report?', '如何导出报告？'].includes(el('question').value)) {
+        el('question').value = words('How do I export a report?', '如何导出报告？');
+      }
+      render();
+    }
+
+    el('language').addEventListener('click', () => {
+      lang = lang === 'en' ? 'zh' : 'en';
+      try { localStorage.setItem('flowwitness-language', lang); } catch {}
+      setLanguage();
+    });
+    document.querySelectorAll('[data-action]').forEach(button => {
+      button.addEventListener('click', () => {
+        lastAction = button.dataset.action;
+        state = transition(state, lastAction);
+        exportShown = false;
+        closeMenu();
+        if (lastAction === 'reset') {
+          el('question').value = words('How do I export a report?', '如何导出报告？');
+          el('role').value = 'admin';
+        }
+        render();
+      });
+    });
+    el('more').addEventListener('click', () => {
+      el('more-menu').hidden = !el('more-menu').hidden;
+      el('more').setAttribute('aria-expanded', String(!el('more-menu').hidden));
+    });
+    el('more-wrap').addEventListener('keydown', event => {
+      if (event.key === 'Escape') { closeMenu(); el('more').focus(); }
+    });
+    document.addEventListener('click', event => {
+      if (!el('more-wrap').contains(event.target)) closeMenu();
+    });
+    ['export-direct', 'export-menu'].forEach(id => {
+      el(id).addEventListener('click', () => {
+        exportShown = true;
+        closeMenu();
+        if (id === 'export-menu') el('more').focus();
+        render();
+      });
+    });
+    el('ask').addEventListener('click', render);
+    el('role').addEventListener('change', render);
+    el('question').addEventListener('input', render);
+    el('question').addEventListener('keydown', event => { if (event.key === 'Enter') render(); });
+    el('preset').addEventListener('click', () => {
+      el('question').value = words('How do I export a report?', '如何导出报告？');
+      render();
+    });
+    setLanguage();
+  </script>
+</body>
+</html>
