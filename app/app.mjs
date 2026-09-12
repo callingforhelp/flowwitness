@@ -142,6 +142,15 @@ function revokeImages() {
   for (const url of urls) URL.revokeObjectURL(url);
   urls.clear();
 }
+function updateWorkflowStatus() {
+  setText($("workflow-status"), status(selected.status));
+  document.querySelectorAll("[data-workflow]").forEach((button) => {
+    if (button.dataset.workflow === selected.id) {
+      const label = button.querySelector("small");
+      if (label) setText(label, status(selected.status));
+    }
+  });
+}
 async function screenshot(id, container, generation = pollGeneration) {
   try {
     const blob = await api(`/v1/artifacts/${encodeURIComponent(id)}`, {
@@ -155,7 +164,15 @@ async function screenshot(id, container, generation = pollGeneration) {
     img.dataset.zhAlt = "真实浏览器截图";
     img.alt = language === "zh" ? img.dataset.zhAlt : img.dataset.enAlt;
     img.src = url;
-    container.append(img);
+    const link = node(
+      "a",
+      t("Open full screenshot (new tab)", "打开完整截图（新标签页）"),
+      "screenshot-link",
+    );
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener";
+    container.append(img, link);
   } catch (error) {
     if (container.isConnected) container.append(node("p", error.message));
   }
@@ -200,7 +217,7 @@ async function choose(id) {
   setText($("publication-status"), "");
   selected = (await api(`/v1/workflows/${encodeURIComponent(id)}`)).workflow;
   setText($("workflow-title"), selected.title);
-  setText($("workflow-status"), status(selected.status));
+  updateWorkflowStatus();
   setText(
     $("workflow-description"),
     `${selected.id} · ${selected.role} · ${selected.locale} — ${t("Workflow", "工作流程")}`,
@@ -347,7 +364,7 @@ async function verify() {
       await loadQuestions();
       selected = (await api(`/v1/workflows/${encodeURIComponent(id)}`))
         .workflow;
-      setText($("workflow-status"), status(selected.status));
+      updateWorkflowStatus();
       return;
     }
     if (Date.now() >= deadline)
