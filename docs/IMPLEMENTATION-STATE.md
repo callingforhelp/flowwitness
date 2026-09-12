@@ -115,3 +115,13 @@ reproduction (6/6), knowledge (4/4), video (4/4), FFmpeg (1/1), composition
 authenticated InsForge run, a real approved E2B/browser adapter, host-specific
 Claude/Codex/pi discovery receipts, public backend hosting and an external
 pilot.
+
+## Pilot checkpoint — 2026-09-12
+
+Internal Pilot 01 completed on the bundled non-sensitive `demo-reports` app.
+Real Chromium verified and published v1, detected the moved Export control in
+v2 and withheld stale guidance, then verified and published the repaired v2
+workflow. The detailed bilingual record is in `docs/PILOT-01.md` and
+`docs/PILOT-01.zh-CN.md`. Public `main` is now `ae5cced`; an external adopter's
+non-sensitive workflow is still required before claiming external pilot
+readiness.
