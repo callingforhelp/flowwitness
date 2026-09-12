@@ -1,0 +1,36 @@
+{
+  "schema_version": "0.1",
+  "synthetic": true,
+  "id": "export-report",
+  "revision": "example-r1",
+  "application": "demo-reports",
+  "deployment_version": "demo-release-1",
+  "role": "member",
+  "status": "draft",
+  "source_links": [
+    {
+      "path": "src/reports.tsx",
+      "screen_id": "reports",
+      "provenance": "authored"
+    }
+  ],
+  "steps": [
+    {
+      "id": "open-reports",
+      "screen_id": "reports",
+      "intent": "Open Reports",
+      "expected_observation": "Reports heading is visible"
+    },
+    {
+      "id": "export",
+      "screen_id": "reports",
+      "intent": "Export this report",
+      "target": {
+        "role": "button",
+        "name": "Export"
+      },
+      "expected_observation": "A CSV download completes"
+    }
+  ],
+  "verification": null
+}

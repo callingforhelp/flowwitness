@@ -1,0 +1,41 @@
+{
+  "synthetic": true,
+  "status": "answered",
+  "workflow_id": "export-report",
+  "guide_revision": "example-published-r1",
+  "deployment_version": "demo-release-1",
+  "verified_at": "2026-09-12T00:00:00Z",
+  "evidence": [
+    {
+      "run_id": "synthetic-run-1",
+      "artifact_id": "synthetic-screenshot-1"
+    }
+  ],
+  "steps": [
+    {
+      "id": "export",
+      "text": "On Reports, select Export. A CSV download should complete."
+    }
+  ],
+  "guidance": {
+    "schema_version": "0.1",
+    "execution_mode": "instructions_only",
+    "allowed_origins": [
+      "https://reports.example.invalid"
+    ],
+    "deployment_version": "demo-release-1",
+    "expires_at": "2026-09-13T00:00:00Z",
+    "requires_user_confirmation": true,
+    "steps": [
+      {
+        "intent": "Export the current report",
+        "target": {
+          "role": "button",
+          "name": "Export"
+        },
+        "precondition": "Reports page is open and the user can access this report",
+        "expected_observation": "CSV download completes"
+      }
+    ]
+  }
+}
