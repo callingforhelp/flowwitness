@@ -33,7 +33,7 @@ change the Stage 1 workflow-to-answer loop.
 | Let a computer-use agent help the customer directly. | Stage 1 returns instructions only. The guidance object includes preconditions and expected observations but never grants browser authority or transfers credentials. | A host-specific computer-use adapter with confirmation, cancellation, mismatch stop, and completion checks. |
 | Have agents ask questions or update periodically after a GitHub push. | A signed push creates a scoped, deduplicated review queue. Registered workers can claim investigation jobs. There is no always-running agent swarm, native lifecycle hook, or hidden scheduled reasoning. | Pilot evidence for the cadence and cost, then an explicit digest/scheduler integration with operator controls. |
 | Use relationship graphs or Archify linkage. | Explicit source/workflow/run/evidence relationships are stored; the graph endpoint exposes only those relationships. Archify code is not bundled and no graph database is required. | A maintainer need for relationship inspection after pilot use, followed by an optional export. |
-| Offer a public customer-service endpoint or hosted cloud. | A small [Cloudflare Worker preview](https://flowwitness-preview.dave-z.workers.dev/) now serves a read-only, dynamic concept surface; the full service remains local or self-hosted, one application per instance, with admin/support credentials in authenticated mode. GitHub Pages remains a simulated concept demo. | The Worker proves edge reachability only. A deployment owner, TLS, private storage, tenant model, operational budget, and authenticated production validation are still required for the backend. |
+| Offer a public customer-service endpoint or hosted cloud. | The authenticated Node/Playwright service is live for sponsor review at the [hosted backend](HOSTED-BACKEND.md), with InsForge-backed state and private artifact bytes; the [Cloudflare Worker preview](https://flowwitness-preview.dave-z.workers.dev/) remains a read-only concept surface. GitHub Pages remains a simulated concept demo. | External HTTPS, auth, image intake, state restart recovery and API paths are reachable. The free 512 MB machine cannot yet create a Chromium page reliably, so production browser verification, tenancy, custom-domain operations and external adoption remain open. |
 
 ## The next pilot gate
 
@@ -60,6 +60,7 @@ the bilingual experience, or funding an explicitly approved browser/renderer
 adapter. No sponsor or partner commitment is implied by this request.
 
 Until that gate is complete, FlowWitness should claim a working local alpha and
-an internal two-release receipt. It should not claim external adoption,
-production hosting, managed E2B, native host plugins, image recognition,
+a hosted authenticated pilot backend with durable state, plus the internal
+two-release receipt. It should not claim production browser verification,
+external adoption, managed E2B, native host plugins, image recognition,
 customer computer control, or customer-facing video delivery.

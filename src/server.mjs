@@ -44,6 +44,8 @@ export async function createServer(options = {}) {
       options.allowedOrigins ||
       process.env.FLOWWITNESS_ALLOWED_ORIGINS?.split(",").filter(Boolean) ||
       [],
+    browserOrigin:
+      options.browserOrigin || process.env.FLOWWITNESS_BROWSER_ORIGIN || null,
   };
   const authenticated = !!(config.adminToken || config.supportToken);
   if (authenticated || !loopback(config.host))
@@ -53,7 +55,10 @@ export async function createServer(options = {}) {
         config.adminToken !== config.supportToken,
       "Distinct admin/support tokens of at least 24 characters required",
     );
-  const store = new Store(config.root);
+  const store = new Store(config.root, {
+    application: config.application,
+    stateBackend: options.stateBackend,
+  });
   if (options.dataDir || process.env.FLOWWITNESS_DATA_DIR)
     store.private = path.resolve(
       options.dataDir || process.env.FLOWWITNESS_DATA_DIR,
@@ -94,15 +99,17 @@ export async function createServer(options = {}) {
       const p = url.pathname;
       const mutation = !["GET", "HEAD"].includes(req.method);
       const host = req.headers.host;
+      const requestHosts = new Set([new URL(config.origin).host]);
+      if (config.browserOrigin) requestHosts.add(new URL(config.browserOrigin).host);
       demand(
-        host === new URL(config.origin).host,
+        requestHosts.has(host),
         "Host not allowed",
         "forbidden",
         403,
       );
       if (req.headers.origin)
         demand(
-          req.headers.origin === config.origin,
+          [config.origin, config.browserOrigin].includes(req.headers.origin),
           "Origin not allowed",
           "forbidden",
           403,

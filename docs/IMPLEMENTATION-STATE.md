@@ -125,3 +125,20 @@ workflow. The detailed bilingual record is in `docs/PILOT-01.md` and
 `docs/PILOT-01.zh-CN.md`. Public `main` is now `ae5cced`; an external adopter's
 non-sensitive workflow is still required before claiming external pilot
 readiness.
+
+## Hosted backend checkpoint — 2026-09-12
+
+The same checkout now deploys an authenticated Node/Playwright service through
+InsForge Compute at the generated `.fly.dev` endpoint. The service uses the
+InsForge `flowwitness_state` table and versioned RPCs for state plus private
+artifact bytes, and a restart test preserved a workflow and uploaded PNG. The
+Cloudflare Worker remains a separate dynamic concept preview.
+
+The free compute plan is limited to a single `shared-1x`/512 MB machine. Health,
+authenticated setup, workflow persistence, deployment identity, image intake
+and private artifact retrieval pass from outside the machine. Chromium launches
+but cannot reliably create a page at that memory limit, so the hosted replay
+job is intentionally not marked passed. The next production gate is a larger
+browser-capable tier (or an explicitly approved remote browser adapter),
+followed by the two-release pilot, custom-domain/TLS operations, backup drill
+and tenant/retention decisions. No successful hosted browser run is claimed.

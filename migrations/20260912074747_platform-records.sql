@@ -1,7 +1,6 @@
 -- Trusted coordinator RPCs. No user/client may commit arbitrary snapshots.
 -- Domain records are normalized into separately indexed rows; the revision row
 -- serializes changes within one exact scope. Null is application scope only.
-begin;
 create table if not exists public.platform_scopes (
   application text not null,
   conversation_key text not null,
@@ -110,4 +109,3 @@ begin
 end $$;
 revoke all on function public.platform_load(text,text), public.platform_commit(text,text,bigint,jsonb) from public, anon, authenticated;
 grant execute on function public.platform_load(text,text), public.platform_commit(text,text,bigint,jsonb) to project_admin;
-commit;

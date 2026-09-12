@@ -215,6 +215,7 @@ export class Service {
         run = await replay(job.workflow, job.deployment, {
           artifact: (b) => this.artifact(b),
           stepTimeout: this.config.stepTimeout,
+          browserBaseUrl: this.config.browserOrigin || undefined,
         });
       } catch {
         run = {

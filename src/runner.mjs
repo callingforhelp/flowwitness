@@ -3,9 +3,22 @@ import { demand } from "./schema.mjs";
 export async function replay(
   w,
   d,
-  { artifact, timeout = 90000, stepTimeout = 5000 },
+  {
+    artifact,
+    timeout = 90000,
+    stepTimeout = 5000,
+    browserBaseUrl = d.base_url,
+  },
 ) {
-  const browser = await chromium.launch({ headless: true });
+  // The hosted Linux service runs as an unprivileged-by-platform container with
+  // a small default /dev/shm. Keep the browser launch deterministic there as
+  // well as in local Docker/CI: Chromium uses /tmp instead of the tiny shared
+  // memory mount, and the root-based image does not attempt the SUID sandbox.
+  const browser = await chromium.launch({
+    headless: true,
+    args: ["--disable-dev-shm-usage", "--no-sandbox", "--disable-gpu"],
+  });
+  const browserOrigin = new URL(browserBaseUrl).origin;
   let timer;
   const run = {
     workflow_id: w.id,
@@ -20,7 +33,7 @@ export async function replay(
       (async () => {
         const context = await browser.newContext({ serviceWorkers: "block" });
         await context.route("**/*", (route) =>
-          new URL(route.request().url()).origin === new URL(d.base_url).origin
+          new URL(route.request().url()).origin === browserOrigin
             ? route.continue()
             : route.abort(),
         );
@@ -30,7 +43,7 @@ export async function replay(
           const p = await context.newPage();
           try {
             const response = await p.goto(
-              new URL(d.identity_path, d.base_url).href,
+              new URL(d.identity_path, browserBaseUrl).href,
               { timeout: stepTimeout },
             );
             demand(response?.ok(), "Identity request failed");
@@ -45,7 +58,7 @@ export async function replay(
           }
         };
         await identity();
-        await page.goto(new URL(w.start_path, d.base_url).href, {
+        await page.goto(new URL(w.start_path, browserBaseUrl).href, {
           timeout: stepTimeout,
         });
         for (const s of w.steps) {
@@ -78,7 +91,7 @@ export async function replay(
             if (a.type === "url")
               await page.waitForURL(
                 (url) =>
-                  url.origin === new URL(d.base_url).origin &&
+                  url.origin === browserOrigin &&
                   url.pathname === a.path,
               );
             const png = await page.screenshot({

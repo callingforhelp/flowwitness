@@ -19,6 +19,11 @@ Workflow records are written to `workflows/<id>.json` under the service's workin
 | FLOWWITNESS_DATA_DIR | Private state and artifact directory |
 | FLOWWITNESS_PUBLIC_ORIGIN | Explicit request origin for reverse proxy/container access; never blindly trust forwarded headers |
 | FLOWWITNESS_ALLOWED_ORIGINS | Comma-separated origins the operator may select for browser checks |
+| FLOWWITNESS_BROWSER_ORIGIN | Optional private origin the hosted runner uses for its browser; the public deployment origin remains in customer guidance |
+| FLOWWITNESS_STATE_BACKEND | `local` (default) or `insforge` for a remotely durable state snapshot |
+| FLOWWITNESS_INSFORGE_URL | InsForge project URL required by the `insforge` state backend |
+| FLOWWITNESS_INSFORGE_API_KEY | Project-admin key for server-only state RPCs; never expose it to a browser or commit it |
+| FLOWWITNESS_STATE_MAX_BYTES | Maximum serialized hosted snapshot, default 8 MB; screenshots count toward this limit |
 | FLOWWITNESS_ADMIN_TOKEN | Management credential for externally bound/authenticated mode |
 | FLOWWITNESS_SUPPORT_TOKEN | Different credential for trusted support backend queries/images/artifacts |
 | FLOWWITNESS_WEBHOOK_SECRET | GitHub push HMAC secret |
@@ -27,7 +32,7 @@ Workflow records are written to `workflows/<id>.json` under the service's workin
 
 Use two distinct tokens of at least 32 random characters. Keep them in a local environment or secret manager. `.env.example` has no credentials. To load an explicitly prepared `.env`, run `node --env-file=.env bin/flowwitness.mjs serve`; `npm start` does not automatically load it. Dashboard tokens live in memory and are cleared on reload. Local unauthenticated mode is for a trusted machine only; it rejects foreign origins and requires a client header for mutations.
 
-External deployments need TLS termination, an operator-controlled allowed origin, private durable disk and a running Chromium-compatible environment. Do not expose the management token in customer-side JavaScript. The support token is for a trusted chat backend that verifies customer role, not a public browser widget. One application per instance; tenant isolation across many customers is not implemented.
+External deployments need TLS termination, an operator-controlled allowed origin, private durable disk or the InsForge state backend, and a running Chromium-compatible environment. For a hosted deployment, set `FLOWWITNESS_STATE_BACKEND=insforge`, apply the migrations in `migrations/`, and keep the project-admin key server-side. `FLOWWITNESS_BROWSER_ORIGIN` may point at the service's private loopback so a reverse-proxy public origin is not used for the browser's own requests. Do not expose the management token in customer-side JavaScript. The support token is for a trusted chat backend that verifies customer role, not a public browser widget. One application per instance; tenant isolation across many customers is not implemented.
 
 ## Your own application
 

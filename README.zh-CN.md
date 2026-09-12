@@ -2,11 +2,11 @@
 
 **让客户轻松用好你做的产品。**
 
-[English](README.md) · [公开概念演示](https://callingforhelp.github.io/flowwitness/) · [Cloudflare 动态预览](https://flowwitness-preview.dave-z.workers.dev/) · [Cloudflare 预览说明](docs/CLOUDFLARE-PREVIEW.zh-CN.md) · [试点 01](docs/PILOT-01.zh-CN.md) · [公开承诺对照表](docs/ADVERTISED-PROMISES.zh-CN.md) · [运行说明](docs/OPERATIONS.zh-CN.md) · [API](docs/API.zh-CN.md) · [调研](docs/RESEARCH.zh-CN.md) · [路线图](ROADMAP.zh-CN.md)
+[English](README.md) · [托管后端](docs/HOSTED-BACKEND.zh-CN.md) · [公开概念演示](https://callingforhelp.github.io/flowwitness/) · [Cloudflare 动态预览](https://flowwitness-preview.dave-z.workers.dev/) · [Cloudflare 预览说明](docs/CLOUDFLARE-PREVIEW.zh-CN.md) · [试点 01](docs/PILOT-01.zh-CN.md) · [公开承诺对照表](docs/ADVERTISED-PROMISES.zh-CN.md) · [运行说明](docs/OPERATIONS.zh-CN.md) · [API](docs/API.zh-CN.md) · [调研](docs/RESEARCH.zh-CN.md) · [路线图](ROADMAP.zh-CN.md)
 
-FlowWitness 是可自托管的本地 alpha：保存客户操作流程和客服问题，在 Chromium 中检查已批准的预览流程，再把明确审核发布的指引交给已有的客服聊天。界面变动后，验证旧步骤、查看失败证据、修复流程并发布新版答案。
+FlowWitness 是可自托管服务，并提供一个临时托管试点后端：保存客户操作流程和客服问题，在 Chromium 中检查已批准的预览流程，再把明确审核发布的指引交给已有的客服聊天。界面变动后，验证旧步骤、查看失败证据、修复流程并发布新版答案。
 
-**后端已经实现。** 包含 CLI、HTTP 服务、中英文操作台、真实浏览器验证、私密截图和客服查询接口。GitHub Pages 上仍是**独立的模拟概念演示**，不托管实际后端。
+**后端已经实现。** 包含 CLI、HTTP 服务、中英文操作台、真实浏览器验证、私密截图和客服查询接口。[托管后端](docs/HOSTED-BACKEND.zh-CN.md)已可供赞助方审阅；GitHub Pages 仍是**独立的模拟概念演示**。
 
 ## 本地运行
 
@@ -50,14 +50,13 @@ npm start
 **第一阶段**是试点路径：问题与问答、关联证据的推理库、代理任务与 CLI、
 工作流验证和中英文操作台。**第二阶段**保留为独立模块：批准的预览复现和
 私有演示视频编辑。它们需要明确适配器，不会改变第一阶段的“工作流到答案”
-闭环。图片理解、客户电脑操作、原生宿主钩子、Archify 导出以及托管
-InsForge/E2B 属于后续集成。
+闭环。图片理解、客户电脑操作、原生宿主钩子、Archify 导出以及托管 E2B 属于后续集成。
 
 ## 当前边界
 
 流程需要明确编写或导入，尚无自动录屏或从代码自动发现流程。查询匹配配置好的问题别名，不调用大模型。支持私密上传图片，但不识别图片内容。验证只面向操作者配置的可信应用，不是执行恶意代码的沙箱；登录后的客户会话回放需要额外适配。
 
-一个服务对应一个应用、一个状态写入进程，不是多租户托管客服平台。没有声称生产部署、外部试用、托管 E2B 连接或原生宿主钩子已完成。客户电脑执行、图片理解和自动生成配音属于后续工作。详见[第一阶段边界](ROADMAP.zh-CN.md)和[模块组合说明](docs/COMPOSITION.zh-CN.md)。
+一个服务对应一个应用、一个状态写入进程。托管地址可供赞助方审阅：认证接口和 InsForge 状态同步已上线，但免费 512 MB 机器仍无法稳定完成 Chromium 页面步骤，因此尚未通过生产认证，也不是多租户客服平台。客户电脑执行、图片理解和自动生成配音属于后续工作。详见[第一阶段边界](ROADMAP.zh-CN.md)、[托管后端检查点](docs/HOSTED-BACKEND.zh-CN.md)和[模块组合说明](docs/COMPOSITION.zh-CN.md)。
 
 ## CLI 与验证
 

@@ -4,7 +4,7 @@ Implementation contract, 2026-09-12. Domain decisions belong to the coordinator;
 
 ## Layout and runtime
 
-Node.js >=22 ESM, native HTTP server, Playwright browser adapter, sharp image normalization. Git-friendly workflow JSON plus private runtime JSON state and artifacts under `.flowwitness/private/` (gitignored). Single service process owns atomic state writes; refuse a second writer using lock. Recover queued/running jobs as interrupted on restart. No model credentials required. Deterministic intent matching with abstention, not claimed AI understanding.
+Node.js >=22 ESM, native HTTP server, Playwright browser adapter, sharp image normalization. Git-friendly workflow JSON plus private runtime JSON state and artifacts under `.flowwitness/private/` (gitignored). Single service process owns atomic state writes; refuse a second writer using lock. Recover queued/running jobs as interrupted on restart. Hosted mode mirrors the state snapshot and private artifact bytes to InsForge through project-admin-only versioned RPCs, while local mode remains file-backed. No model credentials required. Deterministic intent matching with abstention, not claimed AI understanding.
 
 `npm install`, `npx playwright install chromium`, `npm start` starts localhost:4310. Serve `app/` at /app/, existing `site/` at /, real fixture at /fixture/. Node test runner. `npm test` unit/API; `npm run test:integration` actual browser loop. CLI `bin/flowwitness.mjs` exported package bin `flowwitness`: init, validate <file>, import <file>, list, impact --base <ref> --head <ref>, verify <id>, query <question>, serve. Commands with local state must use service or acquire the same lock, never race the server. CLI supports FLOWWITNESS_URL and FLOWWITNESS_TOKEN; never print secrets.
 
