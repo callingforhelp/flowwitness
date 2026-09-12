@@ -161,6 +161,7 @@ The hosted service was redeployed to the existing InsForge Compute pilot with
 the support binding configured. External checks returned health 200, support
 knowledge 200, support issue create/read 201/200, and admin knowledge 200. A
 Compute configuration restart was observed in the service events, and the
-support-scoped issue remained readable afterward. This closes the module
-durability/binding gap; browser capacity, backup/restore, alerting, custom
-domain/TLS, and the external two-release pilot remain open.
+support-scoped issue remained readable afterward. A direct InsForge adapter
+reopen also read a private module artifact through its expiring link. This
+closes the module durability/binding gap; browser capacity, backup/restore,
+alerting, custom domain/TLS, and the external two-release pilot remain open.
