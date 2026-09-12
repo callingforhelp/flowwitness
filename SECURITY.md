@@ -1,11 +1,11 @@
 # Security
 
-This repository currently contains specifications and a static site, not a supported runtime release. Do not connect production credentials or submit customer data to examples.
+FlowWitness is a local alpha, not a hardened multi-tenant service. Use trusted test applications and non-sensitive data. Default unauthenticated mode binds loopback and assumes a trusted local machine. External binding requires separate admin/support credentials; deploy behind TLS and restrict access. The support credential belongs in a trusted chat backend that validates user role, never in a public browser client.
 
-Use the repository's Security → Report a vulnerability option for private vulnerability disclosure when enabled. If unavailable, open an issue asking for a private reporting channel without publishing exploit details or sensitive data. There is no response-time guarantee.
+Workflow browsers restrict requests to the configured origin, but a browser context is not a hostile-code sandbox. Logged-in session imports and user-machine execution are not implemented. Review masking selectors before capturing any sensitive page. Uploaded images are opt-in, normalized and private; image content is not interpreted. Private files expire and are cleaned periodically.
 
-Implementation requirements include per-tenant authorization, redacted/expiring artifacts, input size/rate limits, browser origin restrictions, bounded jobs, and safe handling of untrusted screenshots and application content. These are requirements, not implemented security guarantees.
+Report vulnerabilities through GitHub Security → Report a vulnerability. Do not include customer data, real tokens or private screenshots in public issues. No security-response SLA is offered.
 
-## 中文说明
+## 中文
 
-当前不提供生产运行时，不要向样例输入生产凭据或客户数据。优先使用 GitHub Security 的私密漏洞报告入口；若入口不可用，只发起请求私密渠道的 issue，不公开漏洞细节。隔离、鉴权和脱敏仍是待实现要求，不是已完成的安全保证。
+当前是本地 alpha，不是经过强化的多租户服务。仅使用可信测试应用和无敏感数据。无认证模式只绑定本机；对外部署需分离的管理/客服令牌、TLS 和访问限制，客服后端须核实用户角色。不要把令牌放入公共网页。浏览器上下文不是恶意代码沙箱。录制敏感页面前检查遮盖规则；图片经用户同意后私密保存、重编码并过期清理，没有视觉识别。漏洞请通过 GitHub 私密安全报告提交。

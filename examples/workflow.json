@@ -1,36 +1,42 @@
 {
-  "schema_version": "0.1",
-  "synthetic": true,
+  "schema_version": "1",
   "id": "export-report",
-  "revision": "example-r1",
   "application": "demo-reports",
-  "deployment_version": "demo-release-1",
-  "role": "member",
-  "status": "draft",
-  "source_links": [
-    {
-      "path": "src/reports.tsx",
-      "screen_id": "reports",
-      "provenance": "authored"
-    }
+  "title": "Export a report",
+  "questions": [
+    "How do I export a report?",
+    "Export report",
+    "导出报告",
+    "如何导出报告？"
   ],
+  "role": "admin",
+  "locale": "en",
+  "source_paths": [
+    "fixtures/reports.html"
+  ],
+  "shared_paths": [
+    "src/auth/"
+  ],
+  "start_path": "/fixture/",
   "steps": [
     {
-      "id": "open-reports",
-      "screen_id": "reports",
-      "intent": "Open Reports",
-      "expected_observation": "Reports heading is visible"
-    },
-    {
       "id": "export",
-      "screen_id": "reports",
-      "intent": "Export this report",
-      "target": {
-        "role": "button",
-        "name": "Export"
+      "instruction": "Select Export report.",
+      "instruction_zh": "选择导出报告。",
+      "action": {
+        "type": "click",
+        "selector": "#export"
       },
-      "expected_observation": "A CSV download completes"
+      "assertion": {
+        "type": "visible",
+        "selector": "#download-ready"
+      },
+      "expected": "CSV is ready.",
+      "expected_zh": "CSV 已就绪。"
     }
   ],
-  "verification": null
+  "redact_selectors": [
+    "input[type=password]",
+    "[data-private]"
+  ]
 }

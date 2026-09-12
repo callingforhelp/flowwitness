@@ -1,56 +1,69 @@
 # FlowWitness
 
-**让客户操作指引跟得上你的界面变化。**
+**让客户轻松用好你做的产品。**
 
-[English](README.md) · [项目网站 / 交互演示](https://callingforhelp.github.io/flowwitness/) · [调研](docs/RESEARCH.zh-CN.md) · [产品定义](docs/PRODUCT.zh-CN.md) · [路线图](ROADMAP.zh-CN.md) · [接口设计](docs/API.zh-CN.md)
+[English](README.md) · [公开概念演示](https://callingforhelp.github.io/flowwitness/) · [运行说明](docs/OPERATIONS.zh-CN.md) · [API](docs/API.zh-CN.md) · [调研](docs/RESEARCH.zh-CN.md) · [路线图](ROADMAP.zh-CN.md)
 
-这是一个开源项目：把重要的产品操作流程记录在代码仓库中，绑定版本和验证证据，再把可靠的操作步骤提供给现有客服聊天或用户自己的 AI 助手。
+FlowWitness 是可自托管的本地 alpha：保存客户操作流程，在 Chromium 中实际检查，再把明确审核发布的指引交给已有的客服聊天。界面变动后，验证旧步骤、查看失败证据、修复流程并发布新版答案。
 
-**当前阶段：可交互的浏览器本地演示与设计文档。CLI、客服 API、真实浏览器回放、图像识别和自动视频生成尚未实现。** 演示使用合成数据，实际展示版本校验与状态变化，不代表已经验证了真实网站。
+**后端已经实现。** 包含 CLI、HTTP 服务、中英文操作台、真实浏览器验证、私密截图和客服查询接口。GitHub Pages 上仍是**独立的模拟概念演示**，不托管实际后端。
 
-## 为什么做
+## 本地运行
 
-你移动了按钮、改了权限或重做了新手流程。代码已经上线，客服给出的操作步骤却仍然对应旧界面。
-
-FlowWitness 希望建立这条关系：**代码变化 → 页面 → 操作步骤 → 验证证据 → 客服答案**。相关变化出现后，旧步骤不能再被当作当前版本的可靠答案；重新验证后才能发布。
-
-## 第一阶段只把一件事做好
-
-1. 为一个 Web 产品记录 3–5 个重要流程，明确角色、步骤和预期结果。
-2. 把流程关联到页面与源文件；推送发现可能受影响的流程，部署信息决定该验证哪个版本。
-3. 在隔离测试环境中回放，保存脱敏截图与每一步的结果。
-4. 现有聊天系统调用接口，传入问题、可信版本上下文及可选图片引用。
-5. 返回有版本与证据的步骤；不确定时追问，失效时明确不可用。
-
-第一批使用者是经常借助编程助手更新界面、同时负责客服的独立 SaaS 开发者。浏览器测试通过，只证明指定环境、角色与版本下的结果，并不保证所有客户账号都一样。
-
-## 先后顺序
-
-| 第一阶段 | 第二阶段 |
-| --- | --- |
-| Git 中的流程记录、明确关系 | 更广泛的自动流程发现 |
-| 推送影响检查、按部署版本重新验证 | 更多异常场景与按需代理协作 |
-| 有证据的文字与截图步骤 | 字幕、剪辑与配音的操作视频 |
-| 独立查询接口、结构化指引 | 用户授权后的电脑操作辅助 |
-| 共用 CLI/技能入口，逐一测试兼容性 | Claude Code、Codex、pi 的原生插件 |
-
-不开发聊天应用，不替代整个客服系统，不在第一阶段引入图数据库或持续录屏。接口预留截图/照片输入，但任意照片识别的准确率需要单独验证。
-
-## 现在可以体验什么
-
-网站提供中英文切换和合成流程演示：版本变化后旧答案失效，模拟回放失败时不输出可执行步骤，审核更新并模拟验证成功后恢复新版指引。它是本地状态逻辑演示，没有调用真实后端。
+需要 Node.js 22 或以上、npm 及 Playwright Chromium。
 
 ```sh
-python3 -m http.server 8080 --directory site
-node --test site/demo.test.mjs
+git clone https://github.com/callingforhelp/flowwitness.git
+cd flowwitness
+npm ci
+npx playwright install chromium
+npm start
 ```
 
-访问 http://localhost:8080。示例 JSON 在 [examples](examples) 中，全部为合成样例。
+打开 **http://127.0.0.1:4310/app/**。本地模式不需要模型 API key，仅绑定本机回环地址，适合可信个人机器。对外绑定必须配置不同的管理员与客服令牌，详见 [运行说明](docs/OPERATIONS.zh-CN.md)。
 
-## 参与与支持
+1. 点击“创建演示流程”。
+2. 执行浏览器验证，查看实际截图。
+3. 手动发布成功验证的指引。
+4. 提问“如何导出报告？”。
+5. 在应用变更区域切换至 v2：旧答案不可用，旧步骤会在已变动的真实页面上验证失败。
+6. 修复步骤，再次验证并发布。
 
-最需要的是一个真实但已脱敏的案例：界面更新后，哪条操作说明错了？谁发现的？正确答案需要知道什么？请通过 issue 模板分享，勿提交客户隐私。
+报表数据是合成数据，但服务、浏览器操作、断言、截图和接口调用是真实的。操作台没有用模拟成功替代真实验证。
 
-维护者为 [@callingforhelp](https://github.com/callingforhelp)。贡献说明见 [CONTRIBUTING.md](CONTRIBUTING.md)，行为规范见 [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)，安全说明见 [SECURITY.md](SECURITY.md)。不承诺响应或交付日期。目前没有任何赞助或官方合作。
+## 已实现
 
-采用 [MIT 许可证](LICENSE)。[Archify](https://github.com/tt-a1i/archify) 启发了明确关系、可追溯证据与可移植表示的设计；目前没有复制其代码，图表校验也不能替代真实流程验证。
+- 明确的 JSON 流程、源文件关系、角色、预期结果，以及 CLI 校验/导入/列表/Git 范围影响检查。
+- 持久化任务、单并发 Chromium 队列、运行前后部署身份校验、遮盖敏感字段的截图与可过期私密图片。
+- 手动审核发布；验证成功不等于自动向客户提供答案。
+- 客服接口返回已发布步骤、截图引用和结构化指引，或明确追问/不可用。
+- GitHub 签名推送接收与去重审核问题；推送不等于生产部署。
+- 中英文操作台、用户同意后的图片上传与元数据清除、分离的管理员/客服凭据。
+- [编码助手共享技能](docs/AGENT-INTEGRATION.zh-CN.md)和宿主安装说明。
+
+## 当前边界
+
+流程需要明确编写或导入，尚无自动录屏或从代码自动发现流程。查询匹配配置好的问题别名，不调用大模型。支持私密上传图片，但不识别图片内容。验证只面向操作者配置的可信应用，不是执行恶意代码的沙箱；登录后的客户会话回放需要额外适配。
+
+一个服务对应一个应用、一个状态写入进程，不是多租户托管客服平台。没有声称生产部署或外部试用已完成。原生代理钩子、配音视频、客户电脑执行属于后续工作。
+
+## CLI 与验证
+
+```sh
+node bin/flowwitness.mjs --help
+node bin/flowwitness.mjs init
+node bin/flowwitness.mjs list
+node bin/flowwitness.mjs validate examples/workflow.json
+node bin/flowwitness.mjs verify export-report
+node bin/flowwitness.mjs query '如何导出报告？'
+npm test
+npm run test:integration
+node scripts/check-dashboard.mjs
+python3 scripts/check-system.py
+```
+
+服务类命令需要运行中的实例；validate 只在本地校验。通过私有环境配置 FLOWWITNESS_URL 与需要时的 FLOWWITNESS_TOKEN，勿公开令牌。目前未发布 npm 注册表包。
+
+浏览器测试使用临时数据和内置页面，证明本地行为，不证明外部客户部署。结果见 [验证记录](docs/VALIDATION.md)。
+
+维护者 [@callingforhelp](https://github.com/callingforhelp)，采用 [MIT](LICENSE)。欢迎脱敏的重复客服问题、可复现流程失败或无敏感数据的预览试用。贡献与安全规范见仓库相应文档。不承诺响应时间，目前没有赞助或合作承诺。Archify 启发了关系与证据表达，未复制其代码；关系图不替代实际验证。

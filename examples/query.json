@@ -1,11 +1,11 @@
 {
   "application": "demo-reports",
-  "deployment_version": "demo-release-1",
+  "deployment_version": "v1",
   "question": "How do I export my report?",
   "context": {
-    "role": "member",
+    "role": "admin",
     "route": "/reports",
     "locale": "en"
   },
-  "image_artifact_id": null
+  "environment": "local"
 }

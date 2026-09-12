@@ -1,61 +1,78 @@
 # FlowWitness
 
-**Customer guidance that keeps up with your UI.**
+**Help your customers use what you built.**
 
-An open source project for turning important product workflows into versioned, browser-verified customer instructions, accessible from any support chat or coding agent.
+[简体中文](README.zh-CN.md) · [Public concept demo](https://callingforhelp.github.io/flowwitness/) · [Runbook](docs/OPERATIONS.md) · [API](docs/API.md) · [Research](docs/RESEARCH.md) · [Roadmap](ROADMAP.md)
 
-[简体中文](README.zh-CN.md)
+FlowWitness is a self-hosted local alpha that stores customer workflows, checks them in Chromium, and serves explicitly published instructions to your existing support chat. When an application changes, test the old steps, inspect the failure, repair the workflow, and publish a new checked answer.
 
-**Status: interactive local demo and specifications. There is no installable CLI, running support API, or production integration yet.** The demo implements version/status checks using synthetic data; browser replay and evidence are simulated. This repository also publishes product direction, proposed contracts, and implementation acceptance criteria.
+**The runtime is real.** It includes a CLI, HTTP service, bilingual operator dashboard, actual browser checks, private screenshots, and a support-query endpoint. The public GitHub Pages site remains a **separate simulated concept demo**; it does not host the backend.
 
-[Project site](https://callingforhelp.github.io/flowwitness/) · [Research](docs/RESEARCH.md) · [Product definition](docs/PRODUCT.md) · [Roadmap](ROADMAP.md) · [API proposal](docs/API.md)
+## Run locally
 
-## The problem
-
-You move a button, change a permission, or redesign onboarding. Your application ships, but the instructions your customers and their agents receive still describe the old flow.
-
-FlowWitness will connect **source changes → screens → workflow steps → verification evidence → support answers**. When a relevant change lands, the old guide becomes stale until the flow is checked against the right application version.
-
-## The first useful version
-
-For solo SaaS builders and small product teams shipping web UI changes with coding agents:
-
-1. Record three to five important workflows in your repository with explicit steps, roles, and expected outcomes.
-2. Link them to routes and source files. A push identifies possibly affected flows; a deployed preview supplies the version to verify.
-3. Replay those flows in an isolated test environment and retain redacted screenshots and step results.
-4. Let an existing chat call an endpoint with a question, optional screenshot/photo reference, and application context.
-5. Return current verified instructions and evidence, or a focused clarification. Never silently present stale instructions as current.
-
-A browser test passing is evidence for that version, role, and environment; it is not proof that every customer's account behaves identically.
-
-## Scope
-
-| Stage 1: earn trust | Stage 2: expand assistance |
-| --- | --- |
-| Git-tracked workflow records and explicit links | Automatic discovery across more application types |
-| Push impact checks and deployment-aware replay | Broader scenario exploration and scheduled agent teams |
-| Evidence-backed text and screenshot steps | Narrated, edited customer walkthrough videos |
-| Headless query API and portable guidance object | Rich image understanding and customer computer-use execution |
-| One shared CLI/skill path, adapters verified individually | Native plugins across Claude Code, Codex, and pi |
-
-No chat application, helpdesk replacement, general observability platform, always-on screen surveillance, or graph database in the first release. Screenshot intake belongs in the initial contract; reliable inference from arbitrary photos requires separate evaluation.
-
-## Participate
-
-Read the [research and validation plan](docs/RESEARCH.md). The most valuable contribution right now is a redacted example of a support instruction that became wrong after a release: what changed, how it was discovered, and what a correct answer needed to know. Use the issue template; do not upload customer data.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md), [community conduct](CODE_OF_CONDUCT.md), and [security guidance](SECURITY.md). This is maintained by [@callingforhelp](https://github.com/callingforhelp); no response-time or delivery-date commitment is made.
-
-## Local preview
+Requires Node.js 22 or later, npm, and an installed Chromium browser for Playwright.
 
 ```sh
-python3 -m http.server 8080 --directory site
+git clone https://github.com/callingforhelp/flowwitness.git
+cd flowwitness
+npm ci
+npx playwright install chromium
+npm start
 ```
 
-Run demo logic checks with `node --test site/demo.test.mjs`.
+Open **http://127.0.0.1:4310/app/**. No API key is needed for local mode. The service binds to loopback; use it only on a trusted local machine. Remote binding requires separate admin/support tokens. See the [runbook](docs/OPERATIONS.md).
 
-Open http://localhost:8080. The site is static and has no backend. Proposed JSON fixtures are in [examples](examples); they are synthetic, not captured product evidence.
+1. Select **Set up demo workflow**.
+2. Run a **browser check** and inspect its screenshots.
+3. **Publish** the successful run.
+4. Ask **How do I export a report?**
+5. Under **Try an application change**, move the demo to v2. The old answer becomes unavailable; checking the old steps really fails against the changed page.
+6. Repair the demo steps, check again, and publish the updated instructions.
 
-## License and inspiration
+The fixture uses synthetic report data, but the server, browser interaction, assertions, screenshots and API calls are real. No simulated verification result is used in the operator app.
 
-[MIT](LICENSE). [Archify](https://github.com/tt-a1i/archify) inspired explicit typed relationships, traceable evidence, and portable representations. No Archify code is bundled; a diagram export could be added later. Browser verification and workflow freshness must be implemented independently.
+## What works
+
+- Validated workflow JSON with explicit steps, source paths, role and expected outcomes; CLI import/list/validate and Git-range impact checks.
+- Persistent jobs, bounded one-at-a-time Chromium replay, deployment identity checks before and after execution, masked screenshots and expiring private image artifacts.
+- Explicit publication: a passing check alone never makes instructions available to customers.
+- Headless support queries return published steps, screenshot references and a structured guidance object, or clarification/unavailable status.
+- Signed GitHub push intake and deduplicated review questions. A source push does not overwrite production deployment identity.
+- English/Chinese dashboard, image upload with consent and metadata stripping, and separate admin/support credentials for authenticated mode.
+- A [shared coding-assistant skill](docs/AGENT-INTEGRATION.md), with host installation guidance.
+
+## Honest limits
+
+Workflows are explicitly authored or imported; automatic screen recording and code-to-workflow discovery are not implemented. Query matching uses configured question aliases, not an LLM. Images can be privately uploaded, but image recognition is not implemented. Initial replay targets trusted, operator-configured applications; it is not a sandbox for hostile code. Authenticated customer-session replay needs an additional adapter.
+
+This is one application per service, with a single state writer. It is not a multi-tenant hosted helpdesk. No production deployment or external pilot is claimed. Native agent hooks, narrated videos and customer computer-use execution remain future work. See [Stage 1 boundaries](ROADMAP.md).
+
+## CLI and integrations
+
+```sh
+node bin/flowwitness.mjs --help
+node bin/flowwitness.mjs init
+node bin/flowwitness.mjs list
+node bin/flowwitness.mjs validate examples/workflow.json
+node bin/flowwitness.mjs verify export-report
+node bin/flowwitness.mjs query 'How do I export a report?'
+```
+
+Service commands require a running instance; `validate` is local. Set `FLOWWITNESS_URL` and, in authenticated mode, `FLOWWITNESS_TOKEN` in your private environment. No npm registry release has been published: use this checkout or a local package install.
+
+## Checks
+
+```sh
+npm test
+npm run test:integration
+node scripts/check-dashboard.mjs
+python3 scripts/check-system.py
+```
+
+The browser checks use temporary state and the bundled fixture. They demonstrate local behavior, not an external customer's deployment. Results and limits are in [VALIDATION.md](docs/VALIDATION.md).
+
+## Contribute
+
+Maintained by [@callingforhelp](https://github.com/callingforhelp). Useful contributions include a redacted recurring support task, a reproducible failing workflow, or a pilot on a non-sensitive preview application. Read [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), and [community conduct](CODE_OF_CONDUCT.md). No sponsor or partner has committed, and no response-time guarantee is offered.
+
+[MIT](LICENSE). [Archify](https://github.com/tt-a1i/archify) inspired explicit relationships and evidence-linked representations; no Archify code is bundled. A relationship map does not replace execution proof.

@@ -1,8 +1,8 @@
-# Proposed architecture
+# Runtime architecture
 
 [简体中文](ARCHITECTURE.zh-CN.md)
 
-No runtime is implemented yet. A single process plus queued browser jobs is sufficient initially.
+The local alpha implements a single HTTP process with a bounded browser queue, atomic JSON state and private artifacts. See [operations](OPERATIONS.md) for supported configuration and current limits.
 
 ```mermaid
 flowchart LR

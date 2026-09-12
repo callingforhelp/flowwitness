@@ -1,10 +1,10 @@
 # Contributing
 
-FlowWitness is in research and specification. Start with a concrete customer problem or a small change tied to Stage 1 in [ROADMAP.md](ROADMAP.md). For large implementation work, open an issue describing the workflow, proposed behavior and acceptance evidence first.
+FlowWitness is a local runtime alpha. Start with a concrete customer problem or a small change tied to Stage 1 in [ROADMAP.md](ROADMAP.md). For large implementation work, open an issue describing the workflow, proposed behavior and acceptance evidence first.
 
 Useful contributions: redacted examples of stale help instructions, competing approaches we missed, reproducible browser fixtures, API boundary review and accessibility improvements to the site. Explain what happened, what you expected, and which version/role was involved. Never include customer screenshots, tokens or internal URLs without permission and redaction.
 
-For documentation/site changes, preview with `python3 -m http.server 8080 --directory site`, check links and mobile layout, and run `git diff --check`. JSON examples must parse. Runtime test commands will be documented when runtime code exists; no installation command is available yet.
+For documentation/site changes, preview with `python3 -m http.server 8080 --directory site`, check links and mobile layout, and run `git diff --check`. JSON examples must parse. Run `npm test`, `npm run test:integration` and `npm run test:dashboard` for runtime changes. Install Chromium first; tests use temporary state. See README for setup.
 
 Keep PRs small. State validation performed and what remains untested. Contributions are accepted under the project's MIT license. No CLA is currently required. The maintainer, @callingforhelp, makes scope and release decisions; acceptance and response times are not guaranteed.
 

@@ -2,7 +2,9 @@ name: Runtime checks
 on:
   push:
     branches: [main]
+    paths: ['src/**', 'bin/**', 'app/**', 'fixtures/**', 'test/**', 'scripts/**', 'site/**', 'package*.json', 'Dockerfile', 'compose.yaml', '.dockerignore', '.github/workflows/runtime.yml']
   pull_request:
+    paths: ['src/**', 'bin/**', 'app/**', 'fixtures/**', 'test/**', 'scripts/**', 'site/**', 'package*.json', 'Dockerfile', 'compose.yaml', '.dockerignore', '.github/workflows/runtime.yml']
 permissions:
   contents: read
 concurrency:
@@ -22,3 +24,23 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm test
       - run: npm run test:integration
+      - run: npm run test:dashboard
+      - run: python3 scripts/check-system.py
+  container:
+    needs: runtime
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - run: docker build --tag flowwitness-ci .
+      - name: Check authenticated container startup
+        shell: bash
+        run: |
+          docker run --detach --rm --name flowwitness-ci \
+            -p 127.0.0.1:4310:4310 \
+            -e FLOWWITNESS_ADMIN_TOKEN=ci-only-admin-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
+            -e FLOWWITNESS_SUPPORT_TOKEN=ci-only-support-ssssssssssssssssssssssssssssssss \
+            flowwitness-ci
+          trap 'docker stop flowwitness-ci >/dev/null' EXIT
+          curl --fail --retry 12 --retry-connrefused --retry-delay 2 http://127.0.0.1:4310/health
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:4310/v1/workflows)" = 401

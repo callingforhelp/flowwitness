@@ -1,8 +1,8 @@
-# 架构提案
+# 运行时架构
 
 [English](ARCHITECTURE.md)
 
-当前只有浏览器本地演示，实际服务尚未实现。第一版一个服务进程加浏览器任务队列即可。
+本地 alpha 已实现 HTTP 服务、有限浏览器队列、原子 JSON 状态与私密资源。运行方式与限制见 OPERATIONS.zh-CN.md。
 
 ```mermaid
 flowchart LR
