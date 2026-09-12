@@ -166,3 +166,13 @@ reopen also read a private module artifact through its expiring link. This
 closes the module durability/binding gap; browser capacity, backup/restore,
 alerting, custom domain/TLS, startup-latency policy, and the external
 two-release pilot remain open.
+
+## Hosted webhook checkpoint — 2026-09-12
+
+The public `callingforhelp/flowwitness` repository now has a push-only GitHub
+webhook targeting the hosted `/v1/webhooks/github` endpoint. Its HMAC secret is
+held in the private deployment environment and is not in the repository. A
+synthetic complete signed push returned 200; resending the same delivery ID
+returned 200 with `duplicate=true`. The next real repository push will provide
+the first external delivery receipt. Digest scheduling remains intentionally
+unimplemented until a pilot shows that it is needed.
